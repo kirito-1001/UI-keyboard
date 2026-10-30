@@ -39,6 +39,9 @@ open class LifecycleInputMethodService : InputMethodService(),
     private val store by lazy { ViewModelStore() }
     private val savedStateRegistryController by lazy { SavedStateRegistryController.create(this) }
 
+    val uiScope: CoroutineScope
+        get() = lifecycle.coroutineScope
+
     final override val savedStateRegistry: SavedStateRegistry
         get() = savedStateRegistryController.savedStateRegistry
 

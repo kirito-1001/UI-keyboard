@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2026 The FlorisBoard Contributors
+ * Copyright (C) 2024-2025 The FlorisBoard Contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,21 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlinx.kover)
-    alias(libs.plugins.kotest)
 }
+
+val projectGroupId: String by project
+val artifactId = "florisboard-lib-kotlin"
+val projectVersion: String by project
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
+}
+
+sourceSets {
+    maybeCreate("main").apply {
+        java.srcDir("src/main/kotlin")
+    }
 }
 
 tasks {
@@ -33,7 +42,7 @@ tasks {
         compilerOptions.jvmTarget = JvmTarget.JVM_11
         compilerOptions.freeCompilerArgs = listOf(
             "-opt-in=kotlin.contracts.ExperimentalContracts",
-            "-jvm-default=enable",
+            "-Xjvm-default=all-compatibility",
         )
     }
     compileTestKotlin {
@@ -56,8 +65,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.coroutines)
 
-    testImplementation(libs.kotest.assertions.core)
-    testImplementation(libs.kotest.property)
-    testImplementation(libs.kotest.runner.junit5)
+    testImplementation(libs.junit.jupiter.params)
+    testImplementation(libs.kotlin.test.junit5)
 }
 

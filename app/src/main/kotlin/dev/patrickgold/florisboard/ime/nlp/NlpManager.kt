@@ -19,14 +19,19 @@ package dev.patrickgold.florisboard.ime.nlp
 import android.content.Context
 import android.os.SystemClock
 import android.util.LruCache
+import androidx.lifecycle.MutableLiveData
 import dev.patrickgold.florisboard.app.FlorisPreferenceStore
 import dev.patrickgold.florisboard.clipboardManager
+import dev.patrickgold.florisboard.editorInstance
 import dev.patrickgold.florisboard.ime.clipboard.provider.ClipboardItem
 import dev.patrickgold.florisboard.ime.clipboard.provider.ItemType
 import dev.patrickgold.florisboard.ime.core.Subtype
+import dev.patrickgold.florisboard.ime.editor.EditorContent
+import dev.patrickgold.florisboard.ime.editor.EditorRange
 import dev.patrickgold.florisboard.ime.media.emoji.EmojiSuggestionProvider
+import dev.patrickgold.florisboard.ime.nlp.han.HanShapeBasedLanguageProvider
 import dev.patrickgold.florisboard.ime.nlp.latin.LatinLanguageProvider
-import dev.patrickgold.florisboard.inferFlorisApplication
+import dev.patrickgold.florisboard.keyboardManager
 import dev.patrickgold.florisboard.lib.util.NetworkUtils
 import dev.patrickgold.florisboard.subtypeManager
 import kotlinx.coroutines.CoroutineScope
@@ -34,16 +39,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.florisboard.lib.kotlin.guardedByLock
 import org.florisboard.lib.kotlin.collectLatestIn
-import org.k3lp.runtime.K3Content
-import org.k3lp.runtime.K3TextRange
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.properties.Delegates
 
 private const val BLANK_STR_PATTERN = "^\\s*$"
@@ -52,9 +55,9 @@ class NlpManager(context: Context) {
     private val blankStrRegex = Regex(BLANK_STR_PATTERN)
 
     private val prefs by FlorisPreferenceStore
-    val appContext = context.inferFlorisApplication()
-    val imeController = appContext.imeController
     private val clipboardManager by context.clipboardManager()
+    private val editorInstance by context.editorInstance()
+    private val keyboardManager by context.keyboardManager()
     private val subtypeManager by context.subtypeManager()
 
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
@@ -63,7 +66,7 @@ class NlpManager(context: Context) {
     private val providers = guardedByLock {
         mapOf(
             LatinLanguageProvider.ProviderId to ProviderInstanceWrapper(LatinLanguageProvider(context)),
-            //HanShapeBasedLanguageProvider.ProviderId to ProviderInstanceWrapper(HanShapeBasedLanguageProvider(context)),
+            HanShapeBasedLanguageProvider.ProviderId to ProviderInstanceWrapper(HanShapeBasedLanguageProvider(context)),
         )
     }
     // lock unnecessary because values constant
@@ -83,7 +86,8 @@ class NlpManager(context: Context) {
         }
 
     val debugOverlaySuggestionsInfos = LruCache<Long, Pair<String, SpellingResult>>(10)
-    var debugOverlayVersion = MutableStateFlow(0)
+    var debugOverlayVersion = MutableLiveData(0)
+    private val debugOverlayVersionSource = AtomicInteger(0)
 
     init {
         clipboardManager.primaryClipFlow.collectLatestIn(scope) {
@@ -120,7 +124,8 @@ class NlpManager(context: Context) {
      * @return The punctuation rule or a fallback.
      */
     fun getPunctuationRule(subtype: Subtype): PunctuationRule {
-        return PunctuationRule.Fallback
+        return keyboardManager.resources.punctuationRules.value
+            ?.get(subtype.punctuationRule) ?: PunctuationRule.Fallback
     }
 
     private suspend fun getSpellingProvider(subtype: Subtype): SpellingProvider {
@@ -165,13 +170,13 @@ class NlpManager(context: Context) {
             followingWords = followingWords,
             maxSuggestionCount = maxSuggestionCount,
             allowPossiblyOffensive = !prefs.suggestion.blockPossiblyOffensive.get(),
-            isPrivateSession = false// TODO keyboardManager.activeState.isIncognitoMode,
+            isPrivateSession = keyboardManager.activeState.isIncognitoMode,
         )
     }
 
     suspend fun determineLocalComposing(
         textBeforeSelection: CharSequence, breakIterators: BreakIteratorGroup, localLastCommitPosition: Int
-    ): K3TextRange {
+    ): EditorRange {
         return getSuggestionProvider(subtypeManager.activeSubtype).determineLocalComposing(
             subtypeManager.activeSubtype, textBeforeSelection, breakIterators, localLastCommitPosition
         )
@@ -191,7 +196,7 @@ class NlpManager(context: Context) {
             || prefs.emoji.suggestionEnabled.get()
             || providerForcesSuggestionOn(subtypeManager.activeSubtype)
 
-    fun suggest(subtype: Subtype, content: K3Content) {
+    fun suggest(subtype: Subtype, content: EditorContent) {
         val reqTime = SystemClock.uptimeMillis()
         scope.launch {
             val emojiSuggestions = when {
@@ -201,7 +206,7 @@ class NlpManager(context: Context) {
                         content = content,
                         maxCandidateCount = prefs.emoji.suggestionCandidateMaxCount.get(),
                         allowPossiblyOffensive = !prefs.suggestion.blockPossiblyOffensive.get(),
-                        isPrivateSession = false // TODO keyboardManager.activeState.isIncognitoMode,
+                        isPrivateSession = keyboardManager.activeState.isIncognitoMode,
                     )
                 }
                 else -> emptyList()
@@ -216,7 +221,7 @@ class NlpManager(context: Context) {
                         content = content,
                         maxCandidateCount = 8,
                         allowPossiblyOffensive = !prefs.suggestion.blockPossiblyOffensive.get(),
-                        isPrivateSession = false // TODO keyboardManager.activeState.isIncognitoMode,
+                        isPrivateSession = keyboardManager.activeState.isIncognitoMode,
                     )
                 }
             }
@@ -257,7 +262,7 @@ class NlpManager(context: Context) {
                     if (candidate is ClipboardSuggestionCandidate) {
                         assembleCandidates()
                     } else {
-                        suggest(subtypeManager.activeSubtype, imeController.snapshotState().content)
+                        suggest(subtypeManager.activeSubtype, editorInstance.activeContent)
                     }
                 }
             }
@@ -278,10 +283,10 @@ class NlpManager(context: Context) {
                 isSuggestionOn() -> {
                     clipboardSuggestionProvider.suggest(
                         subtype = Subtype.DEFAULT,
-                        content = imeController.snapshotState().content,
+                        content = editorInstance.activeContent,
                         maxCandidateCount = 8,
                         allowPossiblyOffensive = !prefs.suggestion.blockPossiblyOffensive.get(),
-                        isPrivateSession = false // TODO keyboardManager.activeState.isIncognitoMode,
+                        isPrivateSession = keyboardManager.activeState.isIncognitoMode,
                     ).ifEmpty {
                         buildList {
                             internalSuggestionsGuard.withLock {
@@ -310,7 +315,7 @@ class NlpManager(context: Context) {
             return // We do not auto switch if a repeatable action key was last pressed or if the actions overflow
                    // menu is visible to prevent annoying UI changes
         }*/
-        val isSelection = imeController.snapshotState().content.selection.isNotCollapsed()
+        val isSelection = editorInstance.activeContent.selection.isSelectionMode
         val isExpanded = list1.isNullOrEmpty() && list2.isNullOrEmpty() || isSelection
         scope.launch {
             prefs.smartbar.sharedActionsExpandWithAnimation.set(false)
@@ -319,13 +324,15 @@ class NlpManager(context: Context) {
     }
 
     fun addToDebugOverlay(word: String, info: SpellingResult) {
+        val version = debugOverlayVersionSource.incrementAndGet()
         debugOverlaySuggestionsInfos.put(System.currentTimeMillis(), word to info)
-        debugOverlayVersion.update { it + 1 }
+        debugOverlayVersion.postValue(version)
     }
 
     fun clearDebugOverlay() {
+        val version = debugOverlayVersionSource.incrementAndGet()
         debugOverlaySuggestionsInfos.evictAll()
-        debugOverlayVersion.update { it + 1 }
+        debugOverlayVersion.postValue(version)
     }
 
     private class ProviderInstanceWrapper(val provider: NlpProvider) {
@@ -359,7 +366,7 @@ class NlpManager(context: Context) {
 
         override suspend fun suggest(
             subtype: Subtype,
-            content: K3Content,
+            content: EditorContent,
             maxCandidateCount: Int,
             allowPossiblyOffensive: Boolean,
             isPrivateSession: Boolean,
@@ -367,13 +374,7 @@ class NlpManager(context: Context) {
             // Check if enabled
             if (!prefs.clipboard.suggestionEnabled.get()) return emptyList()
 
-            val text = buildString {
-                // TODO hack
-                append(content.surroundingText.textBefore)
-                append(content.surroundingText.textSelected)
-                append(content.surroundingText.textAfter)
-            }
-            val currentItem = validateClipboardItem(clipboardManager.primaryClip, lastClipboardItemId, text)
+            val currentItem = validateClipboardItem(clipboardManager.primaryClip, lastClipboardItemId, content.text)
                 ?: return emptyList()
 
             return buildList {

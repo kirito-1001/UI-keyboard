@@ -16,12 +16,12 @@
 
 package dev.patrickgold.florisboard.lib.ext
 
-import dev.patrickgold.florisboard.ime.extension.ExtensionMaintainer
-import io.kotest.core.spec.style.FunSpec
-import io.kotest.datatest.withData
+/*
+import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 
-class ExtensionAuthorTest : FunSpec({
+// TODO: rewrite to JUnit5 style
+class ExtensionAuthorTest : FreeSpec({
     val validAuthorPairs = listOf(
         "Jane Doe" to ExtensionMaintainer(name = "Jane Doe"),
         "jane123" to ExtensionMaintainer(name = "jane123"),
@@ -32,26 +32,29 @@ class ExtensionAuthorTest : FunSpec({
         "Jane Doe <jane.doe@gmail.com> (jane-doe.com)" to ExtensionMaintainer(name = "Jane Doe", email = "jane.doe@gmail.com", url = "jane-doe.com"),
     )
 
-    context("ExtensionAuthor.from()") {
-        context("with valid, well-formatted input") {
-            withData(validAuthorPairs) { (authorStr, authorObj) ->
-                ExtensionMaintainer.from(authorStr) shouldBe authorObj
+    "Test ExtensionAuthor.from()" - {
+        "With valid, well-formatted input" - {
+            validAuthorPairs.forEach { (authorStr, authorObj) ->
+                "`$authorStr`" {
+                    ExtensionMaintainer.from(authorStr) shouldBe authorObj
+                }
             }
         }
 
-        context("with valid, ill-formatted input") {
-            withData(
+        "With valid, ill-formatted input" - {
+            listOf(
                 "  Jane Doe " to ExtensionMaintainer(name = "Jane Doe"),
                 " jane123" to ExtensionMaintainer(name = "jane123"),
                 "  Jane Doe    <jane.doe@gmail.com>     " to ExtensionMaintainer(name = "Jane Doe", email = "jane.doe@gmail.com"),
-            ) { (authorStr, authorObj) ->
-                ExtensionMaintainer.from(authorStr) shouldBe authorObj
+            ).forEach { (authorStr, authorObj) ->
+                "`$authorStr`" {
+                    ExtensionMaintainer.from(authorStr) shouldBe authorObj
+                }
             }
         }
 
-        context("With invalid input") {
-            withData(
-                nameFn = { "`$it`" },
+        "With invalid input" - {
+            listOf(
                 "",
                 " ",
                 "<jane.doe@gmail.com>",
@@ -59,15 +62,20 @@ class ExtensionAuthorTest : FunSpec({
                 "<jane.doe@gmail.com> (jane-doe.com)",
                 "Jane Doe <<jane.doe@gmail.com>> ((jane-doe.com))",
                 "Jane Doe <jane.doe@gmail.com) (jane-doe.com)",
-            ) { authorStr ->
-                ExtensionMaintainer.from(authorStr) shouldBe null
+            ).forEach { authorStr ->
+                "`$authorStr` should be null" {
+                    ExtensionMaintainer.from(authorStr) shouldBe null
+                }
             }
         }
     }
 
-    context("Test ExtensionAuthor.toString()") {
-        withData(validAuthorPairs) { (authorStr, authorObj) ->
-            authorObj.toString() shouldBe authorStr
+    "Test ExtensionAuthor.toString()" - {
+        validAuthorPairs.forEach { (authorStr, authorObj) ->
+            "`$authorStr`" {
+                authorObj.toString() shouldBe authorStr
+            }
         }
     }
 })
+*/

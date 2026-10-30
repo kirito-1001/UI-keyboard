@@ -301,7 +301,12 @@
     <string name="pref__keyboard__capitalization_behavior__label" comment="Preference title">سلوك الأحرف الكبيرة</string>
     <string name="pref__keyboard__font_size_multiplier__label" comment="Preference title">مضاعف حجم الخط</string>
     <string name="pref__keyboard__group_layout__label" comment="Preference group title">التخطيط</string>
+    <string name="pref__keyboard__one_handed_mode__label" comment="Preference title">وضع اليد الواحدة</string>
+    <string name="pref__keyboard__one_handed_mode_scale_factor__label" comment="Preference title">عرض لوحة مفاتيح الوضع بيد واحدة</string>
     <string name="pref__keyboard__landscape_input_ui_mode__label" comment="Preference value">إدخال ملء الشاشة الأفقي</string>
+    <string name="pref__keyboard__height_factor__label" comment="Preference title">ارتفاع لوحة المفاتيح</string>
+    <string name="pref__keyboard__key_spacing__label" comment="Preference title">المسافة بين المفاتيح</string>
+    <string name="pref__keyboard__bottom_offset__label" comment="Preference title">الإزاحة السفلية</string>
     <string name="pref__keyboard__group_keypress__label" comment="Preference group title">ضغط المفتاح</string>
     <string name="pref__keyboard__popup_enabled__label" comment="Preference title">رؤية النافذة المنبثقة</string>
     <string name="pref__keyboard__popup_enabled__summary" comment="Preference summary">إظهار النافذة المنبثقة عندما تضغط على مفتاح</string>
@@ -796,6 +801,8 @@
     <string name="enum__landscape_input_ui_mode__never_show" comment="Enum value label">لا تُظهر أبداً</string>
     <string name="enum__landscape_input_ui_mode__always_show" comment="Enum value label">الإظهار دائماً</string>
     <string name="enum__landscape_input_ui_mode__dynamically_show" comment="Enum value label">يعين بشكل ديناميكي</string>
+    <string name="enum__one_handed_mode__start" comment="Enum value label">وضع اليد اليسرى</string>
+    <string name="enum__one_handed_mode__end" comment="Enum value label">وضع اليد اليمنى</string>
     <string name="enum__shape_corner__top_start" comment="Enum value label">بداية علوية</string>
     <string name="enum__shape_corner__top_end" comment="Enum value label">نهاية علوية</string>
     <string name="enum__shape_corner__bottom_end" comment="Enum value label">نهاية سفلية</string>
@@ -905,4 +912,22 @@
         <item quantity="many">{v} مرشحات</item>
         <item quantity="other">{v} مرشحون</item>
     </plurals>
+    <!-- Custom additions -->
+    <string name="pref__smartbar__height_factor__label">ارتفاع شريط الأدوات</string>
+    <string name="pref__smartbar__action_icon_scale__label">حجم أيقونات شريط الأدوات</string>
+    <string name="settings__toolbar_buttons__title">أزرار شريط الأدوات</string>
+    <string name="settings__toolbar_buttons__summary">تغيير ترتيب أزرار الشريط وإخفاؤها أو إظهارها</string>
+    <string name="settings__toolbar_buttons__hint">استخدم الأسهم لتغيير الترتيب، واستخدم أيقونة العين لإخفاء الزر أو إظهاره.</string>
+    <string name="settings__toolbar_buttons__hidden_group">الأزرار المخفية</string>
+    <string name="settings__toolbar_buttons__reset">إعادة الضبط الافتراضي</string>
+    <string name="settings__key_customization__title">تخصيص المفاتيح</string>
+    <string name="settings__key_customization__summary">إزالة المفاتيح ونقلها داخل صفها وتغيير ألوانها</string>
+    <string name="settings__key_customization__hint">اضغط على مفتاح لتعديله. تنطبق التغييرات على لوحة الحروف للغة الحالية.</string>
+    <string name="settings__key_customization__key">المفتاح</string>
+    <string name="settings__key_customization__hide">إزالة هذا المفتاح</string>
+    <string name="settings__key_customization__position">نقل داخل الصف</string>
+    <string name="settings__key_customization__background">لون المفتاح</string>
+    <string name="settings__key_customization__text_color">لون النص</string>
+    <string name="settings__key_customization__reset_key">إعادة ضبط المفتاح</string>
+    <string name="settings__key_customization__reset_all">إعادة ضبط كل المفاتيح</string>
 </resources>

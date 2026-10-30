@@ -22,13 +22,12 @@ import io.github.reactivecircus.cache4k.Cache
 import org.florisboard.lib.kotlin.GuardedByLock
 import org.florisboard.lib.kotlin.guardedByLock
 
-@Deprecated("should be replaced by non-suspending BreakIterators")
 open class BreakIteratorGroup {
-    private val charInstances = Cache.Builder<FlorisLocale, GuardedByLock<BreakIterator>>().build()
+    private val charInstances = Cache.Builder().build<FlorisLocale, GuardedByLock<BreakIterator>>()
 
-    private val wordInstances = Cache.Builder<FlorisLocale, GuardedByLock<BreakIterator>>().build()
+    private val wordInstances = Cache.Builder().build<FlorisLocale, GuardedByLock<BreakIterator>>()
 
-    private val sentenceInstances = Cache.Builder<FlorisLocale, GuardedByLock<BreakIterator>>().build()
+    private val sentenceInstances = Cache.Builder().build<FlorisLocale, GuardedByLock<BreakIterator>>()
 
     suspend fun <R> character(locale: FlorisLocale, action: (BreakIterator) -> R): R {
         val instance = charInstances.get(locale) {

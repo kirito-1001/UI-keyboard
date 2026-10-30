@@ -27,12 +27,12 @@ private typealias EmojiDataBySkinToneImpl = EnumMap<EmojiSkinTone, MutableList<E
 typealias EmojiDataByCategory = Map<EmojiCategory, List<EmojiSet>>
 typealias EmojiDataBySkinTone = Map<EmojiSkinTone, List<Emoji>>
 
-class EmojiData(
+data class EmojiData(
     val byCategory: EmojiDataByCategory,
     val bySkinTone: EmojiDataBySkinTone,
 ) {
     companion object {
-        private val cache = Cache.Builder<String, EmojiData>().build()
+        private val cache = Cache.Builder().build<String, EmojiData>()
         val Fallback = empty()
 
         private fun newByCategory(): EmojiDataByCategoryImpl {

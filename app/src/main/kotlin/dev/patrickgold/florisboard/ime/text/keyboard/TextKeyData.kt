@@ -18,7 +18,9 @@ package dev.patrickgold.florisboard.ime.text.keyboard
 
 import android.icu.lang.UCharacter
 import dev.patrickgold.florisboard.ime.keyboard.AbstractKeyData
+import dev.patrickgold.florisboard.ime.keyboard.ComputingEvaluator
 import dev.patrickgold.florisboard.ime.keyboard.KeyData
+import dev.patrickgold.florisboard.ime.popup.PopupSet
 import dev.patrickgold.florisboard.ime.text.key.KeyCode
 import dev.patrickgold.florisboard.ime.text.key.KeyType
 import dev.patrickgold.florisboard.lib.FlorisLocale
@@ -47,7 +49,18 @@ data class TextKeyData(
     override val code: Int = KeyCode.UNSPECIFIED,
     override val label: String = "",
     override val groupId: Int = KeyData.GROUP_DEFAULT,
+    override val popup: PopupSet<AbstractKeyData>? = null
 ) : KeyData {
+    override fun compute(evaluator: ComputingEvaluator): KeyData? {
+        return if (evaluator.isSlot(this)) {
+            evaluator.slotData(this)?.let { data ->
+                TextKeyData(type, data.code, data.label, groupId, popup)
+            }
+        } else {
+            this
+        }
+    }
+
     override fun asString(isForDisplay: Boolean): String {
         return asString(this, isForDisplay)
     }
@@ -324,12 +337,6 @@ data class TextKeyData(
             label = "clipboard_clear_primary_clip",
         )
 
-        /** Predefined key data for [KeyCode.TOGGLE_FLOATING_WINDOW] */
-        val TOGGLE_FLOATING_WINDOW = TextKeyData(
-            type = KeyType.SYSTEM_GUI,
-            code = KeyCode.TOGGLE_FLOATING_WINDOW,
-            label = "toggle_floating_window",
-        )
         /** Predefined key data for [KeyCode.TOGGLE_COMPACT_LAYOUT] */
         val TOGGLE_COMPACT_LAYOUT = TextKeyData(
             type = KeyType.SYSTEM_GUI,
@@ -347,12 +354,6 @@ data class TextKeyData(
             type = KeyType.SYSTEM_GUI,
             code = KeyCode.COMPACT_LAYOUT_TO_RIGHT,
             label = "compact_layout_to_right",
-        )
-        /** Predefined key data for [KeyCode.TOGGLE_RESIZE_MODE] */
-        val TOGGLE_RESIZE_MODE = TextKeyData(
-            type = KeyType.SYSTEM_GUI,
-            code = KeyCode.TOGGLE_RESIZE_MODE,
-            label = "toggle_resize_mode",
         )
 
         /** Predefined key data for [KeyCode.UNDO] */
@@ -528,8 +529,20 @@ class AutoTextKeyData(
     override val code: Int = KeyCode.UNSPECIFIED,
     override val label: String = "",
     override val groupId: Int = KeyData.GROUP_DEFAULT,
+    override val popup: PopupSet<AbstractKeyData>? = null
 ) : KeyData {
     @Transient private val state = AutoLetterState()
+
+    override fun compute(evaluator: ComputingEvaluator): KeyData? {
+        return if (evaluator.isSlot(this)) {
+            evaluator.slotData(this)?.let { data ->
+                TextKeyData(type, data.code, data.label, groupId, popup)
+            }
+        } else {
+            state.recomputeIfNecessary(evaluator.subtype.primaryLocale)
+            if (evaluator.state.isUppercase) { state.upper } else { state.lower }
+        }
+    }
 
     override fun asString(isForDisplay: Boolean): String {
         return asString(this, isForDisplay)
@@ -554,12 +567,14 @@ class AutoTextKeyData(
                 UCharacter.toString(code).lowercase(locale).codePointAt(0),
                 label.lowercase(locale),
                 groupId,
+                popup,
             )
             upper = TextKeyData(
                 type,
                 UCharacter.toString(code).uppercase(locale).codePointAt(0),
                 label.uppercase(locale),
                 groupId,
+                popup,
             )
         }
     }
@@ -572,8 +587,13 @@ class MultiTextKeyData(
     val codePoints: IntArray = intArrayOf(),
     override val label: String = "",
     override val groupId: Int = KeyData.GROUP_DEFAULT,
+    override val popup: PopupSet<AbstractKeyData>? = null
 ) : KeyData {
     @Transient override val code: Int = KeyCode.MULTIPLE_CODE_POINTS
+
+    override fun compute(evaluator: ComputingEvaluator): KeyData {
+        return this
+    }
 
     override fun asString(isForDisplay: Boolean): String {
         return buildString {

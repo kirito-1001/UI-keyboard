@@ -193,7 +193,6 @@
     <string name="settings__theme_editor__property_value_shape_apply_for_all_corners">Applica per tutti gli angoli</string>
     <string name="settings__theme_editor__property_value_color_dialog_title">Modifica stringa di colore</string>
     <string name="settings__theme_editor__file_selector_dialog_title">Seleziona file</string>
-    <string name="settings__theme_editor__file_selector_no_files_text">Impostazioni / Modifica tema / seleziona file / nessun file di testo</string>
     <string name="settings__theme_editor__component_meta_is_night_theme">È tema scuro</string>
     <string name="settings__theme_editor__component_meta_is_borderless">È senza bordi</string>
     <string name="settings__theme_editor__component_meta_stylesheet_path">Percorso del file di stile</string>
@@ -320,7 +319,12 @@
     <string name="pref__keyboard__capitalization_behavior__label" comment="Preference title">Comportamento delle maiuscole</string>
     <string name="pref__keyboard__font_size_multiplier__label" comment="Preference title">Moltiplicatore dimensione carattere</string>
     <string name="pref__keyboard__group_layout__label" comment="Preference group title">Layout</string>
+    <string name="pref__keyboard__one_handed_mode__label" comment="Preference title">Modalità ad una mano</string>
+    <string name="pref__keyboard__one_handed_mode_scale_factor__label" comment="Preference title">Larghezza della tastiera in modalità a una mano</string>
     <string name="pref__keyboard__landscape_input_ui_mode__label" comment="Preference value">Inserimento a schermo intero orizzontale</string>
+    <string name="pref__keyboard__height_factor__label" comment="Preference title">Altezza tastiera</string>
+    <string name="pref__keyboard__key_spacing__label" comment="Preference title">Spaziatura tasti</string>
+    <string name="pref__keyboard__bottom_offset__label" comment="Preference title">Spaziatura in basso</string>
     <string name="pref__keyboard__group_keypress__label" comment="Preference group title">Pressione tasti</string>
     <string name="pref__keyboard__popup_enabled__label" comment="Preference title">Visibilità Popup</string>
     <string name="pref__keyboard__popup_enabled__summary" comment="Preference summary">Mostra popup quando si preme un tasto</string>
@@ -761,6 +765,8 @@
     <string name="enum__landscape_input_ui_mode__never_show" comment="Enum value label">Non visualizzare mai</string>
     <string name="enum__landscape_input_ui_mode__always_show" comment="Enum value label">Mostra sempre</string>
     <string name="enum__landscape_input_ui_mode__dynamically_show" comment="Enum value label">Mostra dinamicamente</string>
+    <string name="enum__one_handed_mode__start" comment="Enum value label">Modalità per mancini</string>
+    <string name="enum__one_handed_mode__end" comment="Enum value label">Modalità per destri</string>
     <string name="enum__shape_corner__top_start" comment="Enum value label">Inizio parte superiore</string>
     <string name="enum__shape_corner__top_end" comment="Enum value label">Fine parte superiore</string>
     <string name="enum__shape_corner__bottom_end" comment="Enum value label">Fine parte inferiore</string>

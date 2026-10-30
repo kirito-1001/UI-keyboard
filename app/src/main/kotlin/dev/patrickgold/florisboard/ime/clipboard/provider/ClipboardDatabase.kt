@@ -29,7 +29,7 @@ import android.provider.OpenableColumns
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.database.getStringOrNull
-import androidx.core.net.toUri
+import androidx.lifecycle.LiveData
 import androidx.room.AutoMigration
 import androidx.room.ColumnInfo
 import androidx.room.Dao
@@ -47,14 +47,15 @@ import androidx.room.TypeConverters
 import androidx.room.Update
 import androidx.room.migration.AutoMigrationSpec
 import dev.patrickgold.florisboard.R
-import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import org.florisboard.lib.android.AndroidVersion
 import org.florisboard.lib.android.UriSerializer
 import org.florisboard.lib.android.query
 import org.florisboard.lib.android.stringRes
 import org.florisboard.lib.kotlin.tryOrNull
+import androidx.core.net.toUri
 
 private const val CLIPBOARD_HISTORY_TABLE = "clipboard_history"
 private const val CLIPBOARD_FILES_TABLE = "clipboard_files"
@@ -79,7 +80,7 @@ enum class ItemType(val value: Int) {
  */
 @Serializable
 @Entity(tableName = CLIPBOARD_HISTORY_TABLE)
-data class ClipboardItem(
+data class ClipboardItem @OptIn(ExperimentalSerializationApi::class) constructor(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = BaseColumns._ID, index = true)
     var id: Long = 0,
@@ -150,6 +151,7 @@ data class ClipboardItem(
                     var displayName = when (type) {
                         ItemType.IMAGE -> "Image"
                         ItemType.VIDEO -> "Video"
+                        else -> "Unknown"
                     }
                     tryOrNull {
                         context.contentResolver.query(dataItem.uri, MEDIA_PROJECTION)?.use { cursor ->
@@ -167,6 +169,7 @@ data class ClipboardItem(
                     context.contentResolver.insert(when (type) {
                         ItemType.IMAGE -> ClipboardMediaProvider.IMAGE_CLIPS_URI
                         ItemType.VIDEO -> ClipboardMediaProvider.VIDEO_CLIPS_URI
+                        else -> error("Impossible.")
                     }, values)
                 }
             } else { null }
@@ -279,7 +282,7 @@ interface ClipboardHistoryDao {
     fun getAll(): List<ClipboardItem>
 
     @Query("SELECT * FROM $CLIPBOARD_HISTORY_TABLE")
-    fun getAllAsFlow(): Flow<List<ClipboardItem>>
+    fun getAllLive(): LiveData<List<ClipboardItem>>
 
     @Insert
     fun insert(item: ClipboardItem): Long
@@ -364,7 +367,7 @@ interface ClipboardFilesDao {
     fun getCursorById(uid: Long) : Cursor
 
     @Query("SELECT (:projection) FROM $CLIPBOARD_FILES_TABLE WHERE ${BaseColumns._ID} == (:uid)")
-    fun getCursorByIdWithColumns(uid: Long, projection: String) : Cursor
+    fun getCurserByIdWithColums(uid: Long, projection: String) : Cursor
 
     @Query("DELETE FROM $CLIPBOARD_FILES_TABLE WHERE ${BaseColumns._ID} == (:id)")
     fun delete(id: Long)

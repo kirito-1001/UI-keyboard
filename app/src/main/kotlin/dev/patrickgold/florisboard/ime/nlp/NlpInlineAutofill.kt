@@ -24,18 +24,18 @@ import android.view.inputmethod.InlineSuggestion
 import android.view.inputmethod.InlineSuggestionInfo
 import android.widget.inline.InlineContentView
 import androidx.annotation.RequiresApi
+import dev.patrickgold.florisboard.ime.keyboard.FlorisImeSizing
 import dev.patrickgold.florisboard.lib.devtools.flogInfo
 import dev.patrickgold.florisboard.lib.devtools.flogWarning
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.atomic.AtomicInteger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicInteger
 
 data class NlpInlineAutofillSuggestion(
     val info: InlineSuggestionInfo,
@@ -48,11 +48,8 @@ object NlpInlineAutofill {
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
     private val setterGuard = Mutex()
-
-    val suggestions: StateFlow<List<NlpInlineAutofillSuggestion>>
-        field = MutableStateFlow(emptyList())
-
-    var suggestionsChipHeightPx: Int = 0
+    private val _suggestions = MutableStateFlow<List<NlpInlineAutofillSuggestion>>(emptyList())
+    val suggestions = _suggestions
 
     @RequiresApi(Build.VERSION_CODES.R)
     fun showInlineSuggestions(context: Context, rawSuggestions: List<InlineSuggestion>): Boolean {
@@ -64,7 +61,7 @@ object NlpInlineAutofill {
         }
 
         scope.launch {
-            val size = Size(ViewGroup.LayoutParams.WRAP_CONTENT, suggestionsChipHeightPx)
+            val size = Size(ViewGroup.LayoutParams.WRAP_CONTENT, FlorisImeSizing.Static.smartbarHeightPx)
             val latch = CountDownLatch(rawSuggestions.size)
             val suggestionsArray = Array<NlpInlineAutofillSuggestion?>(rawSuggestions.size) { null }
 
@@ -82,13 +79,13 @@ object NlpInlineAutofill {
                 return@launch
             }
 
-            val inflatedSuggestions = suggestionsArray.filterNotNull().sortedByDescending { it.info.isPinned }
+            val suggestions = suggestionsArray.filterNotNull().sortedByDescending { it.info.isPinned }
             setterGuard.lock()
             flogInfo { "showInlineSuggestions: [${sequenceId}] successfully inflated " +
-                "${inflatedSuggestions.count { it.view != null }} out of ${inflatedSuggestions.size} suggestions" }
+                "${suggestions.count { it.view != null }} out of ${suggestions.size} suggestions" }
             if (currentSequenceId.get() == sequenceId) {
                 flogInfo { "showInlineSuggestions: [${sequenceId}] setting suggestions" }
-                suggestions.value = inflatedSuggestions
+                _suggestions.value = suggestions
             } else {
                 flogWarning { "showInlineSuggestions: [${sequenceId}] seqId != current, skip setting suggestions" }
             }
@@ -107,7 +104,7 @@ object NlpInlineAutofill {
         scope.launch {
             setterGuard.lock()
             flogInfo { "clearInlineSuggestions: [${sequenceId}] clearing suggestions" }
-            suggestions.value = emptyList()
+            _suggestions.value = emptyList()
             setterGuard.unlock()
         }
     }

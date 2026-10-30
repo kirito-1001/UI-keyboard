@@ -62,8 +62,8 @@ import dev.patrickgold.florisboard.app.settings.dictionary.DictionaryScreen
 import dev.patrickgold.florisboard.app.settings.dictionary.UserDictionaryScreen
 import dev.patrickgold.florisboard.app.settings.dictionary.UserDictionaryType
 import dev.patrickgold.florisboard.app.settings.gestures.GesturesScreen
-import dev.patrickgold.florisboard.app.settings.keyboard.FnKeyScreen
 import dev.patrickgold.florisboard.app.settings.keyboard.InputFeedbackScreen
+import dev.patrickgold.florisboard.app.settings.keyboard.KeyCustomizationScreen
 import dev.patrickgold.florisboard.app.settings.keyboard.KeyboardScreen
 import dev.patrickgold.florisboard.app.settings.localization.LanguagePackManagerScreen
 import dev.patrickgold.florisboard.app.settings.localization.LanguagePackManagerScreenAction
@@ -72,6 +72,7 @@ import dev.patrickgold.florisboard.app.settings.localization.SelectLocaleScreen
 import dev.patrickgold.florisboard.app.settings.localization.SubtypeEditorScreen
 import dev.patrickgold.florisboard.app.settings.media.MediaScreen
 import dev.patrickgold.florisboard.app.settings.smartbar.SmartbarScreen
+import dev.patrickgold.florisboard.app.settings.smartbar.ToolbarButtonsScreen
 import dev.patrickgold.florisboard.app.settings.theme.ThemeManagerScreen
 import dev.patrickgold.florisboard.app.settings.theme.ThemeManagerScreenAction
 import dev.patrickgold.florisboard.app.settings.theme.ThemeScreen
@@ -139,19 +140,23 @@ object Routes {
 
         @Serializable
         @Deeplink("settings/keyboard")
-        object Keyboard {
-            @Serializable
-            @Deeplink("settings/keyboard/fn-key")
-            object FnKey
+        object Keyboard
 
-            @Serializable
-            @Deeplink("settings/keyboard/input-feedback")
-            object InputFeedback
-        }
+        @Serializable
+        @Deeplink("settings/keyboard/input-feedback")
+        object InputFeedback
+
+        @Serializable
+        @Deeplink("settings/keyboard/key-customization")
+        object KeyCustomization
 
         @Serializable
         @Deeplink("settings/smartbar")
         object Smartbar
+
+        @Serializable
+        @Deeplink("settings/smartbar/toolbar-buttons")
+        object ToolbarButtons
 
         @Serializable
         @Deeplink("settings/typing")
@@ -301,10 +306,12 @@ object Routes {
             }
 
             composableWithDeepLink(Settings.Keyboard::class) { KeyboardScreen() }
-            composableWithDeepLink(Settings.Keyboard.FnKey::class) { FnKeyScreen() }
-            composableWithDeepLink(Settings.Keyboard.InputFeedback::class) { InputFeedbackScreen() }
+            composableWithDeepLink(Settings.InputFeedback::class) { InputFeedbackScreen() }
+
+            composableWithDeepLink(Settings.KeyCustomization::class) { KeyCustomizationScreen() }
 
             composableWithDeepLink(Settings.Smartbar::class) { SmartbarScreen() }
+            composableWithDeepLink(Settings.ToolbarButtons::class) { ToolbarButtonsScreen() }
 
             composableWithDeepLink(Settings.Typing::class) { TypingScreen() }
 

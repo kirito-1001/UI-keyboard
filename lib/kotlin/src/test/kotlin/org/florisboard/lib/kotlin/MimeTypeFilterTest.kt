@@ -16,83 +16,90 @@
 
 package org.florisboard.lib.kotlin
 
-import io.kotest.core.spec.style.FunSpec
-import io.kotest.datatest.withData
-import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 
-class MimeTypeFilterTest : FunSpec({
-    context("basic matching") {
-        context("valid matches") {
-            withData(
-                "font/woff2",
-                "image/png",
-                "application/x-font-otf",
-            ) { mimeType ->
-                val filter = mimeTypeFilterOf(mimeType)
-                filter.matches(mimeType) shouldBe true
-            }
+class MimeTypeFilterTest {
+    @Nested
+    inner class BasicMatching {
+        @ParameterizedTest
+        @ValueSource(strings = [
+            "font/woff2",
+            "image/png",
+            "application/x-font-otf",
+        ])
+        fun `valid matches`(mimeType: String) {
+            val filter = mimeTypeFilterOf(mimeType)
+            assertTrue { filter.matches(mimeType) }
         }
 
-        test("null does not match") {
+        @Test
+        fun `null does not match`() {
             val filter = mimeTypeFilterOf("image/png")
-            filter.matches(null) shouldBe false
+            assertFalse { filter.matches(null) }
         }
 
-        test("empty string does not match") {
+        @Test
+        fun `empty string does not match`() {
             val filter = mimeTypeFilterOf("image/png")
-            filter.matches("") shouldBe false
+            assertFalse { filter.matches("") }
         }
 
-        test("blank string does not match") {
+        @Test
+        fun `blank string does not match`() {
             val filter = mimeTypeFilterOf("image/png")
-            filter.matches("   ") shouldBe false
+            assertFalse { filter.matches("   ") }
         }
     }
 
-    context("wildcard matching") {
-        context("should match type=any subtype=any") {
+    @Nested
+    inner class WildcardMatching {
+        @ParameterizedTest
+        @ValueSource(strings = [
+            "image/png",
+            "image/jpeg",
+            "font/woff2",
+            "application/x-font-otf",
+        ])
+        fun `should match type=any subtype=any`(mimeType: String) {
             val filter = mimeTypeFilterOf("*/*")
-            withData(
-                "image/png",
-                "image/jpeg",
-                "font/woff2",
-                "application/x-font-otf",
-            ) { mimeType ->
-                filter.matches(mimeType) shouldBe true
-            }
+            assertTrue { filter.matches(mimeType) }
         }
 
-        context("should not match type=any subtype=any") {
+        @ParameterizedTest
+        @ValueSource(strings = [
+            "",
+            "   ",
+            "/",
+            "   /",
+            "/    ",
+            "image/",
+            "/jpeg",
+            "image/   ",
+            "   /jpeg",
+            "image/png/jpeg",
+            "image-jpeg",
+        ])
+        fun `should not match type=any subtype=any`(mimeType: String) {
             val filter = mimeTypeFilterOf("*/*")
-            withData(
-                nameFn = { "`$it`" },
-                "",
-                "   ",
-                "/",
-                "   /",
-                "/    ",
-                "image/",
-                "/jpeg",
-                "image/   ",
-                "   /jpeg",
-                "image/png/jpeg",
-                "image-jpeg",
-            ) { mimeType ->
-                filter.matches(mimeType) shouldBe false
-            }
+            assertFalse { filter.matches(mimeType) }
         }
 
-        context("should match type=image subtype=any") {
+        @ParameterizedTest
+        @ValueSource(strings = [
+            "image/png",
+            "image/jpeg",
+        ])
+        fun `should match type=image subtype=any`(mimeType: String) {
             val filter = mimeTypeFilterOf("image/*")
-            withData(
-                "image/png",
-                "image/jpeg",
-            ) { mimeType ->
-                filter.matches(mimeType) shouldBe true
-            }
+            assertTrue { filter.matches(mimeType) }
         }
 
-        test("legacy otf file should work with wildcard filters") {
+        @Test
+        fun `legacy otf file should work with wildcard filters`() {
             // https://github.com/florisboard/florisboard/issues/2957
             val filter = mimeTypeFilterOf(
                 "font/*",
@@ -100,28 +107,31 @@ class MimeTypeFilterTest : FunSpec({
                 "application/x-font-*",
                 "application/vnd.ms-fontobject",
             )
-            filter.matches("application/x-font-otf") shouldBe true
+            assertTrue { filter.matches("application/x-font-otf") }
         }
 
-        test("should match type=any subtype=font-any") {
+        @Test
+        fun `should match type=any subtype=font-any`() {
             val filter = mimeTypeFilterOf(
                 "*/x-font-*",
             )
-            filter.matches("application/x-font-otf") shouldBe true
+            assertTrue { filter.matches("application/x-font-otf") }
         }
 
-        test("should match type=application subtype=any-font-any") {
+        @Test
+        fun `should match type=application subtype=any-font-any`() {
             val filter = mimeTypeFilterOf(
                 "application/*-font-*",
             )
-            filter.matches("application/x-font-otf") shouldBe true
+            assertTrue { filter.matches("application/x-font-otf") }
         }
 
-        test("should match type=any-application-any subtype=any-font-any") {
+        @Test
+        fun `should match type=any-application-any subtype=any-font-any`() {
             val filter = mimeTypeFilterOf(
                 "*-application-*/*-font-*",
             )
-            filter.matches("x-application-custom/x-font-otf") shouldBe true
+            assertTrue { filter.matches("x-application-custom/x-font-otf") }
         }
     }
-})
+}

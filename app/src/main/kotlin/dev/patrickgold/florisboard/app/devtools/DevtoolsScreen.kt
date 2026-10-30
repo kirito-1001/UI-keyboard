@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2026 The FlorisBoard Contributors
+ * Copyright (C) 2021-2025 The FlorisBoard Contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,24 +21,26 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
 import dev.patrickgold.florisboard.R
 import dev.patrickgold.florisboard.app.LocalNavController
 import dev.patrickgold.florisboard.app.Routes
+import dev.patrickgold.florisboard.extensionManager
 import dev.patrickgold.florisboard.ime.dictionary.DictionaryManager
 import dev.patrickgold.florisboard.ime.dictionary.FlorisUserDictionaryDatabase
-import dev.patrickgold.florisboard.ime.keyboard3.interaction.LocalInteractionController
-import dev.patrickgold.florisboard.ime.keyboard3.interaction.showLongToast
 import dev.patrickgold.florisboard.ime.smartbar.quickaction.QuickActionArrangement
 import dev.patrickgold.florisboard.lib.compose.FlorisConfirmDeleteDialog
 import dev.patrickgold.florisboard.lib.compose.FlorisScreen
-import dev.patrickgold.jetpref.datastore.model.collectAsState
+import dev.patrickgold.jetpref.datastore.model.observeAsState
 import dev.patrickgold.jetpref.datastore.ui.Preference
 import dev.patrickgold.jetpref.datastore.ui.PreferenceGroup
 import dev.patrickgold.jetpref.datastore.ui.SwitchPreference
-import kotlinx.coroutines.launch
 import org.florisboard.lib.android.AndroidSettings
+import kotlinx.coroutines.launch
 import org.florisboard.lib.android.AndroidVersion
+import org.florisboard.lib.android.showLongToast
 import org.florisboard.lib.compose.stringRes
+import org.florisboard.lib.android.showLongToastSync
 
 class DebugOnPurposeCrashException : Exception(
     "Success! The app crashed purposely to display this beautiful screen we all love :)"
@@ -49,8 +51,9 @@ fun DevtoolsScreen() = FlorisScreen {
     title = stringRes(R.string.devtools__title)
     previewFieldVisible = true
 
-    val interactionController = LocalInteractionController.current
+    val context = LocalContext.current
     val navController = LocalNavController.current
+    val extensionManager by context.extensionManager()
     val scope = rememberCoroutineScope()
 
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
@@ -106,15 +109,14 @@ fun DevtoolsScreen() = FlorisScreen {
                 onClick = { setShowDialog(true) },
                 enabledIf = { prefs.devtools.enabled isEqualTo true },
             )
-            val successMsg = stringRes(R.string.devtools__reset_quick_actions_to_default__toast_success)
             Preference(
                 title = stringRes(R.string.devtools__reset_quick_actions_to_default__label),
                 summary = stringRes(R.string.devtools__reset_quick_actions_to_default__summary),
                 onClick = {
                     scope.launch {
                         prefs.smartbar.actionArrangement.set(QuickActionArrangement.Default)
-                        interactionController.showLongToast(successMsg)
                     }
+                    context.showLongToastSync(R.string.devtools__reset_quick_actions_to_default__toast_success)
                 },
                 enabledIf = { prefs.devtools.enabled isEqualTo true },
             )
@@ -141,43 +143,6 @@ fun DevtoolsScreen() = FlorisScreen {
                 title = "prefs.glide.enabled (debug)",
                 summaryOn = "This impacts your performance and may trigger the all keys invisible bug!",
                 summaryOff = "Recommended to keep this off!",
-                enabledIf = { prefs.devtools.enabled isEqualTo true },
-            )
-            SwitchPreference(
-                prefs.emoji.experimentalEmojiSearchEnabled,
-                title = "prefs.emoji.experimentalEmojiSearchEnabled",
-                summary = "Enables the technical PoC UI of emoji search. No proper UX yet!",
-                enabledIf = { prefs.devtools.enabled isEqualTo true },
-            )
-        }
-
-        PreferenceGroup(title = stringRes(R.string.devtools__group_ime_window_tools__title)) {
-            SwitchPreference(
-                prefs.devtools.showWindowResizeHandleBoundaries,
-                title = stringRes(R.string.devtools__show_window_resize_handle_boundaries__label),
-                summary = stringRes(R.string.devtools__show_window_resize_handle_boundaries__summary),
-                enabledIf = { prefs.devtools.enabled isEqualTo true },
-            )
-            val successMsg = stringRes(R.string.devtools__reset_window_config__toast_success)
-            val failureMsg = stringRes(R.string.devtools__reset_window_config__toast_failure)
-            Preference(
-                title = stringRes(R.string.devtools__reset_window_config__label),
-                summary = stringRes(R.string.devtools__reset_window_config__summary),
-                onClick = {
-                    scope.launch {
-                        prefs.keyboard.windowConfig.reset().fold(
-                            onSuccess = {
-                                interactionController.showLongToast(successMsg)
-                            },
-                            onFailure = { error ->
-                                interactionController.showLongToast(
-                                    failureMsg,
-                                    "message" to "${error.localizedMessage}",
-                                )
-                            },
-                        )
-                    }
-                },
                 enabledIf = { prefs.devtools.enabled isEqualTo true },
             )
         }
@@ -218,20 +183,37 @@ fun DevtoolsScreen() = FlorisScreen {
         }
 
         PreferenceGroup(title = "prefs.internal.version*") {
-            val versionOnInstall by prefs.internal.versionOnInstall.collectAsState()
+            val versionOnInstall by prefs.internal.versionOnInstall.observeAsState()
             Preference(
                 title = "prefs.internal.versionOnInstall",
                 summary = versionOnInstall,
             )
-            val versionLastUse by prefs.internal.versionLastUse.collectAsState()
+            val versionLastUse by prefs.internal.versionLastUse.observeAsState()
             Preference(
                 title = "prefs.internal.versionLastUse",
                 summary = versionLastUse,
             )
-            val versionLastChangelog by prefs.internal.versionLastChangelog.collectAsState()
+            val versionLastChangelog by prefs.internal.versionLastChangelog.observeAsState()
             Preference(
                 title = "prefs.internal.versionLastChangelog",
                 summary = versionLastChangelog,
+            )
+        }
+
+        PreferenceGroup(title = "ExtensionManager index paths") {
+            Preference(
+                title = "keyboardExtensions",
+                summary = extensionManager.keyboardExtensions.internalModuleDir.absolutePath,
+                onClick = {
+                    context.showLongToastSync(extensionManager.keyboardExtensions.internalModuleDir.absolutePath)
+                },
+            )
+            Preference(
+                title = "themes",
+                summary = extensionManager.themes.internalModuleDir.absolutePath,
+                onClick = {
+                    context.showLongToastSync(extensionManager.themes.internalModuleDir.absolutePath)
+                },
             )
         }
 

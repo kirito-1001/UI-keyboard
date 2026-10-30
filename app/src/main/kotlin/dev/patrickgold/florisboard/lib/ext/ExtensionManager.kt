@@ -19,7 +19,11 @@ package dev.patrickgold.florisboard.lib.ext
 import android.content.Context
 import android.net.Uri
 import android.os.FileObserver
+import androidx.compose.runtime.Composable
+import androidx.lifecycle.LiveData
 import dev.patrickgold.florisboard.appContext
+import dev.patrickgold.florisboard.ime.keyboard.KeyboardExtension
+import dev.patrickgold.florisboard.ime.nlp.LanguagePackExtension
 import dev.patrickgold.florisboard.ime.text.composing.Appender
 import dev.patrickgold.florisboard.ime.text.composing.Composer
 import dev.patrickgold.florisboard.ime.text.composing.HangulUnicode
@@ -29,14 +33,15 @@ import dev.patrickgold.florisboard.ime.theme.ThemeExtension
 import dev.patrickgold.florisboard.lib.devtools.LogTopic
 import dev.patrickgold.florisboard.lib.devtools.flogDebug
 import dev.patrickgold.florisboard.lib.devtools.flogError
+import dev.patrickgold.florisboard.lib.io.FlorisRef
+import dev.patrickgold.florisboard.lib.io.ZipUtils
+import dev.patrickgold.florisboard.lib.io.delete
+import dev.patrickgold.florisboard.lib.io.listDirs
+import dev.patrickgold.florisboard.lib.io.listFiles
+import dev.patrickgold.florisboard.lib.io.loadJsonAsset
+import dev.patrickgold.florisboard.lib.observeAsNonNullState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalForInheritanceCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -50,7 +55,6 @@ import org.florisboard.lib.kotlin.io.FsFile
 import org.florisboard.lib.kotlin.io.writeJson
 import org.florisboard.lib.kotlin.throwOnFailure
 
-/*
 @OptIn(ExperimentalSerializationApi::class)
 val ExtensionJsonConfig = Json {
     classDiscriminator = "$"
@@ -78,7 +82,6 @@ val ExtensionJsonConfig = Json {
 class ExtensionManager(context: Context) {
     companion object {
         const val IME_KEYBOARD_PATH = "ime/keyboard"
-        const val IME_KEYBOARD3_PATH = "ime/keyboard3"
         const val IME_THEME_PATH = "ime/theme"
         const val IME_LANGUAGEPACK_PATH = "ime/languagepack"
 
@@ -87,25 +90,21 @@ class ExtensionManager(context: Context) {
     }
 
     private val appContext by context.appContext()
-    private val defaultScope = CoroutineScope(Dispatchers.Default)
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
     val keyboardExtensions = ExtensionIndex(KeyboardExtension.serializer(), IME_KEYBOARD_PATH)
     val themes = ExtensionIndex(ThemeExtension.serializer(), IME_THEME_PATH)
     val languagePacks = ExtensionIndex(LanguagePackExtension.serializer(), IME_LANGUAGEPACK_PATH)
 
-    val extensions = combine(
-        keyboardExtensions,
-        themes,
-        languagePacks,
-    ) { lists -> lists.flatMap { it } }.stateIn(defaultScope, SharingStarted.Eagerly, emptyList())
+    @Composable
+    fun combinedExtensionList() = listOf(keyboardExtensions.observeAsNonNullState(), themes.observeAsNonNullState(), languagePacks.observeAsNonNullState()).map {
+        it.value
+    }.flatten()
 
     fun init() {
-        ioScope.launch {
-            keyboardExtensions.init()
-            themes.init()
-            languagePacks.init()
-        }
+        keyboardExtensions.init()
+        themes.init()
+        languagePacks.init()
     }
 
     fun import(ext: Extension) {
@@ -138,7 +137,10 @@ class ExtensionManager(context: Context) {
     }
 
     fun getExtensionById(id: String): Extension? {
-        return extensions.value.find { it.meta.id == id }
+        keyboardExtensions.value?.find { it.meta.id == id }?.let { return it }
+        themes.value?.find { it.meta.id == id }?.let { return it }
+        languagePacks.value?.find { it.meta.id == id }?.let { return it }
+        return null
     }
 
     fun canDelete(ext: Extension): Boolean {
@@ -151,12 +153,11 @@ class ExtensionManager(context: Context) {
         ext.sourceRef!!.delete(appContext)
     }
 
-    @OptIn(ExperimentalForInheritanceCoroutinesApi::class)
     inner class ExtensionIndex<T : Extension>(
         private val serializer: KSerializer<T>,
         modulePath: String,
-        private val flow: MutableStateFlow<List<T>> = MutableStateFlow(emptyList()),
-    ) : StateFlow<List<T>> by flow {
+    ) : LiveData<List<T>>() {
+
         private val assetsModuleRef = FlorisRef.assets(modulePath)
         private val internalModuleRef = FlorisRef.internal(modulePath)
         var internalModuleDir = internalModuleRef.absoluteFile(appContext)
@@ -166,35 +167,41 @@ class ExtensionManager(context: Context) {
         private val initGuard = Mutex()
         private val refreshGuard = Mutex()
 
-        suspend fun init() {
-            initGuard.withLock {
-                // Update internal module dir to actual path and make directory if not exists
-                internalModuleDir = internalModuleRef.absoluteFile(appContext)
-                internalModuleDir.mkdirs()
+        init {
+            value = emptyList()
+        }
 
-                // Refresh index to new state
-                refreshGuard.withLock {
-                    staticExtensions = indexAssetsModule()
-                    refresh()
-                }
+        fun init() {
+            ioScope.launch {
+                initGuard.withLock {
+                    // Update internal module dir to actual path and make directory if not exists
+                    internalModuleDir = internalModuleRef.absoluteFile(appContext)
+                    internalModuleDir.mkdirs()
 
-                // Stop watching on old file observer if one exists and start new observer on new path
-                fileObserver?.stopWatching()
-                fileObserver = FileObserver(internalModuleDir, FILE_OBSERVER_MASK) { event, path ->
-                    flogDebug(LogTopic.EXT_INDEXING) { "FileObserver.onEvent { event=$event path=$path }" }
-                    if (path == null) return@FileObserver
-                    ioScope.launch {
-                        refreshGuard.withLock {
-                            refresh()
-                        }
+                    // Refresh index to new state
+                    refreshGuard.withLock {
+                        staticExtensions = indexAssetsModule()
+                        refresh()
                     }
-                }.also { it.startWatching() }
+
+                    // Stop watching on old file observer if one exists and start new observer on new path
+                    fileObserver?.stopWatching()
+                    fileObserver = FileObserver(internalModuleDir, FILE_OBSERVER_MASK) { event, path ->
+                        flogDebug(LogTopic.EXT_INDEXING) { "FileObserver.onEvent { event=$event path=$path }" }
+                        if (path == null) return@FileObserver
+                        ioScope.launch {
+                            refreshGuard.withLock {
+                                refresh()
+                            }
+                        }
+                    }.also { it.startWatching() }
+                }
             }
         }
 
         private fun refresh() {
             val dynamicExtensions = staticExtensions + indexInternalModule()
-            flow.value = dynamicExtensions
+            postValue(dynamicExtensions)
         }
 
         private fun indexAssetsModule(): List<T> {
@@ -256,4 +263,3 @@ class ExtensionManager(context: Context) {
         }
     }
 }
- */

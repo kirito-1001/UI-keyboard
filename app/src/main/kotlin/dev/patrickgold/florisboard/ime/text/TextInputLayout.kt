@@ -21,65 +21,66 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.LayoutDirection
 import dev.patrickgold.florisboard.R
 import dev.patrickgold.florisboard.app.FlorisPreferenceStore
-import dev.patrickgold.florisboard.ime.keyboard3.LocalImeController
-import dev.patrickgold.florisboard.ime.keyboard3.ui.ImeKeyboardBox
 import dev.patrickgold.florisboard.ime.smartbar.IncognitoDisplayMode
 import dev.patrickgold.florisboard.ime.smartbar.InlineSuggestionsStyleCache
 import dev.patrickgold.florisboard.ime.smartbar.Smartbar
 import dev.patrickgold.florisboard.ime.smartbar.quickaction.QuickActionsOverflowPanel
+import dev.patrickgold.florisboard.ime.text.keyboard.TextKeyboardLayout
 import dev.patrickgold.florisboard.ime.theme.FlorisImeUi
-import dev.patrickgold.jetpref.datastore.model.collectAsState
+import dev.patrickgold.florisboard.keyboardManager
+import dev.patrickgold.jetpref.datastore.model.observeAsState
 import org.florisboard.lib.snygg.ui.SnyggIcon
 
 @Composable
 fun TextInputLayout(
     modifier: Modifier = Modifier,
 ) {
-    val prefs by FlorisPreferenceStore
-    val imeController = LocalImeController.current
+    val context = LocalContext.current
+    val keyboardManager by context.keyboardManager()
 
-    val imeState by imeController.activeState.collectAsState()
-    val isActionsOverflowVisible by remember {
-        derivedStateOf { imeState.flags.isActionsOverflowVisible }
-    }
-    val isIncognitoMode by remember {
-        derivedStateOf { imeState.flags.isIncognitoMode }
-    }
+    val prefs by FlorisPreferenceStore
+
+    val state by keyboardManager.activeState.collectAsState()
+    val evaluator by keyboardManager.activeEvaluator.collectAsState()
 
     InlineSuggestionsStyleCache()
 
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
-    ) {
-        Smartbar()
-        if (isActionsOverflowVisible) {
-            QuickActionsOverflowPanel()
-        } else {
-            Box {
-                val incognitoDisplayMode by prefs.keyboard.incognitoDisplayMode.collectAsState()
-                val showIncognitoIcon = isIncognitoMode &&
-                    incognitoDisplayMode == IncognitoDisplayMode.DISPLAY_BEHIND_KEYBOARD
-                if (showIncognitoIcon) {
-                    SnyggIcon(
-                        FlorisImeUi.IncognitoModeIndicator.elementName,
-                        modifier = Modifier
-                            .matchParentSize()
-                            .align(Alignment.Center),
-                        painter = painterResource(R.drawable.ic_incognito),
-                    )
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+        ) {
+            Smartbar()
+            if (state.isActionsOverflowVisible) {
+                QuickActionsOverflowPanel()
+            } else {
+                Box {
+                    val incognitoDisplayMode by prefs.keyboard.incognitoDisplayMode.observeAsState()
+                    val showIncognitoIcon = evaluator.state.isIncognitoMode &&
+                        incognitoDisplayMode == IncognitoDisplayMode.DISPLAY_BEHIND_KEYBOARD
+                    if (showIncognitoIcon) {
+                        SnyggIcon(
+                            FlorisImeUi.IncognitoModeIndicator.elementName,
+                            modifier = Modifier
+                                .matchParentSize()
+                                .align(Alignment.Center),
+                            painter = painterResource(R.drawable.ic_incognito),
+                        )
+                    }
+                    TextKeyboardLayout(evaluator = evaluator)
                 }
-                ImeKeyboardBox()
             }
         }
     }
