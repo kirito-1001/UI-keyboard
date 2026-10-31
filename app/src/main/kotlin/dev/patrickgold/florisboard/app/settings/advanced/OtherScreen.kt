@@ -161,11 +161,6 @@ fun OtherScreen() = FlorisScreen {
             title = stringRes(R.string.physical_keyboard__title),
             onClick = { navController.navigate(Routes.Settings.PhysicalKeyboard) },
         )
-        Preference(
-            icon = Icons.Default.Adb,
-            title = stringRes(R.string.devtools__title),
-            onClick = { navController.navigate(Routes.Devtools.Home) },
-        )
 
         PreferenceGroup(title = stringRes(R.string.backup_and_restore__title)) {
             Preference(

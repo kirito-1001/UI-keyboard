@@ -206,6 +206,15 @@ fun ProvideSnyggTheme(
 }
 
 /**
+ * Multiplies the font size of all Snygg elements inside [content] by [scale].
+ */
+@Composable
+fun ProvideSnyggFontScale(scale: Float, content: @Composable () -> Unit) {
+    val current = LocalSnyggFontSizeMultiplier.current
+    CompositionLocalProvider(LocalSnyggFontSizeMultiplier provides current * scale, content = content)
+}
+
+/**
  * Optional per-element color override. When provided, every Snygg element whose name equals [elementName] will use
  * the given [background] and/or [foreground] colors instead of the theme colors. Child elements without an own element
  * name inherit the overridden style.

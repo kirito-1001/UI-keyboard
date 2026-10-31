@@ -16,6 +16,8 @@
 
 package dev.patrickgold.florisboard.app.settings.about
 
+import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,6 +28,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.outlined.Description
+import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Policy
 import androidx.compose.material3.Text
@@ -78,6 +81,20 @@ fun AboutScreen() = FlorisScreen {
                 modifier = Modifier.padding(top = 16.dp),
             )
         }
+        Preference(
+            icon = Icons.Outlined.Email,
+            title = stringRes(R.string.about__developer__title),
+            summary = "Khaled Yagami\nLightyagami710199@gmail.com",
+            onClick = {
+                val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:Lightyagami710199@gmail.com"))
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                try {
+                    context.startActivity(intent)
+                } catch (_: Throwable) {
+                    Toast.makeText(context, "Lightyagami710199@gmail.com", Toast.LENGTH_LONG).show()
+                }
+            },
+        )
         Preference(
             icon = Icons.Outlined.Info,
             title = stringRes(R.string.about__version__title),

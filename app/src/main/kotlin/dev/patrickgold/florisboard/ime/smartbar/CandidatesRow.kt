@@ -40,6 +40,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import dev.patrickgold.florisboard.app.FlorisPreferenceStore
+import dev.patrickgold.florisboard.lib.observeAsTransformingState
 import dev.patrickgold.florisboard.ime.nlp.ClipboardSuggestionCandidate
 import dev.patrickgold.florisboard.ime.nlp.SuggestionCandidate
 import dev.patrickgold.florisboard.ime.theme.FlorisImeUi
@@ -55,6 +56,7 @@ import org.florisboard.lib.snygg.ui.SnyggColumn
 import org.florisboard.lib.snygg.ui.SnyggIcon
 import org.florisboard.lib.snygg.ui.SnyggRow
 import org.florisboard.lib.snygg.ui.SnyggSpacer
+import org.florisboard.lib.snygg.ui.ProvideSnyggFontScale
 import org.florisboard.lib.snygg.ui.SnyggText
 
 val CandidatesRowScrollbarHeight = 2.dp
@@ -200,19 +202,23 @@ private fun CandidateItem(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            SnyggText(
-                elementName = "$elementName-text",
-                attributes = attributes,
-                selector = selector,
-                text = candidate.text.toString(),
-            )
-            if (candidate.secondaryText != null) {
+            val scalePrefs by FlorisPreferenceStore
+            val textScale by scalePrefs.suggestion.textSizeFactor.observeAsTransformingState { it.toFloat() / 100f }
+            ProvideSnyggFontScale(textScale) {
                 SnyggText(
-                    elementName = "$elementName-secondary-text",
+                    elementName = "$elementName-text",
                     attributes = attributes,
                     selector = selector,
-                    text = candidate.secondaryText!!.toString(),
+                    text = candidate.text.toString(),
                 )
+                if (candidate.secondaryText != null) {
+                    SnyggText(
+                        elementName = "$elementName-secondary-text",
+                        attributes = attributes,
+                        selector = selector,
+                        text = candidate.secondaryText!!.toString(),
+                    )
+                }
             }
         }
     }

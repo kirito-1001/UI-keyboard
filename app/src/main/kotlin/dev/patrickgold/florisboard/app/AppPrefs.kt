@@ -745,6 +745,10 @@ abstract class FlorisPreferenceModel : PreferenceModel() {
             key = "suggestion__enabled",
             default = false,
         )
+        val textSizeFactor = int(
+            key = "suggestion__text_size_factor",
+            default = 100,
+        )
         val displayMode = enum(
             key = "suggestion__display_mode",
             default = CandidatesDisplayMode.DYNAMIC_SCROLLABLE,

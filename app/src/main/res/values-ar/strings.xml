@@ -930,4 +930,6 @@
     <string name="settings__key_customization__text_color">لون النص</string>
     <string name="settings__key_customization__reset_key">إعادة ضبط المفتاح</string>
     <string name="settings__key_customization__reset_all">إعادة ضبط كل المفاتيح</string>
+    <string name="about__developer__title">المطوّر</string>
+    <string name="pref__suggestion__text_size__label">حجم نص المقترحات</string>
 </resources>

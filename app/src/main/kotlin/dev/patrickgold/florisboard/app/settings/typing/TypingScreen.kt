@@ -43,6 +43,7 @@ import dev.patrickgold.florisboard.lib.compose.FlorisHyperlinkText
 import dev.patrickgold.florisboard.lib.compose.FlorisScreen
 import dev.patrickgold.jetpref.datastore.model.observeAsState
 import dev.patrickgold.jetpref.datastore.ui.ExperimentalJetPrefDatastoreUi
+import dev.patrickgold.jetpref.datastore.ui.DialogSliderPreference
 import dev.patrickgold.jetpref.datastore.ui.ListPreference
 import dev.patrickgold.jetpref.datastore.ui.Preference
 import dev.patrickgold.jetpref.datastore.ui.PreferenceGroup
@@ -74,6 +75,14 @@ fun TypingScreen() = FlorisScreen {
                 prefs.suggestion.enabled,
                 title = stringRes(R.string.pref__suggestion__enabled__label),
                 summary = stringRes(R.string.pref__suggestion__enabled__summary),
+            )
+            DialogSliderPreference(
+                prefs.suggestion.textSizeFactor,
+                title = stringRes(R.string.pref__suggestion__text_size__label),
+                valueLabel = { stringRes(R.string.unit__percent__symbol, "v" to it) },
+                min = 70,
+                max = 200,
+                stepIncrement = 5,
             )
             SwitchPreference(
                 prefs.suggestion.blockPossiblyOffensive,
