@@ -38,6 +38,11 @@ import dev.patrickgold.florisboard.ime.smartbar.Smartbar
 import dev.patrickgold.florisboard.ime.smartbar.quickaction.QuickActionsOverflowPanel
 import dev.patrickgold.florisboard.ime.text.keyboard.TextKeyboardLayout
 import dev.patrickgold.florisboard.ime.theme.FlorisImeUi
+import dev.patrickgold.florisboard.ime.uikb.EditTextPanel
+import dev.patrickgold.florisboard.ime.uikb.NumericPanel
+import dev.patrickgold.florisboard.ime.uikb.UiLanguageMenu
+import dev.patrickgold.florisboard.ime.uikb.UiPanel
+import dev.patrickgold.florisboard.ime.uikb.UiPanelState
 import dev.patrickgold.florisboard.keyboardManager
 import dev.patrickgold.jetpref.datastore.model.observeAsState
 import org.florisboard.lib.snygg.ui.SnyggIcon
@@ -79,7 +84,12 @@ fun TextInputLayout(
                             painter = painterResource(R.drawable.ic_incognito),
                         )
                     }
-                    TextKeyboardLayout(evaluator = evaluator)
+                    when (UiPanelState.panel) {
+                        UiPanel.EDIT_TEXT -> EditTextPanel()
+                        UiPanel.NUMERIC -> NumericPanel()
+                        UiPanel.NONE -> TextKeyboardLayout(evaluator = evaluator)
+                    }
+                    UiLanguageMenu(modifier = Modifier.align(Alignment.TopCenter))
                 }
             }
         }

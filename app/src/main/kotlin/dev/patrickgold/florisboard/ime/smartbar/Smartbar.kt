@@ -61,6 +61,7 @@ import dev.patrickgold.florisboard.ime.smartbar.quickaction.QuickActionButton
 import dev.patrickgold.florisboard.ime.smartbar.quickaction.QuickActionsRow
 import dev.patrickgold.florisboard.ime.smartbar.quickaction.ToggleOverflowPanelAction
 import dev.patrickgold.florisboard.ime.theme.FlorisImeUi
+import dev.patrickgold.florisboard.ime.uikb.UiToolbar
 import dev.patrickgold.florisboard.keyboardManager
 import dev.patrickgold.florisboard.nlpManager
 import dev.patrickgold.jetpref.datastore.model.observeAsState
@@ -322,46 +323,15 @@ private fun SmartbarMainRow(modifier: Modifier = Modifier) {
             .fillMaxWidth()
             .height(FlorisImeSizing.smartbarHeight),
     ) {
-        when (smartbarLayout) {
-            SmartbarLayout.SUGGESTIONS_ONLY -> {
-                if (shouldShowInlineSuggestionsUi) {
-                    InlineSuggestionsUi(inlineSuggestions)
-                } else {
-                    CandidatesRow()
-                }
-            }
-
-            SmartbarLayout.ACTIONS_ONLY -> {
-                if (shouldShowInlineSuggestionsUi) {
-                    InlineSuggestionsUi(inlineSuggestions)
-                } else {
-                    QuickActionsRow(FlorisImeUi.SmartbarSharedActionsRow.elementName)
-                }
-            }
-
-            SmartbarLayout.SUGGESTIONS_ACTIONS_SHARED -> {
-                if (!flipToggles) {
-                    SharedActionsToggle()
-                    CenterContent()
-                    StickyAction()
-                } else {
-                    StickyAction()
-                    CenterContent()
-                    SharedActionsToggle()
-                }
-            }
-
-            SmartbarLayout.SUGGESTIONS_ACTIONS_EXTENDED -> {
-                if (!flipToggles) {
-                    ExtendedActionsToggle()
-                    CenterContent()
-                    StickyAction()
-                } else {
-                    StickyAction()
-                    CenterContent()
-                    ExtendedActionsToggle()
-                }
-            }
+        val activeCandidates by nlpManager.activeCandidatesFlow.collectAsState()
+        if (shouldShowInlineSuggestionsUi) {
+            // Inline autofill suggestions replace the whole toolbar
+            InlineSuggestionsUi(inlineSuggestions)
+        } else if (activeCandidates.isNotEmpty()) {
+            // While typing, word suggestions replace the whole toolbar
+            CandidatesRow()
+        } else {
+            UiToolbar()
         }
     }
 }

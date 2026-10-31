@@ -1163,4 +1163,16 @@
     <string name="settings__key_customization__reset_all">Reset all keys</string>
     <string name="about__developer__title">Developer</string>
     <string name="pref__suggestion__text_size__label">Suggestions text size</string>
+    <string name="ui__edit__select_all">Select all</string>
+    <string name="ui__edit__clear">Clear</string>
+    <string name="ui__edit__select">Select</string>
+    <string name="ui__edit__search">Search</string>
+    <string name="ui__edit__cancel">Cancel</string>
+    <string name="ui__edit__copy">Copy</string>
+    <string name="ui__edit__cut">Cut</string>
+    <string name="ui__edit__paste">Paste</string>
+    <string name="ui__edit__back">Back</string>
+    <string name="ui__menu__numeric">Numeric</string>
+    <string name="ui__menu__symbols">Symbols</string>
+    <string name="ui__menu__settings">Settings</string>
 </resources>

@@ -932,4 +932,16 @@
     <string name="settings__key_customization__reset_all">إعادة ضبط كل المفاتيح</string>
     <string name="about__developer__title">المطوّر</string>
     <string name="pref__suggestion__text_size__label">حجم نص المقترحات</string>
+    <string name="ui__edit__select_all">جميع</string>
+    <string name="ui__edit__clear">مسح</string>
+    <string name="ui__edit__select">اختيار</string>
+    <string name="ui__edit__search">بحث</string>
+    <string name="ui__edit__cancel">إنهاء</string>
+    <string name="ui__edit__copy">نسخ</string>
+    <string name="ui__edit__cut">قص</string>
+    <string name="ui__edit__paste">لصق</string>
+    <string name="ui__edit__back">رجوع</string>
+    <string name="ui__menu__numeric">رقمي</string>
+    <string name="ui__menu__symbols">الرموز</string>
+    <string name="ui__menu__settings">الإعدادات</string>
 </resources>
