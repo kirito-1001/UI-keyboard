@@ -183,7 +183,7 @@ fun UiLanguageMenu(modifier: Modifier = Modifier) {
             SnyggBox(
                 elementName = FlorisImeUi.Key.elementName,
                 selector = if (index == UiPanelState.languageMenuHighlight) SnyggSelector.PRESSED else SnyggSelector.NONE,
-                modifier = Modifier.fillMaxWidth().height(itemHeight),
+                modifier = Modifier.fillMaxWidth().height(itemHeight).padding(horizontal = 4.dp, vertical = 3.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 SnyggText(text = entry.label)
