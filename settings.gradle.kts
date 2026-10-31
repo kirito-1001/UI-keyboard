@@ -27,6 +27,7 @@ pluginManagement {
 dependencyResolutionManagement {
     repositories {
         google()
+        mavenLocal() // jetpref is built from source by the CI workflow (the published snapshot was deleted)
         mavenCentral()
         // Uncomment the following if testing snapshots from Maven Central
         maven("https://central.sonatype.com/repository/maven-snapshots/")

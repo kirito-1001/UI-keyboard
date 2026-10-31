@@ -20,6 +20,20 @@ jobs:
           distribution: temurin
       - name: Set up CMake and Ninja
         uses: lukka/get-cmake@v4.0.2
+      - name: Build jetpref library from source
+        run: |
+          # The jetpref snapshot used by FlorisBoard v0.5.2 was deleted from the snapshot repository,
+          # so we build the matching source revision and publish it to the local Maven repository.
+          set -o pipefail
+          git clone https://github.com/patrickgold/jetpref "$RUNNER_TEMP/jetpref"
+          cd "$RUNNER_TEMP/jetpref"
+          git checkout d6e12dd
+          ./gradlew publishToMavenLocal \
+            -PprojectVersion=20251119T222500Z-SNAPSHOT \
+            -PRELEASE_SIGNING_ENABLED=false \
+            -PmavenCentralPublishing=false \
+            -PmavenCentralAutomaticPublishing=false \
+            -x test --console=plain 2>&1 | tee "$GITHUB_WORKSPACE/jetpref.log"
       - name: Build debug APK
         run: |
           set -o pipefail
@@ -30,7 +44,7 @@ jobs:
           {
             echo "## Build errors"
             echo '```'
-            grep -E "^e: |error:|FAILED|What went wrong" -A3 build.log | head -80
+            grep -E "^e: |error:|FAILED|What went wrong" -A3 jetpref.log build.log 2>/dev/null | head -100
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
