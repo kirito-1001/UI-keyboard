@@ -44,7 +44,6 @@ import dev.patrickgold.florisboard.ime.text.key.KeyType
 import dev.patrickgold.florisboard.ime.text.keyboard.TextKeyData
 import dev.patrickgold.florisboard.keyboardManager
 import dev.patrickgold.florisboard.subtypeManager
-import org.florisboard.lib.compose.stringRes
 import org.florisboard.lib.snygg.ui.SnyggText
 
 private val EnterKeyData = TextKeyData(code = KeyCode.ENTER, type = KeyType.ENTER_EDITING, label = "enter")
@@ -143,7 +142,7 @@ fun NumericPanel(modifier: Modifier = Modifier) {
                 onClick = { UiPanelState.panel = UiPanel.NONE },
                 modifier = Modifier.weight(1f).fillMaxWidth(),
             ) {
-                UiKeyLabel(stringRes(R.string.ui__edit__back))
+                UiKeyLabel(uiString(R.string.ui__edit__back))
             }
             UiDispatchKey(
                 keyData = TextKeyData.SPACE,

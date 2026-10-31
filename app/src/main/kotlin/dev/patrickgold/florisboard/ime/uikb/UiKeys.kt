@@ -73,7 +73,7 @@ fun UiDispatchKey(
         elementName = FlorisImeUi.Key.elementName,
         attributes = mapOf(FlorisImeUi.Attr.Code to keyData.code),
         selector = if (isPressed) SnyggSelector.PRESSED else SnyggSelector.NONE,
-        modifier = modifier,
+        modifier = modifier.padding(2.dp),
         clickAndSemanticsModifier = Modifier
             .indication(interactionSource, ripple())
             .pointerInput(keyData) {
@@ -124,7 +124,7 @@ fun UiTapKey(
     SnyggBox(
         elementName = FlorisImeUi.Key.elementName,
         selector = selector,
-        modifier = modifier,
+        modifier = modifier.padding(2.dp),
         clickAndSemanticsModifier = Modifier.clickable(
             interactionSource = interactionSource,
             indication = ripple(),
@@ -156,11 +156,11 @@ fun BoxScope.ActiveDot() {
 /** Label of a key with an optional icon on its left (icon is roughly text sized). */
 @Composable
 fun UiKeyLabel(text: String, icon: ImageVector? = null) {
-    ProvideSnyggFontScale(0.7f) {
+    ProvideSnyggFontScale(0.55f) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             if (icon != null) {
                 SnyggIcon(
-                    modifier = Modifier.size(18.dp),
+                    modifier = Modifier.size(15.dp),
                     imageVector = icon,
                 )
                 androidx.compose.foundation.layout.Spacer(modifier = Modifier.size(width = 3.dp, height = 1.dp))

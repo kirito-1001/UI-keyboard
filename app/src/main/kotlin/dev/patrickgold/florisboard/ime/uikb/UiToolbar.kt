@@ -39,7 +39,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.changedToUp
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -51,7 +50,6 @@ import dev.patrickgold.florisboard.ime.text.keyboard.TextKeyData
 import dev.patrickgold.florisboard.ime.theme.FlorisImeUi
 import dev.patrickgold.florisboard.keyboardManager
 import dev.patrickgold.florisboard.subtypeManager
-import org.florisboard.lib.compose.stringRes
 import org.florisboard.lib.snygg.SnyggSelector
 import org.florisboard.lib.snygg.ui.SnyggBox
 import org.florisboard.lib.snygg.ui.SnyggIcon
@@ -79,9 +77,9 @@ fun UiToolbar(modifier: Modifier = Modifier) {
         return name.replaceFirstChar { it.uppercase() }
     }
 
-    val labelNumeric = stringRes(R.string.ui__menu__numeric)
-    val labelSymbols = stringRes(R.string.ui__menu__symbols)
-    val labelSettings = stringRes(R.string.ui__menu__settings)
+    val labelNumeric = uiString(R.string.ui__menu__numeric)
+    val labelSymbols = uiString(R.string.ui__menu__symbols)
+    val labelSettings = uiString(R.string.ui__menu__settings)
 
     fun buildEntries(): List<UiMenuEntry> = buildList {
         for (subtype in subtypes) {
@@ -103,7 +101,7 @@ fun UiToolbar(modifier: Modifier = Modifier) {
         SnyggIconButton(
             elementName = FlorisImeUi.SmartbarActionKey.elementName,
             onClick = onClick,
-            modifier = Modifier.padding(horizontal = 2.dp).height(barHeight).aspectRatio(1f),
+            modifier = Modifier.padding(horizontal = 4.dp).height(barHeight).aspectRatio(1f),
         ) {
             content()
         }
@@ -124,7 +122,7 @@ fun UiToolbar(modifier: Modifier = Modifier) {
         SnyggBox(
             elementName = FlorisImeUi.SmartbarActionKey.elementName,
             selector = if (UiPanelState.languageMenuOpen) SnyggSelector.PRESSED else SnyggSelector.NONE,
-            modifier = Modifier.weight(1f).height(barHeight).padding(horizontal = 4.dp, vertical = 3.dp),
+            modifier = Modifier.weight(1f).height(barHeight).padding(horizontal = 6.dp, vertical = 4.dp),
             clickAndSemanticsModifier = Modifier.pointerInput(subtypes) {
                 awaitEachGesture {
                     val down = awaitFirstDown(requireUnconsumed = false)
@@ -145,8 +143,9 @@ fun UiToolbar(modifier: Modifier = Modifier) {
                         val index = if (y < 0f) -1 else (y / UiPanelState.menuItemHeightPx).toInt()
                         UiPanelState.languageMenuHighlight =
                             if (index in UiPanelState.menuEntries.indices) index else -1
+                        val released = !change.pressed
                         change.consume()
-                        if (change.changedToUp()) break
+                        if (released) break
                     }
                     val chosen = UiPanelState.menuEntries.getOrNull(UiPanelState.languageMenuHighlight)
                     UiPanelState.languageMenuOpen = false

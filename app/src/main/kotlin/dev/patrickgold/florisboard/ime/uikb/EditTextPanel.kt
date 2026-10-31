@@ -49,7 +49,6 @@ import dev.patrickgold.florisboard.ime.editor.OperationUnit
 import dev.patrickgold.florisboard.ime.keyboard.FlorisImeSizing
 import dev.patrickgold.florisboard.ime.text.keyboard.TextKeyData
 import dev.patrickgold.florisboard.keyboardManager
-import org.florisboard.lib.compose.stringRes
 
 /**
  * The text editing panel which replaces the key area.
@@ -112,7 +111,7 @@ fun EditTextPanel(modifier: Modifier = Modifier) {
             // Row 1: select-all | up | clear
             Row(modifier = Modifier.weight(1f).fillMaxWidth()) {
                 Key(TextKeyData.CLIPBOARD_SELECT_ALL) {
-                    UiKeyLabel(stringRes(R.string.ui__edit__select_all), Icons.Default.SelectAll)
+                    UiKeyLabel(uiString(R.string.ui__edit__select_all), Icons.Default.SelectAll)
                 }
                 Key(TextKeyData.ARROW_UP) {
                     Icon(Icons.Default.KeyboardArrowUp, contentDescription = null)
@@ -126,7 +125,7 @@ fun EditTextPanel(modifier: Modifier = Modifier) {
                     },
                     enabled = hasSelection,
                 ) {
-                    UiKeyLabel(stringRes(R.string.ui__edit__clear), Icons.Default.Delete)
+                    UiKeyLabel(uiString(R.string.ui__edit__clear), Icons.Default.Delete)
                 }
             }
             // Row 2: left | select | right
@@ -135,7 +134,7 @@ fun EditTextPanel(modifier: Modifier = Modifier) {
                     Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = null)
                 }
                 Key(TextKeyData.CLIPBOARD_SELECT) {
-                    UiKeyLabel(stringRes(R.string.ui__edit__select))
+                    UiKeyLabel(uiString(R.string.ui__edit__select))
                     if (selectionModeOn) ActiveDot()
                 }
                 Key(TextKeyData.ARROW_RIGHT) {
@@ -159,7 +158,7 @@ fun EditTextPanel(modifier: Modifier = Modifier) {
                     },
                     enabled = hasSelection,
                 ) {
-                    UiKeyLabel(stringRes(R.string.ui__edit__search), Icons.Default.Search)
+                    UiKeyLabel(uiString(R.string.ui__edit__search), Icons.Default.Search)
                 }
                 Key(TextKeyData.ARROW_DOWN) {
                     Icon(Icons.Default.KeyboardArrowDown, contentDescription = null)
@@ -175,19 +174,19 @@ fun EditTextPanel(modifier: Modifier = Modifier) {
                         keyboardManager.activeState.isManualSelectionModeEnd = false
                     },
                 ) {
-                    UiKeyLabel(stringRes(R.string.ui__edit__cancel), UiIcons.CircleX)
+                    UiKeyLabel(uiString(R.string.ui__edit__cancel), UiIcons.CircleX)
                 }
             }
             // Row 4: copy | cut | paste
             Row(modifier = Modifier.weight(1f).fillMaxWidth()) {
                 Key(TextKeyData.CLIPBOARD_COPY) {
-                    UiKeyLabel(stringRes(R.string.ui__edit__copy), Icons.Default.ContentCopy)
+                    UiKeyLabel(uiString(R.string.ui__edit__copy), Icons.Default.ContentCopy)
                 }
                 Key(TextKeyData.CLIPBOARD_CUT) {
-                    UiKeyLabel(stringRes(R.string.ui__edit__cut), Icons.Default.ContentCut)
+                    UiKeyLabel(uiString(R.string.ui__edit__cut), Icons.Default.ContentCut)
                 }
                 Key(TextKeyData.CLIPBOARD_PASTE) {
-                    UiKeyLabel(stringRes(R.string.ui__edit__paste), UiIcons.PasteTornSheet)
+                    UiKeyLabel(uiString(R.string.ui__edit__paste), UiIcons.PasteTornSheet)
                 }
             }
         }
@@ -204,7 +203,7 @@ fun EditTextPanel(modifier: Modifier = Modifier) {
                 onClick = { UiPanelState.panel = UiPanel.NONE },
                 modifier = Modifier.weight(1f).fillMaxWidth(),
             ) {
-                UiKeyLabel(stringRes(R.string.ui__edit__back))
+                UiKeyLabel(uiString(R.string.ui__edit__back))
             }
             UiDispatchKey(
                 keyData = TextKeyData.SPACE,
