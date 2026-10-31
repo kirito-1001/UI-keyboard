@@ -359,6 +359,9 @@ class FlorisImeService : LifecycleInputMethodService() {
         super.onStartInputView(info, restarting)
         if (info == null) return
         val editorInfo = FlorisEditorInfo.wrap(info)
+        if (!restarting) {
+            dev.patrickgold.florisboard.ime.uikb.UiPanelState.panel = dev.patrickgold.florisboard.ime.uikb.UiPanel.NONE
+        }
         activeState.batchEdit {
             if (activeState.imeUiMode != ImeUiMode.CLIPBOARD || prefs.clipboard.historyHideOnNextTextField.get()) {
                 activeState.imeUiMode = ImeUiMode.TEXT
@@ -433,7 +436,11 @@ class FlorisImeService : LifecycleInputMethodService() {
             activeState.imeUiMode = ImeUiMode.TEXT
             activeState.isActionsOverflowVisible = false
             activeState.isActionsEditorVisible = false
+            // Always reopen on the letters (the next input start sets the mode for special fields)
+            activeState.keyboardMode = dev.patrickgold.florisboard.ime.keyboard.KeyboardMode.CHARACTERS
         }
+        dev.patrickgold.florisboard.ime.uikb.UiPanelState.panel = dev.patrickgold.florisboard.ime.uikb.UiPanel.NONE
+        dev.patrickgold.florisboard.ime.uikb.UiPanelState.languageMenuOpen = false
     }
 
     override fun onEvaluateFullscreenMode(): Boolean {
