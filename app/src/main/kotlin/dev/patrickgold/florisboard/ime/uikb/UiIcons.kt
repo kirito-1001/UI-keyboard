@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
 
@@ -203,6 +204,43 @@ object UiIcons {
                 // Short stem
                 moveTo(12f, 17.7f)
                 lineTo(12f, 19.5f)
+            }
+        }.build()
+    }
+
+    /**
+     * The mono app logo shown in the toolbar (keyboard outline with the "U" shield). Drawn in a 200 x 200 viewport.
+     */
+    val Logo: ImageVector by lazy {
+        ImageVector.Builder(
+            name = "Logo",
+            defaultWidth = 24.dp,
+            defaultHeight = 24.dp,
+            viewportWidth = 200f,
+            viewportHeight = 200f,
+        ).apply {
+            val paths = listOf(
+                "M62,70 H42 A20,20 0 0 0 22,90 V154 A20,20 0 0 0 42,174 H158 A20,20 0 0 0 178,154 V90 A20,20 0 0 0 158,70 H138",
+                "M62,18 H138 V76 C138,98 118,114 100,124 C82,114 62,98 62,76 Z",
+                "M82,42 V76 C82,87 90,93 100,93 C110,93 118,87 118,76 V42",
+            )
+            for (data in paths) {
+                addPath(
+                    pathData = addPathNodes(data),
+                    stroke = SolidColor(Color.Black),
+                    strokeLineWidth = 9f,
+                    strokeLineCap = StrokeCap.Round,
+                    strokeLineJoin = StrokeJoin.Round,
+                )
+            }
+            // The five key dots
+            for (cx in listOf(52f, 76f, 100f, 124f, 148f)) {
+                path(fill = SolidColor(Color.Black)) {
+                    moveTo(cx - 5f, 148f)
+                    arcTo(5f, 5f, 0f, true, false, cx + 5f, 148f)
+                    arcTo(5f, 5f, 0f, true, false, cx - 5f, 148f)
+                    close()
+                }
             }
         }.build()
     }

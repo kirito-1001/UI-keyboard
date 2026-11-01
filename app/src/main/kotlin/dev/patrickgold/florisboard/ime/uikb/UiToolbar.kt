@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import org.florisboard.lib.snygg.ui.rememberSnyggThemeQuery
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.aspectRatio
@@ -180,7 +181,6 @@ fun UiToolbar(modifier: Modifier = Modifier) {
     fun Divider() {
         Box(
             modifier = Modifier
-                .padding(horizontal = 2.dp)
                 .width(lineWidth)
                 .height(barHeight * 0.6f)
                 .background(outlineColor),
@@ -213,7 +213,7 @@ fun UiToolbar(modifier: Modifier = Modifier) {
 
     /** A customizable button: tap runs its feature, long press opens a menu to pick another feature. */
     @Composable
-    fun RowScope.SlotButton(feature: UiFeature, pref: dev.patrickgold.jetpref.datastore.model.PreferenceData<UiFeature>) {
+    fun SlotButton(feature: UiFeature, pref: dev.patrickgold.jetpref.datastore.model.PreferenceData<UiFeature>) {
         var anchorLeft by remember { mutableIntStateOf(0) }
         var anchorWidth by remember { mutableIntStateOf(0) }
         SnyggBox(
@@ -246,7 +246,7 @@ fun UiToolbar(modifier: Modifier = Modifier) {
     }
 
     @Composable
-    fun RowScope.BarButton(onClick: () -> Unit, content: @Composable () -> Unit) {
+    fun BarButton(onClick: () -> Unit, content: @Composable () -> Unit) {
         SnyggIconButton(
             elementName = FlorisImeUi.SmartbarActionKey.elementName,
             onClick = onClick,
@@ -256,25 +256,37 @@ fun UiToolbar(modifier: Modifier = Modifier) {
         }
     }
 
+    @Composable
+    fun RowScope.Cell(content: @Composable () -> Unit) {
+        Box(
+            modifier = Modifier.weight(1f).fillMaxHeight(),
+            contentAlignment = Alignment.Center,
+        ) {
+            content()
+        }
+    }
+
+    // Layout: [ logo | edit ]  [ language box, 140dp, centered ]  [ emoji | hide ]
+    // Each side takes half of the free space, and its divider is exactly in the middle of that side.
     SnyggRow(
         modifier = modifier.fillMaxWidth().height(barHeight),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        BarButton(onClick = { UiPanelState.toggle(UiPanel.ACTIONS) }) {
-            SnyggIcon(modifier = Modifier.size(ToolbarIconSize), painter = painterResource(R.drawable.ic_ui_keyboard_logo))
+        Row(modifier = Modifier.weight(1f).fillMaxHeight(), verticalAlignment = Alignment.CenterVertically) {
+            Cell {
+                BarButton(onClick = { UiPanelState.toggle(UiPanel.ACTIONS) }) {
+                    SnyggIcon(modifier = Modifier.size(ToolbarIconSize), imageVector = UiIcons.Logo)
+                }
+            }
+            Divider()
+            Cell { SlotButton(slotEdit, prefs.smartbar.uiSlotEdit) }
         }
-        Divider()
-        SlotButton(slotEdit, prefs.smartbar.uiSlotEdit)
 
         // Language box: tap switches to the next language, long press opens the popup menu.
-        Box(
-            modifier = Modifier.weight(1f).height(barHeight),
-            contentAlignment = Alignment.Center,
-        ) {
         SnyggBox(
             elementName = FlorisImeUi.SmartbarActionKey.elementName,
             selector = if (UiPanelState.languageMenuOpen) SnyggSelector.PRESSED else SnyggSelector.NONE,
-            modifier = Modifier.widthIn(max = 170.dp).fillMaxWidth().height(barHeight).padding(vertical = 6.dp).then(langOutline),
+            modifier = Modifier.width(140.dp).height(barHeight).padding(vertical = 6.dp).then(langOutline),
             clickAndSemanticsModifier = Modifier.uiMenuGesture(
                 key = subtypes,
                 onTap = {
@@ -287,75 +299,13 @@ fun UiToolbar(modifier: Modifier = Modifier) {
         ) {
             SnyggText(text = languageName(activeSubtype.primaryLocale.base))
         }
-        }
 
-        SlotButton(slotEmoji, prefs.smartbar.uiSlotEmoji)
-        Divider()
-        BarButton(onClick = { dispatcher.sendDownUp(TextKeyData.IME_HIDE_UI) }) {
-            SnyggIcon(modifier = Modifier.size(ToolbarIconSize), imageVector = Icons.Default.ArrowDropDown)
-        }
-    }
-}
-
-/**
- * The popup menu of the language box. It is drawn on the left side, starting one item above the toolbar, so the items
- * are split between the area above and below the toolbar. Only [UiPanelState.MENU_VISIBLE] entries are visible at
- * once: the two middle ones normally, the first and last faded. Holding the finger on a faded entry scrolls the list.
- * Must be placed at the top-start corner of the keyboard view.
- */
-@Composable
-fun UiLanguageMenu(modifier: Modifier = Modifier) {
-    val entries = UiPanelState.menuEntries
-    if (!UiPanelState.languageMenuOpen || entries.isEmpty()) return
-    val density = androidx.compose.ui.platform.LocalDensity.current
-    val bar = FlorisImeSizing.smartbarHeight
-    val ui = FlorisImeSizing.keyboardUiHeight()
-    val keyColor = rememberSnyggThemeQuery(FlorisImeUi.Key.elementName).background(Color.Gray)
-    val outlineColor = rememberSnyggThemeQuery(FlorisImeUi.SmartbarActionKey.elementName)
-        .foreground(Color.Gray).copy(alpha = 0.5f)
-    val visible = minOf(UiPanelState.MENU_VISIBLE, entries.size)
-    val maxScroll = entries.size - visible
-    val slot = minOf(bar, (bar + ui) / maxOf(visible - 1, 1))
-    SideEffect { UiPanelState.menuItemHeightPx = with(density) { slot.roundToPx() }.coerceAtLeast(1) }
-    androidx.compose.runtime.LaunchedEffect(Unit) {
-        while (true) {
-            kotlinx.coroutines.delay(350)
-            if (UiPanelState.menuFingerSlot == 0 && UiPanelState.menuScroll > 0) {
-                UiPanelState.menuScroll -= 1
-            } else if (UiPanelState.menuFingerSlot == visible - 1 && UiPanelState.menuScroll < maxScroll) {
-                UiPanelState.menuScroll += 1
-            }
-        }
-    }
-    val iconOnly = UiPanelState.menuIconOnly
-    val menuModifier = if (iconOnly) {
-        modifier
-            .absoluteOffset(x = with(density) { UiPanelState.menuAnchorLeftPx.toDp() }, y = -slot)
-            .width(with(density) { UiPanelState.menuAnchorWidthPx.toDp() })
-    } else {
-        modifier.absoluteOffset(y = -slot).width(170.dp)
-    }
-    Column(modifier = menuModifier) {
-        for (slotIndex in 0 until visible) {
-            val index = UiPanelState.menuScroll + slotIndex
-            val entry = entries.getOrNull(index) ?: continue
-            val highlighted = index == UiPanelState.languageMenuHighlight
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(slot)
-                    .padding(vertical = 4.dp)
-                    .background(if (highlighted) MenuHighlightColor else keyColor, RoundedCornerShape(10.dp))
-                    .border(1.5.dp, outlineColor, RoundedCornerShape(10.dp)),
-                contentAlignment = Alignment.Center,
-            ) {
-                if (iconOnly && entry.icon != null) {
-                    SnyggIcon(
-                        modifier = Modifier.size(if (entry.icon === UiIcons.EditText) EditTextIconSize else ToolbarIconSize),
-                        imageVector = entry.icon,
-                    )
-                } else {
-                    SnyggText(text = entry.label)
+        Row(modifier = Modifier.weight(1f).fillMaxHeight(), verticalAlignment = Alignment.CenterVertically) {
+            Cell { SlotButton(slotEmoji, prefs.smartbar.uiSlotEmoji) }
+            Divider()
+            Cell {
+                BarButton(onClick = { dispatcher.sendDownUp(TextKeyData.IME_HIDE_UI) }) {
+                    SnyggIcon(modifier = Modifier.size(ToolbarIconSize), imageVector = Icons.Default.ArrowDropDown)
                 }
             }
         }
