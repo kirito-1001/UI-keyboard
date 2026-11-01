@@ -39,7 +39,6 @@ import dev.patrickgold.florisboard.ime.smartbar.quickaction.QuickActionsOverflow
 import dev.patrickgold.florisboard.ime.text.keyboard.TextKeyboardLayout
 import dev.patrickgold.florisboard.ime.theme.FlorisImeUi
 import dev.patrickgold.florisboard.ime.uikb.EditTextPanel
-import dev.patrickgold.florisboard.ime.uikb.EmojiPanel
 import dev.patrickgold.florisboard.ime.uikb.NumericPanel
 import dev.patrickgold.florisboard.ime.uikb.UiLanguageMenu
 import dev.patrickgold.florisboard.ime.uikb.UiPanel
@@ -89,7 +88,6 @@ fun TextInputLayout(
                     when (UiPanelState.panel) {
                         UiPanel.EDIT_TEXT -> EditTextPanel()
                         UiPanel.NUMERIC -> NumericPanel()
-                        UiPanel.EMOJI -> EmojiPanel()
                         UiPanel.NONE -> TextKeyboardLayout(evaluator = evaluator)
                     }
                 }

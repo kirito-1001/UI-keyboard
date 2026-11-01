@@ -179,7 +179,10 @@ fun UiToolbar(modifier: Modifier = Modifier) {
 
     fun runFeature(feature: UiFeature) {
         when (feature) {
-            UiFeature.EMOJI -> UiPanelState.toggle(UiPanel.EMOJI)
+            UiFeature.EMOJI -> {
+                UiPanelState.panel = UiPanel.NONE
+                dispatcher.sendDownUp(TextKeyData.IME_UI_MODE_MEDIA)
+            }
             UiFeature.EDIT_TEXT -> UiPanelState.toggle(UiPanel.EDIT_TEXT)
             UiFeature.CLIPBOARD -> {
                 UiPanelState.panel = UiPanel.NONE
