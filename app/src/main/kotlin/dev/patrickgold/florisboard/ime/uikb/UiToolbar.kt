@@ -19,7 +19,11 @@ package dev.patrickgold.florisboard.ime.uikb
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.awaitLongPressOrCancellation
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.Color
+import org.florisboard.lib.snygg.ui.rememberSnyggThemeQuery
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
@@ -98,12 +102,16 @@ fun UiToolbar(modifier: Modifier = Modifier) {
         add(UiMenuEntry(labelSettings) { dispatcher.sendDownUp(TextKeyData.SETTINGS) })
     }
 
+    val outlineColor = rememberSnyggThemeQuery(FlorisImeUi.SmartbarActionKey.elementName)
+        .foreground(Color.Gray).copy(alpha = 0.5f)
+    val outline = Modifier.border(1.5.dp, outlineColor, RoundedCornerShape(12.dp))
+
     @Composable
     fun RowScope.BarButton(onClick: () -> Unit, content: @Composable () -> Unit) {
         SnyggIconButton(
             elementName = FlorisImeUi.SmartbarActionKey.elementName,
             onClick = onClick,
-            modifier = Modifier.padding(horizontal = 4.dp).height(barHeight).aspectRatio(1f),
+            modifier = Modifier.height(barHeight).padding(horizontal = 4.dp, vertical = 4.dp).aspectRatio(1f).then(outline),
         ) {
             content()
         }
@@ -124,7 +132,7 @@ fun UiToolbar(modifier: Modifier = Modifier) {
         SnyggBox(
             elementName = FlorisImeUi.SmartbarActionKey.elementName,
             selector = if (UiPanelState.languageMenuOpen) SnyggSelector.PRESSED else SnyggSelector.NONE,
-            modifier = Modifier.weight(1f).height(barHeight).padding(horizontal = 6.dp, vertical = 4.dp),
+            modifier = Modifier.weight(1f).height(barHeight).padding(horizontal = 4.dp, vertical = 4.dp).then(outline),
             clickAndSemanticsModifier = Modifier.pointerInput(subtypes) {
                 awaitEachGesture {
                     val down = awaitFirstDown(requireUnconsumed = false)
