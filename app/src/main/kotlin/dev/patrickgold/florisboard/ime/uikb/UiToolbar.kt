@@ -36,6 +36,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.EmojiEmotions
@@ -266,10 +267,14 @@ fun UiToolbar(modifier: Modifier = Modifier) {
         SlotButton(slotEdit, prefs.smartbar.uiSlotEdit)
 
         // Language box: tap switches to the next language, long press opens the popup menu.
+        Box(
+            modifier = Modifier.weight(1f).height(barHeight),
+            contentAlignment = Alignment.Center,
+        ) {
         SnyggBox(
             elementName = FlorisImeUi.SmartbarActionKey.elementName,
             selector = if (UiPanelState.languageMenuOpen) SnyggSelector.PRESSED else SnyggSelector.NONE,
-            modifier = Modifier.weight(1f).height(barHeight).padding(horizontal = 6.dp, vertical = 6.dp).then(langOutline),
+            modifier = Modifier.widthIn(max = 170.dp).fillMaxWidth().height(barHeight).padding(vertical = 6.dp).then(langOutline),
             clickAndSemanticsModifier = Modifier.uiMenuGesture(
                 key = subtypes,
                 onTap = {
@@ -281,6 +286,7 @@ fun UiToolbar(modifier: Modifier = Modifier) {
             contentAlignment = Alignment.Center,
         ) {
             SnyggText(text = languageName(activeSubtype.primaryLocale.base))
+        }
         }
 
         SlotButton(slotEmoji, prefs.smartbar.uiSlotEmoji)
@@ -339,8 +345,8 @@ fun UiLanguageMenu(modifier: Modifier = Modifier) {
                     .fillMaxWidth()
                     .height(slot)
                     .padding(vertical = 4.dp)
-                    .background(if (highlighted) MenuHighlightColor else keyColor, RoundedCornerShape(14.dp))
-                    .border(1.5.dp, outlineColor, RoundedCornerShape(14.dp)),
+                    .background(if (highlighted) MenuHighlightColor else keyColor, RoundedCornerShape(10.dp))
+                    .border(1.5.dp, outlineColor, RoundedCornerShape(10.dp)),
                 contentAlignment = Alignment.Center,
             ) {
                 if (iconOnly && entry.icon != null) {
