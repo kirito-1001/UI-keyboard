@@ -137,7 +137,11 @@ fun ProvideKeyboardRowBaseHeight(content: @Composable () -> Unit) {
         }
     }
     val smartbarHeightFactor by prefs.smartbar.heightFactor.observeAsTransformingState { it.toFloat() / 100f }
-    val smartbarHeight = baseRowHeight * 0.753f * smartbarHeightFactor
+    // The toolbar has a fixed size: it does not change with the keyboard height setting
+    val unscaledRowHeight = remember(configuration, resources, systemBarHeights) {
+        calcInputViewHeight(resources, systemBarHeights)
+    }
+    val smartbarHeight = unscaledRowHeight * 0.753f * smartbarHeightFactor
 
     SideEffect {
         FlorisImeSizing.Static.keyboardRowBaseHeightPx = baseRowHeight.toInt()
