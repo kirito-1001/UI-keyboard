@@ -81,7 +81,7 @@ private val MenuHighlightColor = Color(0xFF2ECC71)
 private val ToolbarIconSize = 28.dp
 
 /** The edit-text icon keeps its larger size. */
-private val EditTextIconSize = 31.dp
+private val EditTextIconSize = 32.dp
 
 /**
  * Gesture for toolbar buttons with a popup menu: a tap runs [onTap], a long press opens the popup menu with the entries
