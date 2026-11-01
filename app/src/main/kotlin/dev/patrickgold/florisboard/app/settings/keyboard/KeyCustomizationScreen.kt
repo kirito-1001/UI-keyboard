@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -54,6 +55,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import dev.patrickgold.florisboard.R
 import dev.patrickgold.florisboard.app.FlorisPreferenceStore
 import dev.patrickgold.florisboard.ime.keyboard.KeyCustomization
@@ -129,45 +131,52 @@ fun KeyCustomizationScreen() = FlorisScreen {
     }
 
     content {
-        Text(
-            text = stringRes(R.string.settings__key_customization__hint),
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-        )
-
+        // All keys of a row share the width of the screen, so nothing is cut off and no scrolling is needed
+        val maxKeys = rows.maxOfOrNull { row -> row.count { it != null } } ?: 1
         for (row in rows) {
+            val keys = row.filterNotNull()
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState())
-                    .padding(horizontal = 12.dp, vertical = 4.dp),
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    .padding(horizontal = 8.dp, vertical = 3.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                for (key in row) {
-                    if (key == null) continue
+                for (key in keys) {
                     val custom = customizations.find(key.code)
+                    val isSelected = selected == key
                     val background = custom?.background?.let { Color(it) }
                         ?: MaterialTheme.colorScheme.surfaceVariant
                     val foreground = custom?.foreground?.let { Color(it) }
                         ?: MaterialTheme.colorScheme.onSurfaceVariant
                     Surface(
                         modifier = Modifier
-                            .heightIn(min = 48.dp)
-                            .widthIn(min = 44.dp)
+                            .weight(1f)
+                            .heightIn(min = 46.dp)
                             .clickable { selected = key },
                         shape = RoundedCornerShape(8.dp),
                         color = background,
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+                        // The key being edited is highlighted with a thick colored border
+                        border = if (isSelected) {
+                            BorderStroke(3.dp, MaterialTheme.colorScheme.primary)
+                        } else {
+                            BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
+                        },
                     ) {
-                        Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(horizontal = 8.dp)) {
+                        Box(contentAlignment = Alignment.Center) {
                             Text(
                                 text = key.label,
+                                fontSize = 15.sp,
+                                maxLines = 1,
                                 color = if (custom?.hidden == true) foreground.copy(alpha = 0.4f) else foreground,
                                 textDecoration = if (custom?.hidden == true) TextDecoration.LineThrough else null,
                                 textAlign = TextAlign.Center,
                             )
                         }
                     }
+                }
+                // Shorter rows keep the same key width as the longest row
+                if (keys.size < maxKeys) {
+                    Spacer(modifier = Modifier.weight((maxKeys - keys.size).toFloat()))
                 }
             }
         }
@@ -180,15 +189,25 @@ fun KeyCustomizationScreen() = FlorisScreen {
         ) {
             Text(text = stringRes(R.string.settings__key_customization__reset_all))
         }
-    }
 
-    selected?.let { key ->
-        val custom = customizations.find(key.code) ?: KeyCustomization(key.code)
-        AlertDialog(
-            onDismissRequest = { selected = null },
-            title = { Text(text = "${stringRes(R.string.settings__key_customization__key)}: ${key.label}") },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        // Editing tools for the selected key, shown below the keyboard
+        val key = selected
+        if (key == null) {
+            Text(
+                text = stringRes(R.string.settings__key_customization__hint),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp),
+            )
+        } else {
+            val custom = customizations.find(key.code) ?: KeyCustomization(key.code)
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Text(
+                    text = "${stringRes(R.string.settings__key_customization__key)}: ${key.label}",
+                    style = MaterialTheme.typography.titleMedium,
+                )
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth(),
@@ -227,23 +246,18 @@ fun KeyCustomizationScreen() = FlorisScreen {
                         current = custom.foreground,
                         onChange = { color -> update(key.code) { it.copy(foreground = color) } },
                     )
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    TextButton(onClick = { update(key.code) { KeyCustomization(it.code) } }) {
+                        Text(stringRes(R.string.settings__key_customization__reset_key))
+                    }
+                    TextButton(onClick = { selected = null }) {
+                        Text(stringRes(R.string.action__ok))
+                    }
                 }
-            },
-            confirmButton = {
-                TextButton(onClick = { selected = null }) {
-                    Text(stringRes(R.string.action__ok))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = {
-                    update(key.code) { KeyCustomization(it.code) }
-                    selected = null
-                }) {
-                    Text(stringRes(R.string.settings__key_customization__reset_key))
-                }
-            },
-        )
+            }
+        }
     }
+
 }
 
 @Composable
