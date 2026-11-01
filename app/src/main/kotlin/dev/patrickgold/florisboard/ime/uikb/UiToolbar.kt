@@ -33,6 +33,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EditNote
@@ -62,6 +63,9 @@ import org.florisboard.lib.snygg.ui.SnyggIcon
 import org.florisboard.lib.snygg.ui.SnyggIconButton
 import org.florisboard.lib.snygg.ui.SnyggRow
 import org.florisboard.lib.snygg.ui.SnyggText
+
+/** Size of the toolbar icons (24dp default size + 50%). */
+private val ToolbarIconSize = 36.dp
 
 /**
  * The toolbar of the "UI keyboard", shown while there are no word suggestions.
@@ -122,10 +126,10 @@ fun UiToolbar(modifier: Modifier = Modifier) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         BarButton(onClick = { dispatcher.sendDownUp(TextKeyData.SETTINGS) }) {
-            SnyggIcon(painter = painterResource(R.drawable.ic_ui_keyboard_logo))
+            SnyggIcon(modifier = Modifier.size(ToolbarIconSize), painter = painterResource(R.drawable.ic_ui_keyboard_logo))
         }
         BarButton(onClick = { UiPanelState.toggle(UiPanel.EDIT_TEXT) }) {
-            SnyggIcon(imageVector = Icons.Default.EditNote)
+            SnyggIcon(modifier = Modifier.size(ToolbarIconSize), imageVector = Icons.Default.EditNote)
         }
 
         // Language box: tap switches to the next language, long press opens the popup menu.
@@ -177,10 +181,10 @@ fun UiToolbar(modifier: Modifier = Modifier) {
             UiPanelState.panel = UiPanel.NONE
             dispatcher.sendDownUp(TextKeyData.IME_UI_MODE_MEDIA)
         }) {
-            SnyggIcon(imageVector = Icons.Default.EmojiEmotions)
+            SnyggIcon(modifier = Modifier.size(ToolbarIconSize), imageVector = Icons.Default.EmojiEmotions)
         }
         BarButton(onClick = { dispatcher.sendDownUp(TextKeyData.IME_HIDE_UI) }) {
-            SnyggIcon(imageVector = Icons.Default.KeyboardArrowDown)
+            SnyggIcon(modifier = Modifier.size(ToolbarIconSize), imageVector = Icons.Default.KeyboardArrowDown)
         }
     }
 }
