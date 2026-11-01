@@ -93,7 +93,9 @@ fun TextInputLayout(
                 }
             }
         }
-        UiLanguageMenu(modifier = Modifier.align(Alignment.TopCenter))
+        UiLanguageMenu(
+            modifier = Modifier.align(if (UiPanelState.menuIconOnly) Alignment.TopStart else Alignment.TopCenter),
+        )
         }
     }
 }

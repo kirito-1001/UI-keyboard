@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.vector.ImageVector
 
 /**
  * Panels which can temporarily replace the key area of the text keyboard.
@@ -62,6 +63,13 @@ object UiPanelState {
     /** Height of one menu item in pixels, set by the menu overlay when it is drawn. */
     var menuItemHeightPx by mutableIntStateOf(1)
 
+    /** True if the menu shows only icons, as a column above the pressed button (see [menuAnchorLeftPx]). */
+    var menuIconOnly by mutableStateOf(false)
+
+    /** Left edge and width (pixels) of the button the icon-only menu is attached to. */
+    var menuAnchorLeftPx by mutableIntStateOf(0)
+    var menuAnchorWidthPx by mutableIntStateOf(0)
+
     /** Toggles [target]: shows it, or goes back to the letters if it is already shown. */
     fun toggle(target: UiPanel) {
         panel = if (panel == target) UiPanel.NONE else target
@@ -69,4 +77,4 @@ object UiPanelState {
 }
 
 /** One entry of the language popup menu. */
-class UiMenuEntry(val label: String, val action: () -> Unit)
+class UiMenuEntry(val label: String, val icon: ImageVector? = null, val action: () -> Unit)

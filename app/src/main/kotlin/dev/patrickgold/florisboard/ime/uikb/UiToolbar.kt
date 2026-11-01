@@ -43,6 +43,11 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.runtime.rememberCoroutineScope
 import dev.patrickgold.florisboard.app.FlorisPreferenceStore
 import dev.patrickgold.jetpref.datastore.model.observeAsState
@@ -82,6 +87,7 @@ private fun Modifier.uiMenuGesture(
     key: Any?,
     onTap: () -> Unit,
     entries: () -> List<UiMenuEntry>,
+    iconAnchor: (() -> Pair<Int, Int>)? = null,
 ): Modifier = pointerInput(key) {
     awaitEachGesture {
         val down = awaitFirstDown(requireUnconsumed = false)
@@ -92,6 +98,11 @@ private fun Modifier.uiMenuGesture(
             return@awaitEachGesture
         }
         UiPanelState.menuEntries = entries()
+        UiPanelState.menuIconOnly = iconAnchor != null
+        iconAnchor?.invoke()?.let { (left, width) ->
+            UiPanelState.menuAnchorLeftPx = left
+            UiPanelState.menuAnchorWidthPx = width
+        }
         UiPanelState.menuScroll = 0
         UiPanelState.menuFingerSlot = -1
         UiPanelState.languageMenuOpen = true
@@ -199,17 +210,27 @@ fun UiToolbar(modifier: Modifier = Modifier) {
     /** A customizable button: tap runs its feature, long press opens a menu to pick another feature. */
     @Composable
     fun RowScope.SlotButton(feature: UiFeature, pref: dev.patrickgold.jetpref.datastore.model.PreferenceData<UiFeature>) {
+        var anchorLeft by remember { mutableIntStateOf(0) }
+        var anchorWidth by remember { mutableIntStateOf(0) }
         SnyggBox(
             elementName = FlorisImeUi.SmartbarActionKey.elementName,
-            modifier = Modifier.height(barHeight).padding(horizontal = 4.dp, vertical = 4.dp).aspectRatio(1f),
+            modifier = Modifier
+                .height(barHeight)
+                .padding(horizontal = 4.dp, vertical = 4.dp)
+                .aspectRatio(1f)
+                .onGloballyPositioned { coords ->
+                    anchorLeft = coords.positionInRoot().x.toInt()
+                    anchorWidth = coords.size.width
+                },
             clickAndSemanticsModifier = Modifier.uiMenuGesture(
                 key = feature,
                 onTap = { runFeature(feature) },
                 entries = {
                     UiFeature.entries.mapIndexed { i, f ->
-                        UiMenuEntry(featureLabels[i]) { scope.launch { pref.set(f) } }
+                        UiMenuEntry(featureLabels[i], f.icon) { scope.launch { pref.set(f) } }
                     }
                 },
+                iconAnchor = { anchorLeft to anchorWidth },
             ),
             contentAlignment = Alignment.Center,
         ) {
@@ -294,11 +315,15 @@ fun UiLanguageMenu(modifier: Modifier = Modifier) {
             }
         }
     }
-    Column(
-        modifier = modifier
-            .absoluteOffset(y = -slot)
-            .width(170.dp),
-    ) {
+    val iconOnly = UiPanelState.menuIconOnly
+    val menuModifier = if (iconOnly) {
+        modifier
+            .absoluteOffset(x = with(density) { UiPanelState.menuAnchorLeftPx.toDp() }, y = -slot)
+            .width(with(density) { UiPanelState.menuAnchorWidthPx.toDp() })
+    } else {
+        modifier.absoluteOffset(y = -slot).width(170.dp)
+    }
+    Column(modifier = menuModifier) {
         for (slotIndex in 0 until visible) {
             val index = UiPanelState.menuScroll + slotIndex
             val entry = entries.getOrNull(index) ?: continue
@@ -312,7 +337,11 @@ fun UiLanguageMenu(modifier: Modifier = Modifier) {
                     .border(1.5.dp, outlineColor, RoundedCornerShape(14.dp)),
                 contentAlignment = Alignment.Center,
             ) {
-                SnyggText(text = entry.label)
+                if (iconOnly && entry.icon != null) {
+                    SnyggIcon(modifier = Modifier.size(ToolbarIconSize), imageVector = entry.icon)
+                } else {
+                    SnyggText(text = entry.label)
+                }
             }
         }
     }
