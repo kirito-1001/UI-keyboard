@@ -260,7 +260,7 @@ fun UiToolbar(modifier: Modifier = Modifier) {
         modifier = modifier.fillMaxWidth().height(barHeight),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        BarButton(onClick = { dispatcher.sendDownUp(TextKeyData.SETTINGS) }) {
+        BarButton(onClick = { UiPanelState.toggle(UiPanel.ACTIONS) }) {
             SnyggIcon(modifier = Modifier.size(ToolbarIconSize), painter = painterResource(R.drawable.ic_ui_keyboard_logo))
         }
         Divider()
