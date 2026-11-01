@@ -43,6 +43,10 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
+import dev.patrickgold.florisboard.app.FlorisPreferenceStore
+import dev.patrickgold.jetpref.datastore.model.observeAsState
+import kotlinx.coroutines.launch
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -65,10 +69,53 @@ import org.florisboard.lib.snygg.ui.SnyggIconButton
 import org.florisboard.lib.snygg.ui.SnyggRow
 import org.florisboard.lib.snygg.ui.SnyggText
 
-/** Size of the toolbar icons (30dp). */
 private val MenuHighlightColor = Color(0xFF2ECC71)
 
+/** Size of the toolbar icons. */
 private val ToolbarIconSize = 30.dp
+
+/**
+ * Gesture for toolbar buttons with a popup menu: a tap runs [onTap], a long press opens the popup menu with the entries
+ * returned by [entries]; the finger then selects an entry and releasing it runs the entry.
+ */
+private fun Modifier.uiMenuGesture(
+    key: Any?,
+    onTap: () -> Unit,
+    entries: () -> List<UiMenuEntry>,
+): Modifier = pointerInput(key) {
+    awaitEachGesture {
+        val down = awaitFirstDown(requireUnconsumed = false)
+        val longPress = awaitLongPressOrCancellation(down.id)
+        if (longPress == null) {
+            // Released (or moved) before the long press time: counts as a tap.
+            onTap()
+            return@awaitEachGesture
+        }
+        UiPanelState.menuEntries = entries()
+        UiPanelState.menuScroll = 0
+        UiPanelState.menuFingerSlot = -1
+        UiPanelState.languageMenuOpen = true
+        val startY = longPress.position.y
+        var moved = false
+        while (true) {
+            val event = awaitPointerEvent()
+            val change = event.changes.firstOrNull { it.id == down.id } ?: break
+            val slot = UiPanelState.menuItemHeightPx
+            val y = change.position.y
+            if (!moved && kotlin.math.abs(y - startY) > slot / 3f) moved = true
+            // Item 0 starts one slot above the toolbar, item 1 is level with the toolbar, and so on.
+            val index = kotlin.math.floor((y + slot) / slot).toInt()
+            UiPanelState.menuFingerSlot = if (moved && index in 0 until UiPanelState.MENU_VISIBLE) index else -1
+            val released = !change.pressed
+            change.consume()
+            if (released) break
+        }
+        val chosen = UiPanelState.menuEntries.getOrNull(UiPanelState.languageMenuHighlight)
+        UiPanelState.languageMenuOpen = false
+        UiPanelState.menuFingerSlot = -1
+        chosen?.action?.invoke()
+    }
+}
 
 /**
  * The toolbar of the "UI keyboard", shown while there are no word suggestions.
@@ -125,6 +172,48 @@ fun UiToolbar(modifier: Modifier = Modifier) {
         )
     }
 
+    val prefs by FlorisPreferenceStore
+    val scope = rememberCoroutineScope()
+    val slotEdit by prefs.smartbar.uiSlotEdit.observeAsState()
+    val slotEmoji by prefs.smartbar.uiSlotEmoji.observeAsState()
+
+    fun runFeature(feature: UiFeature) {
+        when (feature) {
+            UiFeature.EMOJI -> UiPanelState.toggle(UiPanel.EMOJI)
+            UiFeature.EDIT_TEXT -> UiPanelState.toggle(UiPanel.EDIT_TEXT)
+            UiFeature.CLIPBOARD -> {
+                UiPanelState.panel = UiPanel.NONE
+                dispatcher.sendDownUp(TextKeyData.IME_UI_MODE_CLIPBOARD)
+            }
+            UiFeature.VOICE -> dispatcher.sendDownUp(TextKeyData.VOICE_INPUT)
+        }
+    }
+
+    @Composable
+    fun featureLabels() = UiFeature.entries.map { uiString(it.labelRes) }
+    val featureLabels = featureLabels()
+
+    /** A customizable button: tap runs its feature, long press opens a menu to pick another feature. */
+    @Composable
+    fun RowScope.SlotButton(feature: UiFeature, pref: dev.patrickgold.jetpref.datastore.model.PreferenceData<UiFeature>) {
+        SnyggBox(
+            elementName = FlorisImeUi.SmartbarActionKey.elementName,
+            modifier = Modifier.height(barHeight).padding(horizontal = 4.dp, vertical = 4.dp).aspectRatio(1f),
+            clickAndSemanticsModifier = Modifier.uiMenuGesture(
+                key = feature,
+                onTap = { runFeature(feature) },
+                entries = {
+                    UiFeature.entries.mapIndexed { i, f ->
+                        UiMenuEntry(featureLabels[i]) { scope.launch { pref.set(f) } }
+                    }
+                },
+            ),
+            contentAlignment = Alignment.Center,
+        ) {
+            SnyggIcon(modifier = Modifier.size(ToolbarIconSize), imageVector = feature.icon)
+        }
+    }
+
     @Composable
     fun RowScope.BarButton(onClick: () -> Unit, content: @Composable () -> Unit) {
         SnyggIconButton(
@@ -144,61 +233,27 @@ fun UiToolbar(modifier: Modifier = Modifier) {
             SnyggIcon(modifier = Modifier.size(ToolbarIconSize), painter = painterResource(R.drawable.ic_ui_keyboard_logo))
         }
         Divider()
-        BarButton(onClick = { UiPanelState.toggle(UiPanel.EDIT_TEXT) }) {
-            SnyggIcon(modifier = Modifier.size(ToolbarIconSize), imageVector = UiIcons.EditText)
-        }
+        SlotButton(slotEdit, prefs.smartbar.uiSlotEdit)
 
         // Language box: tap switches to the next language, long press opens the popup menu.
         SnyggBox(
             elementName = FlorisImeUi.SmartbarActionKey.elementName,
             selector = if (UiPanelState.languageMenuOpen) SnyggSelector.PRESSED else SnyggSelector.NONE,
             modifier = Modifier.weight(1f).height(barHeight).padding(horizontal = 6.dp, vertical = 6.dp).then(langOutline),
-            clickAndSemanticsModifier = Modifier.pointerInput(subtypes) {
-                awaitEachGesture {
-                    val down = awaitFirstDown(requireUnconsumed = false)
-                    val longPress = awaitLongPressOrCancellation(down.id)
-                    if (longPress == null) {
-                        // Released (or moved) before the long press time: counts as a tap.
-                        subtypeManager.switchToNextSubtype()
-                        UiPanelState.panel = UiPanel.NONE
-                        return@awaitEachGesture
-                    }
-                    UiPanelState.menuEntries = buildEntries()
-                    UiPanelState.menuScroll = 0
-                    UiPanelState.menuFingerSlot = -1
-                    UiPanelState.languageMenuOpen = true
-                    val startY = longPress.position.y
-                    var moved = false
-                    while (true) {
-                        val event = awaitPointerEvent()
-                        val change = event.changes.firstOrNull { it.id == down.id } ?: break
-                        val slot = UiPanelState.menuItemHeightPx
-                        val y = change.position.y
-                        if (!moved && kotlin.math.abs(y - startY) > slot / 3f) moved = true
-                        // Item 0 starts one slot above the toolbar, item 1 is level with the toolbar, and so on.
-                        val index = kotlin.math.floor((y + slot) / slot).toInt()
-                        UiPanelState.menuFingerSlot = if (moved && index in 0 until UiPanelState.MENU_VISIBLE) index else -1
-                        val released = !change.pressed
-                        change.consume()
-                        if (released) break
-                    }
-                    val chosen = UiPanelState.menuEntries.getOrNull(UiPanelState.languageMenuHighlight)
-                    UiPanelState.languageMenuOpen = false
-                    UiPanelState.menuFingerSlot = -1
-                    chosen?.action?.invoke()
-                }
-            },
+            clickAndSemanticsModifier = Modifier.uiMenuGesture(
+                key = subtypes,
+                onTap = {
+                    subtypeManager.switchToNextSubtype()
+                    UiPanelState.panel = UiPanel.NONE
+                },
+                entries = { buildEntries() },
+            ),
             contentAlignment = Alignment.Center,
         ) {
             SnyggText(text = languageName(activeSubtype.primaryLocale.base))
         }
 
-        BarButton(onClick = {
-            UiPanelState.panel = UiPanel.NONE
-            dispatcher.sendDownUp(TextKeyData.IME_UI_MODE_MEDIA)
-        }) {
-            SnyggIcon(modifier = Modifier.size(ToolbarIconSize), imageVector = Icons.Default.EmojiEmotions)
-        }
+        SlotButton(slotEmoji, prefs.smartbar.uiSlotEmoji)
         Divider()
         BarButton(onClick = { dispatcher.sendDownUp(TextKeyData.IME_HIDE_UI) }) {
             SnyggIcon(modifier = Modifier.size(ToolbarIconSize), imageVector = Icons.Default.ArrowDropDown)

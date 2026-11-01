@@ -675,6 +675,14 @@ abstract class FlorisPreferenceModel : PreferenceModel() {
             key = "smartbar__enabled",
             default = true,
         )
+        val uiSlotEdit = enum(
+            key = "smartbar__ui_slot_edit",
+            default = dev.patrickgold.florisboard.ime.uikb.UiFeature.EDIT_TEXT,
+        )
+        val uiSlotEmoji = enum(
+            key = "smartbar__ui_slot_emoji",
+            default = dev.patrickgold.florisboard.ime.uikb.UiFeature.EMOJI,
+        )
         val layout = enum(
             key = "smartbar__layout",
             default = SmartbarLayout.SUGGESTIONS_ACTIONS_SHARED,

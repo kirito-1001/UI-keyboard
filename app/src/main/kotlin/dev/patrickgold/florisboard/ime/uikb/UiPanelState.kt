@@ -28,6 +28,7 @@ enum class UiPanel {
     NONE,
     EDIT_TEXT,
     NUMERIC,
+    EMOJI,
 }
 
 /**

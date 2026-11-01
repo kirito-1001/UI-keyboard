@@ -1,0 +1,35 @@
+/*
+ * Copyright (C) 2025 The FlorisBoard Contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package dev.patrickgold.florisboard.ime.uikb
+
+import androidx.annotation.StringRes
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ContentPaste
+import androidx.compose.material.icons.filled.EmojiEmotions
+import androidx.compose.material.icons.filled.Mic
+import androidx.compose.ui.graphics.vector.ImageVector
+import dev.patrickgold.florisboard.R
+
+/**
+ * Features which can be assigned to the two customizable toolbar buttons.
+ */
+enum class UiFeature(@StringRes val labelRes: Int, val icon: ImageVector) {
+    EMOJI(R.string.ui__feature__emoji, Icons.Default.EmojiEmotions),
+    EDIT_TEXT(R.string.ui__feature__edit_text, UiIcons.EditText),
+    CLIPBOARD(R.string.ui__feature__clipboard, Icons.Default.ContentPaste),
+    VOICE(R.string.ui__feature__voice, Icons.Default.Mic),
+}
