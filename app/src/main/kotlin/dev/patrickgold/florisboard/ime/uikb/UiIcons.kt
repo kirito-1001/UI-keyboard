@@ -111,4 +111,55 @@ object UiIcons {
             }
         }.build()
     }
+
+    /**
+     * The "edit text" icon: a rounded box with a filled block (selected text) and a text cursor (I-beam) on its right.
+     */
+    val EditText: ImageVector by lazy {
+        ImageVector.Builder(
+            name = "EditText",
+            defaultWidth = 24.dp,
+            defaultHeight = 24.dp,
+            viewportWidth = 24f,
+            viewportHeight = 24f,
+        ).apply {
+            // Box outline
+            path(
+                fill = null,
+                stroke = SolidColor(Color.Black),
+                strokeLineWidth = 2f,
+                strokeLineCap = StrokeCap.Round,
+                strokeLineJoin = StrokeJoin.Round,
+            ) {
+                moveTo(18f, 8f)
+                lineTo(4f, 8f)
+                lineTo(2.5f, 9.5f)
+                lineTo(2.5f, 14.5f)
+                lineTo(4f, 16f)
+                lineTo(18f, 16f)
+            }
+            // Selected-text block
+            path(fill = SolidColor(Color.Black)) {
+                moveTo(5.5f, 10.5f)
+                lineTo(12f, 10.5f)
+                lineTo(12f, 13.5f)
+                lineTo(5.5f, 13.5f)
+                close()
+            }
+            // I-beam cursor
+            path(
+                fill = null,
+                stroke = SolidColor(Color.Black),
+                strokeLineWidth = 2f,
+                strokeLineCap = StrokeCap.Butt,
+            ) {
+                moveTo(16f, 3f)
+                lineTo(20f, 3f)
+                moveTo(18f, 3f)
+                lineTo(18f, 21f)
+                moveTo(16f, 21f)
+                lineTo(20f, 21f)
+            }
+        }.build()
+    }
 }

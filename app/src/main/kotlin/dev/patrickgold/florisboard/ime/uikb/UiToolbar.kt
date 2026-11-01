@@ -39,7 +39,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.EmojiEmotions
-import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
@@ -111,14 +111,26 @@ fun UiToolbar(modifier: Modifier = Modifier) {
 
     val outlineColor = rememberSnyggThemeQuery(FlorisImeUi.SmartbarActionKey.elementName)
         .foreground(Color.Gray).copy(alpha = 0.5f)
-    val outline = Modifier.border(1.5.dp, outlineColor, RoundedCornerShape(12.dp))
+    val lineWidth = 1.dp
+    val langOutline = Modifier.border(lineWidth, outlineColor, RoundedCornerShape(12.dp))
+
+    @Composable
+    fun Divider() {
+        Box(
+            modifier = Modifier
+                .padding(horizontal = 2.dp)
+                .width(lineWidth)
+                .height(barHeight * 0.6f)
+                .background(outlineColor),
+        )
+    }
 
     @Composable
     fun RowScope.BarButton(onClick: () -> Unit, content: @Composable () -> Unit) {
         SnyggIconButton(
             elementName = FlorisImeUi.SmartbarActionKey.elementName,
             onClick = onClick,
-            modifier = Modifier.height(barHeight).padding(horizontal = 4.dp, vertical = 4.dp).aspectRatio(1f).then(outline),
+            modifier = Modifier.height(barHeight).padding(horizontal = 4.dp, vertical = 4.dp).aspectRatio(1f),
         ) {
             content()
         }
@@ -131,15 +143,16 @@ fun UiToolbar(modifier: Modifier = Modifier) {
         BarButton(onClick = { dispatcher.sendDownUp(TextKeyData.SETTINGS) }) {
             SnyggIcon(modifier = Modifier.size(ToolbarIconSize), painter = painterResource(R.drawable.ic_ui_keyboard_logo))
         }
+        Divider()
         BarButton(onClick = { UiPanelState.toggle(UiPanel.EDIT_TEXT) }) {
-            SnyggIcon(modifier = Modifier.size(ToolbarIconSize), imageVector = Icons.Default.EditNote)
+            SnyggIcon(modifier = Modifier.size(ToolbarIconSize), imageVector = UiIcons.EditText)
         }
 
         // Language box: tap switches to the next language, long press opens the popup menu.
         SnyggBox(
             elementName = FlorisImeUi.SmartbarActionKey.elementName,
             selector = if (UiPanelState.languageMenuOpen) SnyggSelector.PRESSED else SnyggSelector.NONE,
-            modifier = Modifier.weight(1f).height(barHeight).padding(horizontal = 4.dp, vertical = 4.dp).then(outline),
+            modifier = Modifier.weight(1f).height(barHeight).padding(horizontal = 6.dp, vertical = 6.dp).then(langOutline),
             clickAndSemanticsModifier = Modifier.pointerInput(subtypes) {
                 awaitEachGesture {
                     val down = awaitFirstDown(requireUnconsumed = false)
@@ -186,8 +199,9 @@ fun UiToolbar(modifier: Modifier = Modifier) {
         }) {
             SnyggIcon(modifier = Modifier.size(ToolbarIconSize), imageVector = Icons.Default.EmojiEmotions)
         }
+        Divider()
         BarButton(onClick = { dispatcher.sendDownUp(TextKeyData.IME_HIDE_UI) }) {
-            SnyggIcon(modifier = Modifier.size(ToolbarIconSize), imageVector = Icons.Default.KeyboardArrowDown)
+            SnyggIcon(modifier = Modifier.size(ToolbarIconSize), imageVector = Icons.Default.ArrowDropDown)
         }
     }
 }
