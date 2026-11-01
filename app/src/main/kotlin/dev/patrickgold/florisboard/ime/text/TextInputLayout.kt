@@ -62,6 +62,7 @@ fun TextInputLayout(
     InlineSuggestionsStyleCache()
 
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+        Box {
         Column(
             modifier = modifier
                 .fillMaxWidth()
@@ -89,9 +90,10 @@ fun TextInputLayout(
                         UiPanel.NUMERIC -> NumericPanel()
                         UiPanel.NONE -> TextKeyboardLayout(evaluator = evaluator)
                     }
-                    UiLanguageMenu(modifier = Modifier.align(Alignment.TopCenter))
                 }
             }
+        }
+        UiLanguageMenu(modifier = Modifier.align(Alignment.TopStart))
         }
     }
 }

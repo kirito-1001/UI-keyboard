@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -136,13 +137,18 @@ fun UiToolbar(modifier: Modifier = Modifier) {
                     UiPanelState.menuEntries = buildEntries()
                     UiPanelState.languageMenuHighlight = -1
                     UiPanelState.languageMenuOpen = true
+                    val startY = longPress.position.y
+                    var moved = false
                     while (true) {
                         val event = awaitPointerEvent()
                         val change = event.changes.firstOrNull { it.id == down.id } ?: break
-                        val y = change.position.y - size.height
-                        val index = if (y < 0f) -1 else (y / UiPanelState.menuItemHeightPx).toInt()
+                        val slot = UiPanelState.menuItemHeightPx
+                        val y = change.position.y
+                        if (!moved && kotlin.math.abs(y - startY) > slot / 3f) moved = true
+                        // Item 0 starts one slot above the toolbar, item 1 is level with the toolbar, and so on.
+                        val index = kotlin.math.floor((y + slot) / slot).toInt()
                         UiPanelState.languageMenuHighlight =
-                            if (index in UiPanelState.menuEntries.indices) index else -1
+                            if (moved && index in UiPanelState.menuEntries.indices) index else -1
                         val released = !change.pressed
                         change.consume()
                         if (released) break
@@ -170,20 +176,29 @@ fun UiToolbar(modifier: Modifier = Modifier) {
     }
 }
 
-/** The popup menu of the language box, drawn over the key area just below the toolbar. */
+/**
+ * The popup menu of the language box. It is drawn on the left side, starting one item above the toolbar, so the items
+ * are split between the area above and below the toolbar. Must be placed at the top-start corner of the keyboard view.
+ */
 @Composable
 fun UiLanguageMenu(modifier: Modifier = Modifier) {
     val entries = UiPanelState.menuEntries
     if (!UiPanelState.languageMenuOpen || entries.isEmpty()) return
     val density = androidx.compose.ui.platform.LocalDensity.current
-    val itemHeight = minOf(44.dp, FlorisImeSizing.keyboardUiHeight() / entries.size)
-    SideEffect { UiPanelState.menuItemHeightPx = with(density) { itemHeight.roundToPx() }.coerceAtLeast(1) }
-    Column(modifier = modifier.width(200.dp)) {
+    val bar = FlorisImeSizing.smartbarHeight
+    val ui = FlorisImeSizing.keyboardUiHeight()
+    val slot = minOf(bar, (bar + ui) / maxOf(entries.size - 1, 1))
+    SideEffect { UiPanelState.menuItemHeightPx = with(density) { slot.roundToPx() }.coerceAtLeast(1) }
+    Column(
+        modifier = modifier
+            .absoluteOffset(x = 8.dp, y = -slot)
+            .width(170.dp),
+    ) {
         entries.forEachIndexed { index, entry ->
             SnyggBox(
                 elementName = FlorisImeUi.Key.elementName,
                 selector = if (index == UiPanelState.languageMenuHighlight) SnyggSelector.PRESSED else SnyggSelector.NONE,
-                modifier = Modifier.fillMaxWidth().height(itemHeight).padding(horizontal = 4.dp, vertical = 3.dp),
+                modifier = Modifier.fillMaxWidth().height(slot).padding(vertical = 4.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 SnyggText(text = entry.label)
