@@ -171,4 +171,39 @@ object UiIcons {
             }
         }.build()
     }
+
+    /**
+     * The microphone icon: a filled capsule, a U-shaped holder and a short stem (no base line).
+     */
+    val Mic: ImageVector by lazy {
+        ImageVector.Builder(
+            name = "Mic",
+            defaultWidth = 24.dp,
+            defaultHeight = 24.dp,
+            viewportWidth = 24f,
+            viewportHeight = 24f,
+        ).apply {
+            path(fill = SolidColor(Color.Black)) {
+                moveTo(8.6f, 6.9f)
+                arcTo(3.4f, 3.4f, 0f, false, true, 15.4f, 6.9f)
+                lineTo(15.4f, 12.1f)
+                arcTo(3.4f, 3.4f, 0f, false, true, 8.6f, 12.1f)
+                close()
+            }
+            path(
+                fill = null,
+                stroke = SolidColor(Color.Black),
+                strokeLineWidth = 1.8f,
+                strokeLineCap = StrokeCap.Round,
+                strokeLineJoin = StrokeJoin.Round,
+            ) {
+                // Holder
+                moveTo(5.6f, 11.5f)
+                arcTo(6.4f, 6.4f, 0f, false, false, 18.4f, 11.5f)
+                // Short stem
+                moveTo(12f, 17.7f)
+                lineTo(12f, 19.5f)
+            }
+        }.build()
+    }
 }
