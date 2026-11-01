@@ -38,7 +38,7 @@ import org.florisboard.lib.snygg.ui.SnyggBox
 
 /**
  * The panel opened by the logo button: it replaces the key area (the toolbar stays) and shows all toolbar actions
- * available in the app in a grid. The grid scrolls up and down, so actions added in the future always fit.
+ * the user has enabled in Settings > Smartbar > Toolbar buttons (in that order) in a grid. The grid scrolls up and down, so actions added in the future always fit.
  */
 @Composable
 fun ActionsPanel(modifier: Modifier = Modifier) {
@@ -48,12 +48,9 @@ fun ActionsPanel(modifier: Modifier = Modifier) {
     val actionArrangement by prefs.smartbar.actionArrangement.observeAsState()
     val evaluator by keyboardManager.activeSmartbarEvaluator.collectAsState()
 
+    // Same list and order as set in Settings > Smartbar > Toolbar buttons; hidden actions are not shown
     val allActions = remember(actionArrangement) {
-        buildList {
-            actionArrangement.stickyAction?.let { add(it) }
-            addAll(actionArrangement.dynamicActions)
-            addAll(actionArrangement.hiddenActions)
-        }.distinct()
+        actionArrangement.dynamicActions.filter { it !in actionArrangement.hiddenActions }.distinct()
     }
 
     SnyggBox(
