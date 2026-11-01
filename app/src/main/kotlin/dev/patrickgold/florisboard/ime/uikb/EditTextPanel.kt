@@ -127,7 +127,7 @@ fun EditTextPanel(modifier: Modifier = Modifier) {
                 Key(TextKeyData.CLIPBOARD_SELECT_ALL, enabled = hasText) {
                     UiKeyLabel(uiString(R.string.ui__edit__select_all), Icons.Default.SelectAll)
                 }
-                Key(TextKeyData.ARROW_UP, enabled = hasText) {
+                Key(TextKeyData.ARROW_UP) {
                     Icon(Icons.Default.KeyboardArrowUp, contentDescription = null)
                 }
                 Tap(
@@ -144,14 +144,14 @@ fun EditTextPanel(modifier: Modifier = Modifier) {
             }
             // Row 2: left | select | right
             Row(modifier = Modifier.weight(1f).fillMaxWidth()) {
-                Key(TextKeyData.ARROW_LEFT, enabled = canLeft) {
+                Key(TextKeyData.ARROW_LEFT) {
                     Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = null)
                 }
-                Key(TextKeyData.CLIPBOARD_SELECT, enabled = hasText) {
+                Key(TextKeyData.CLIPBOARD_SELECT) {
                     UiKeyLabel(uiString(R.string.ui__edit__select))
                     if (selectionModeOn) ActiveDot()
                 }
-                Key(TextKeyData.ARROW_RIGHT, enabled = canRight) {
+                Key(TextKeyData.ARROW_RIGHT) {
                     Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
                 }
             }
@@ -174,7 +174,7 @@ fun EditTextPanel(modifier: Modifier = Modifier) {
                 ) {
                     UiKeyLabel(uiString(R.string.ui__edit__search), Icons.Default.Search)
                 }
-                Key(TextKeyData.ARROW_DOWN, enabled = hasText) {
+                Key(TextKeyData.ARROW_DOWN) {
                     Icon(Icons.Default.KeyboardArrowDown, contentDescription = null)
                 }
                 Tap(
