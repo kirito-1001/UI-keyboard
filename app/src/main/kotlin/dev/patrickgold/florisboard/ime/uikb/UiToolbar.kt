@@ -311,3 +311,68 @@ fun UiToolbar(modifier: Modifier = Modifier) {
         }
     }
 }
+
+/**
+ * The popup menu of the language box. It is drawn on the left side, starting one item above the toolbar, so the items
+ * are split between the area above and below the toolbar. Only [UiPanelState.MENU_VISIBLE] entries are visible at
+ * once: the two middle ones normally, the first and last faded. Holding the finger on a faded entry scrolls the list.
+ * Must be placed at the top-start corner of the keyboard view.
+ */
+@Composable
+fun UiLanguageMenu(modifier: Modifier = Modifier) {
+    val entries = UiPanelState.menuEntries
+    if (!UiPanelState.languageMenuOpen || entries.isEmpty()) return
+    val density = androidx.compose.ui.platform.LocalDensity.current
+    val bar = FlorisImeSizing.smartbarHeight
+    val ui = FlorisImeSizing.keyboardUiHeight()
+    val keyColor = rememberSnyggThemeQuery(FlorisImeUi.Key.elementName).background(Color.Gray)
+    val outlineColor = rememberSnyggThemeQuery(FlorisImeUi.SmartbarActionKey.elementName)
+        .foreground(Color.Gray).copy(alpha = 0.5f)
+    val visible = minOf(UiPanelState.MENU_VISIBLE, entries.size)
+    val maxScroll = entries.size - visible
+    val slot = minOf(bar, (bar + ui) / maxOf(visible - 1, 1))
+    SideEffect { UiPanelState.menuItemHeightPx = with(density) { slot.roundToPx() }.coerceAtLeast(1) }
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        while (true) {
+            kotlinx.coroutines.delay(350)
+            if (UiPanelState.menuFingerSlot == 0 && UiPanelState.menuScroll > 0) {
+                UiPanelState.menuScroll -= 1
+            } else if (UiPanelState.menuFingerSlot == visible - 1 && UiPanelState.menuScroll < maxScroll) {
+                UiPanelState.menuScroll += 1
+            }
+        }
+    }
+    val iconOnly = UiPanelState.menuIconOnly
+    val menuModifier = if (iconOnly) {
+        modifier
+            .absoluteOffset(x = with(density) { UiPanelState.menuAnchorLeftPx.toDp() }, y = -slot)
+            .width(with(density) { UiPanelState.menuAnchorWidthPx.toDp() })
+    } else {
+        modifier.absoluteOffset(y = -slot).width(170.dp)
+    }
+    Column(modifier = menuModifier) {
+        for (slotIndex in 0 until visible) {
+            val index = UiPanelState.menuScroll + slotIndex
+            val entry = entries.getOrNull(index) ?: continue
+            val highlighted = index == UiPanelState.languageMenuHighlight
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(slot)
+                    .padding(vertical = 4.dp)
+                    .background(if (highlighted) MenuHighlightColor else keyColor, RoundedCornerShape(10.dp))
+                    .border(1.5.dp, outlineColor, RoundedCornerShape(10.dp)),
+                contentAlignment = Alignment.Center,
+            ) {
+                if (iconOnly && entry.icon != null) {
+                    SnyggIcon(
+                        modifier = Modifier.size(if (entry.icon === UiIcons.EditText) EditTextIconSize else ToolbarIconSize),
+                        imageVector = entry.icon,
+                    )
+                } else {
+                    SnyggText(text = entry.label)
+                }
+            }
+        }
+    }
+}
