@@ -77,7 +77,10 @@ import org.florisboard.lib.snygg.ui.SnyggText
 private val MenuHighlightColor = Color(0xFF2ECC71)
 
 /** Size of the toolbar icons. */
-private val ToolbarIconSize = 30.dp
+private val ToolbarIconSize = 28.dp
+
+/** The edit-text icon keeps its larger size. */
+private val EditTextIconSize = 30.dp
 
 /**
  * Gesture for toolbar buttons with a popup menu: a tap runs [onTap], a long press opens the popup menu with the entries
@@ -234,7 +237,10 @@ fun UiToolbar(modifier: Modifier = Modifier) {
             ),
             contentAlignment = Alignment.Center,
         ) {
-            SnyggIcon(modifier = Modifier.size(ToolbarIconSize), imageVector = feature.icon)
+            SnyggIcon(
+                modifier = Modifier.size(if (feature == UiFeature.EDIT_TEXT) EditTextIconSize else ToolbarIconSize),
+                imageVector = feature.icon,
+            )
         }
     }
 
@@ -338,7 +344,10 @@ fun UiLanguageMenu(modifier: Modifier = Modifier) {
                 contentAlignment = Alignment.Center,
             ) {
                 if (iconOnly && entry.icon != null) {
-                    SnyggIcon(modifier = Modifier.size(ToolbarIconSize), imageVector = entry.icon)
+                    SnyggIcon(
+                        modifier = Modifier.size(if (entry.icon === UiIcons.EditText) EditTextIconSize else ToolbarIconSize),
+                        imageVector = entry.icon,
+                    )
                 } else {
                     SnyggText(text = entry.label)
                 }
