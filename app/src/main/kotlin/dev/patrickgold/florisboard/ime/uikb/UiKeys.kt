@@ -37,6 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
@@ -52,6 +53,9 @@ import org.florisboard.lib.snygg.ui.SnyggBox
 import org.florisboard.lib.snygg.ui.SnyggIcon
 import org.florisboard.lib.snygg.ui.SnyggText
 
+/** Opacity of keys which cannot do anything right now. */
+private const val DisabledAlpha = 0.38f
+
 private val ActiveDotColor = Color(0xFF2ECC71)
 
 /**
@@ -64,6 +68,7 @@ fun UiDispatchKey(
     inputEventDispatcher: InputEventDispatcher,
     modifier: Modifier = Modifier,
     showDot: Boolean = false,
+    enabled: Boolean = true,
     content: @Composable BoxScope.() -> Unit,
 ) {
     val feedback = LocalInputFeedbackController.current
@@ -72,11 +77,12 @@ fun UiDispatchKey(
     SnyggBox(
         elementName = FlorisImeUi.Key.elementName,
         attributes = mapOf(FlorisImeUi.Attr.Code to keyData.code),
-        selector = if (isPressed) SnyggSelector.PRESSED else SnyggSelector.NONE,
-        modifier = modifier.padding(2.dp),
+        selector = if (!enabled) SnyggSelector.DISABLED else if (isPressed) SnyggSelector.PRESSED else SnyggSelector.NONE,
+        modifier = modifier.padding(2.dp).alpha(if (enabled) 1f else DisabledAlpha),
         clickAndSemanticsModifier = Modifier
             .indication(interactionSource, ripple())
-            .pointerInput(keyData) {
+            .pointerInput(keyData, enabled) {
+                if (!enabled) return@pointerInput
                 awaitEachGesture {
                     val down = awaitFirstDown(requireUnconsumed = false)
                     if (down.pressed != down.previousPressed) down.consume()
@@ -124,7 +130,7 @@ fun UiTapKey(
     SnyggBox(
         elementName = FlorisImeUi.Key.elementName,
         selector = selector,
-        modifier = modifier.padding(2.dp),
+        modifier = modifier.padding(2.dp).alpha(if (enabled) 1f else DisabledAlpha),
         clickAndSemanticsModifier = Modifier.clickable(
             interactionSource = interactionSource,
             indication = ripple(),

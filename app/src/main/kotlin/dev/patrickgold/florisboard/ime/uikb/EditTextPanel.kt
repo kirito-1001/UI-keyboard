@@ -44,6 +44,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import dev.patrickgold.florisboard.R
+import dev.patrickgold.florisboard.clipboardManager
 import dev.patrickgold.florisboard.editorInstance
 import dev.patrickgold.florisboard.ime.editor.OperationUnit
 import dev.patrickgold.florisboard.ime.keyboard.FlorisImeSizing
@@ -69,18 +70,31 @@ fun EditTextPanel(modifier: Modifier = Modifier) {
     val state by keyboardManager.activeState.collectAsState()
     val dispatcher = keyboardManager.inputEventDispatcher
 
-    val hasSelection = state.isSelectionMode
+    val content by editorInstance.activeContentFlow.collectAsState()
+    val clipboardManager by context.clipboardManager()
+    val primaryClip by clipboardManager.primaryClipFlow.collectAsState()
+
+    // Keys which cannot do anything right now are dimmed. If the app does not report its text (raw editors), the
+    // text dependent keys stay enabled because we cannot know.
+    val known = content.localSelection.isValid
+    val hasSelection = state.isSelectionMode || content.selection.isSelectionMode
     val selectionModeOn = state.isManualSelectionMode
+    val hasText = !known || content.text.isNotEmpty()
+    val canLeft = !known || hasSelection || content.offset > 0 || content.textBeforeSelection.isNotEmpty()
+    val canRight = !known || hasSelection || content.textAfterSelection.isNotEmpty()
+    val canPaste = primaryClip != null
 
     @Composable
     fun RowScope.Key(
         data: dev.patrickgold.florisboard.ime.keyboard.KeyData,
+        enabled: Boolean = true,
         content: @Composable androidx.compose.foundation.layout.BoxScope.() -> Unit,
     ) {
         UiDispatchKey(
             keyData = data,
             inputEventDispatcher = dispatcher,
             modifier = Modifier.weight(1f).fillMaxHeight(),
+            enabled = enabled,
             content = content,
         )
     }
@@ -110,10 +124,10 @@ fun EditTextPanel(modifier: Modifier = Modifier) {
         Column(modifier = Modifier.weight(3f).fillMaxHeight()) {
             // Row 1: select-all | up | clear
             Row(modifier = Modifier.weight(1f).fillMaxWidth()) {
-                Key(TextKeyData.CLIPBOARD_SELECT_ALL) {
+                Key(TextKeyData.CLIPBOARD_SELECT_ALL, enabled = hasText) {
                     UiKeyLabel(uiString(R.string.ui__edit__select_all), Icons.Default.SelectAll)
                 }
-                Key(TextKeyData.ARROW_UP) {
+                Key(TextKeyData.ARROW_UP, enabled = hasText) {
                     Icon(Icons.Default.KeyboardArrowUp, contentDescription = null)
                 }
                 Tap(
@@ -130,14 +144,14 @@ fun EditTextPanel(modifier: Modifier = Modifier) {
             }
             // Row 2: left | select | right
             Row(modifier = Modifier.weight(1f).fillMaxWidth()) {
-                Key(TextKeyData.ARROW_LEFT) {
+                Key(TextKeyData.ARROW_LEFT, enabled = canLeft) {
                     Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = null)
                 }
-                Key(TextKeyData.CLIPBOARD_SELECT) {
+                Key(TextKeyData.CLIPBOARD_SELECT, enabled = hasText) {
                     UiKeyLabel(uiString(R.string.ui__edit__select))
                     if (selectionModeOn) ActiveDot()
                 }
-                Key(TextKeyData.ARROW_RIGHT) {
+                Key(TextKeyData.ARROW_RIGHT, enabled = canRight) {
                     Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
                 }
             }
@@ -160,7 +174,7 @@ fun EditTextPanel(modifier: Modifier = Modifier) {
                 ) {
                     UiKeyLabel(uiString(R.string.ui__edit__search), Icons.Default.Search)
                 }
-                Key(TextKeyData.ARROW_DOWN) {
+                Key(TextKeyData.ARROW_DOWN, enabled = hasText) {
                     Icon(Icons.Default.KeyboardArrowDown, contentDescription = null)
                 }
                 Tap(
@@ -173,19 +187,20 @@ fun EditTextPanel(modifier: Modifier = Modifier) {
                         keyboardManager.activeState.isManualSelectionModeStart = false
                         keyboardManager.activeState.isManualSelectionModeEnd = false
                     },
+                    enabled = hasSelection || selectionModeOn,
                 ) {
                     UiKeyLabel(uiString(R.string.ui__edit__cancel), UiIcons.CircleX)
                 }
             }
             // Row 4: copy | cut | paste
             Row(modifier = Modifier.weight(1f).fillMaxWidth()) {
-                Key(TextKeyData.CLIPBOARD_COPY) {
+                Key(TextKeyData.CLIPBOARD_COPY, enabled = hasSelection) {
                     UiKeyLabel(uiString(R.string.ui__edit__copy), Icons.Default.ContentCopy)
                 }
-                Key(TextKeyData.CLIPBOARD_CUT) {
+                Key(TextKeyData.CLIPBOARD_CUT, enabled = hasSelection) {
                     UiKeyLabel(uiString(R.string.ui__edit__cut), Icons.Default.ContentCut)
                 }
-                Key(TextKeyData.CLIPBOARD_PASTE) {
+                Key(TextKeyData.CLIPBOARD_PASTE, enabled = canPaste) {
                     UiKeyLabel(uiString(R.string.ui__edit__paste), UiIcons.PasteTornSheet)
                 }
             }
@@ -196,6 +211,7 @@ fun EditTextPanel(modifier: Modifier = Modifier) {
                 keyData = TextKeyData.DELETE,
                 inputEventDispatcher = dispatcher,
                 modifier = Modifier.weight(1f).fillMaxWidth(),
+                enabled = canLeft,
             ) {
                 Icon(Icons.AutoMirrored.Outlined.Backspace, contentDescription = null)
             }
