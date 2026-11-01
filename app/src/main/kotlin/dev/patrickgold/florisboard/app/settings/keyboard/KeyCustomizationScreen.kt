@@ -144,8 +144,10 @@ fun KeyCustomizationScreen() = FlorisScreen {
                 for (key in keys) {
                     val custom = customizations.find(key.code)
                     val isSelected = selected == key
+                    // The key being edited is also shaded, so it is easy to see which key is selected
                     val background = custom?.background?.let { Color(it) }
-                        ?: MaterialTheme.colorScheme.surfaceVariant
+                        ?: if (isSelected) MaterialTheme.colorScheme.primaryContainer
+                        else MaterialTheme.colorScheme.surfaceVariant
                     val foreground = custom?.foreground?.let { Color(it) }
                         ?: MaterialTheme.colorScheme.onSurfaceVariant
                     Surface(
