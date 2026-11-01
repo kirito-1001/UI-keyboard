@@ -64,8 +64,8 @@ import org.florisboard.lib.snygg.ui.SnyggIconButton
 import org.florisboard.lib.snygg.ui.SnyggRow
 import org.florisboard.lib.snygg.ui.SnyggText
 
-/** Size of the toolbar icons (24dp default size + 50%). */
-private val ToolbarIconSize = 36.dp
+/** Size of the toolbar icons (30dp). */
+private val ToolbarIconSize = 30.dp
 
 /**
  * The toolbar of the "UI keyboard", shown while there are no word suggestions.
