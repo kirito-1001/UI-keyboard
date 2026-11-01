@@ -40,6 +40,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -135,7 +136,8 @@ fun UiToolbar(modifier: Modifier = Modifier) {
                         return@awaitEachGesture
                     }
                     UiPanelState.menuEntries = buildEntries()
-                    UiPanelState.languageMenuHighlight = -1
+                    UiPanelState.menuScroll = 0
+                    UiPanelState.menuFingerSlot = -1
                     UiPanelState.languageMenuOpen = true
                     val startY = longPress.position.y
                     var moved = false
@@ -147,15 +149,14 @@ fun UiToolbar(modifier: Modifier = Modifier) {
                         if (!moved && kotlin.math.abs(y - startY) > slot / 3f) moved = true
                         // Item 0 starts one slot above the toolbar, item 1 is level with the toolbar, and so on.
                         val index = kotlin.math.floor((y + slot) / slot).toInt()
-                        UiPanelState.languageMenuHighlight =
-                            if (moved && index in UiPanelState.menuEntries.indices) index else -1
+                        UiPanelState.menuFingerSlot = if (moved && index in 0 until UiPanelState.MENU_VISIBLE) index else -1
                         val released = !change.pressed
                         change.consume()
                         if (released) break
                     }
                     val chosen = UiPanelState.menuEntries.getOrNull(UiPanelState.languageMenuHighlight)
                     UiPanelState.languageMenuOpen = false
-                    UiPanelState.languageMenuHighlight = -1
+                    UiPanelState.menuFingerSlot = -1
                     chosen?.action?.invoke()
                 }
             },
@@ -178,7 +179,9 @@ fun UiToolbar(modifier: Modifier = Modifier) {
 
 /**
  * The popup menu of the language box. It is drawn on the left side, starting one item above the toolbar, so the items
- * are split between the area above and below the toolbar. Must be placed at the top-start corner of the keyboard view.
+ * are split between the area above and below the toolbar. Only [UiPanelState.MENU_VISIBLE] entries are visible at
+ * once: the two middle ones normally, the first and last faded. Holding the finger on a faded entry scrolls the list.
+ * Must be placed at the top-start corner of the keyboard view.
  */
 @Composable
 fun UiLanguageMenu(modifier: Modifier = Modifier) {
@@ -187,18 +190,38 @@ fun UiLanguageMenu(modifier: Modifier = Modifier) {
     val density = androidx.compose.ui.platform.LocalDensity.current
     val bar = FlorisImeSizing.smartbarHeight
     val ui = FlorisImeSizing.keyboardUiHeight()
-    val slot = minOf(bar, (bar + ui) / maxOf(entries.size - 1, 1))
+    val visible = minOf(UiPanelState.MENU_VISIBLE, entries.size)
+    val maxScroll = entries.size - visible
+    val slot = minOf(bar, (bar + ui) / maxOf(visible - 1, 1))
     SideEffect { UiPanelState.menuItemHeightPx = with(density) { slot.roundToPx() }.coerceAtLeast(1) }
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        while (true) {
+            kotlinx.coroutines.delay(350)
+            if (UiPanelState.menuFingerSlot == 0 && UiPanelState.menuScroll > 0) {
+                UiPanelState.menuScroll -= 1
+            } else if (UiPanelState.menuFingerSlot == visible - 1 && UiPanelState.menuScroll < maxScroll) {
+                UiPanelState.menuScroll += 1
+            }
+        }
+    }
     Column(
         modifier = modifier
             .absoluteOffset(x = 8.dp, y = -slot)
             .width(170.dp),
     ) {
-        entries.forEachIndexed { index, entry ->
+        for (slotIndex in 0 until visible) {
+            val index = UiPanelState.menuScroll + slotIndex
+            val entry = entries.getOrNull(index) ?: continue
+            val fadeTop = slotIndex == 0 && UiPanelState.menuScroll > 0
+            val fadeBottom = slotIndex == visible - 1 && UiPanelState.menuScroll < maxScroll
             SnyggBox(
                 elementName = FlorisImeUi.Key.elementName,
                 selector = if (index == UiPanelState.languageMenuHighlight) SnyggSelector.PRESSED else SnyggSelector.NONE,
-                modifier = Modifier.fillMaxWidth().height(slot).padding(vertical = 4.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(slot)
+                    .padding(vertical = 4.dp)
+                    .alpha(if (fadeTop || fadeBottom) 0.35f else 1f),
                 contentAlignment = Alignment.Center,
             ) {
                 SnyggText(text = entry.label)

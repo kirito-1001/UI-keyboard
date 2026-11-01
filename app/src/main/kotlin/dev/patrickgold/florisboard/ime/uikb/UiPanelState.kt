@@ -40,8 +40,20 @@ object UiPanelState {
     /** True while the language popup menu (opened by long-pressing the language box) is visible. */
     var languageMenuOpen by mutableStateOf(false)
 
-    /** Index of the language menu item currently under the finger, or -1. */
-    var languageMenuHighlight by mutableIntStateOf(-1)
+    /** Index of the first visible menu entry (the menu shows up to [MENU_VISIBLE] entries at once). */
+    var menuScroll by mutableIntStateOf(0)
+
+    /** Visible slot (0 until [MENU_VISIBLE]) under the finger, or -1. */
+    var menuFingerSlot by mutableIntStateOf(-1)
+
+    /** Index of the menu entry currently under the finger, or -1. */
+    val languageMenuHighlight: Int
+        get() {
+            val visible = minOf(MENU_VISIBLE, menuEntries.size)
+            return if (menuFingerSlot in 0 until visible) menuScroll + menuFingerSlot else -1
+        }
+
+    const val MENU_VISIBLE = 4
 
     /** Entries of the language popup menu, filled when the menu is opened. */
     var menuEntries by mutableStateOf(emptyList<UiMenuEntry>())
