@@ -53,7 +53,8 @@ object UiPanelState {
             return if (menuFingerSlot in 0 until visible) menuScroll + menuFingerSlot else -1
         }
 
-    const val MENU_VISIBLE = 4
+    /** The whole menu is always shown, no scrolling. */
+    const val MENU_VISIBLE = Int.MAX_VALUE
 
     /** Entries of the language popup menu, filled when the menu is opened. */
     var menuEntries by mutableStateOf(emptyList<UiMenuEntry>())
