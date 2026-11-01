@@ -79,6 +79,8 @@ import org.florisboard.lib.snygg.ui.SnyggText
 private val MenuHighlightColor = Color(0xFF2ECC71)
 
 /** Size of the toolbar icons. */
+private val MenuShape = RoundedCornerShape(6.dp)
+private val MenuIconBoxSize = 40.dp
 private val ToolbarIconSize = 28.dp
 
 /** The edit-text icon keeps its larger size. */
@@ -175,7 +177,7 @@ fun UiToolbar(modifier: Modifier = Modifier) {
     val outlineColor = rememberSnyggThemeQuery(FlorisImeUi.SmartbarActionKey.elementName)
         .foreground(Color.Gray).copy(alpha = 0.5f)
     val lineWidth = 1.dp
-    val langOutline = Modifier.border(lineWidth, outlineColor, RoundedCornerShape(10.dp))
+    val langOutline = Modifier.border(lineWidth, outlineColor, MenuShape)
 
     @Composable
     fun Divider() {
@@ -345,8 +347,12 @@ fun UiLanguageMenu(modifier: Modifier = Modifier) {
     val iconOnly = UiPanelState.menuIconOnly
     val menuModifier = if (iconOnly) {
         modifier
-            .absoluteOffset(x = with(density) { UiPanelState.menuAnchorLeftPx.toDp() }, y = -slot)
-            .width(with(density) { UiPanelState.menuAnchorWidthPx.toDp() })
+            .absoluteOffset(
+                x = with(density) { (UiPanelState.menuAnchorLeftPx + UiPanelState.menuAnchorWidthPx / 2).toDp() } -
+                    MenuIconBoxSize / 2,
+                y = -slot,
+            )
+            .width(MenuIconBoxSize)
     } else {
         modifier.absoluteOffset(y = -slot).width(170.dp)
     }
@@ -359,9 +365,9 @@ fun UiLanguageMenu(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(slot)
-                    .padding(vertical = 4.dp)
-                    .background(if (highlighted) MenuHighlightColor else keyColor, RoundedCornerShape(10.dp))
-                    .border(1.5.dp, outlineColor, RoundedCornerShape(10.dp)),
+                    .padding(vertical = if (iconOnly) maxOf(0.dp, (slot - MenuIconBoxSize) / 2) else 4.dp)
+                    .background(if (highlighted) MenuHighlightColor else keyColor, MenuShape)
+                    .border(1.5.dp, outlineColor, MenuShape),
                 contentAlignment = Alignment.Center,
             ) {
                 if (iconOnly && entry.icon != null) {
