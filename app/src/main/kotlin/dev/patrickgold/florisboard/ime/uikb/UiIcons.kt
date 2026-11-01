@@ -113,52 +113,61 @@ object UiIcons {
     }
 
     /**
-     * The "edit text" icon: a rounded box with a filled block (selected text) and a text cursor (I-beam) on its right.
+     * The "edit text" icon: a rounded box outline (open around the cursor), a filled block (selected text) inside it and
+     * a text cursor (I-beam with flat serifs). Drawn in a 380 x 380 viewport.
      */
     val EditText: ImageVector by lazy {
         ImageVector.Builder(
             name = "EditText",
             defaultWidth = 24.dp,
             defaultHeight = 24.dp,
-            viewportWidth = 24f,
-            viewportHeight = 24f,
+            viewportWidth = 380f,
+            viewportHeight = 380f,
         ).apply {
-            // Box outline
+            // Left part of the box outline
             path(
                 fill = null,
                 stroke = SolidColor(Color.Black),
-                strokeLineWidth = 2f,
-                strokeLineCap = StrokeCap.Round,
+                strokeLineWidth = 17f,
+                strokeLineCap = StrokeCap.Butt,
                 strokeLineJoin = StrokeJoin.Round,
             ) {
-                moveTo(18f, 8f)
-                lineTo(4f, 8f)
-                lineTo(2.5f, 9.5f)
-                lineTo(2.5f, 14.5f)
-                lineTo(4f, 16f)
-                lineTo(18f, 16f)
+                moveTo(214f, 118.5f)
+                lineTo(82f, 118.5f)
+                arcTo(21.5f, 21.5f, 0f, false, false, 60.5f, 140f)
+                lineTo(60.5f, 233f)
+                arcTo(21.5f, 21.5f, 0f, false, false, 82f, 254.5f)
+                lineTo(214f, 254.5f)
+                // Right bracket
+                moveTo(250f, 118.5f)
+                lineTo(273f, 118.5f)
+                arcTo(21.5f, 21.5f, 0f, false, true, 294.5f, 140f)
+                lineTo(294.5f, 233f)
+                arcTo(21.5f, 21.5f, 0f, false, true, 273f, 254.5f)
+                lineTo(250f, 254.5f)
             }
-            // Selected-text block
+            // Selected-text block, stem and serifs of the cursor
             path(fill = SolidColor(Color.Black)) {
-                moveTo(5.5f, 10.5f)
-                lineTo(12f, 10.5f)
-                lineTo(12f, 13.5f)
-                lineTo(5.5f, 13.5f)
+                moveTo(92f, 148f)
+                lineTo(182f, 148f)
+                lineTo(182f, 226f)
+                lineTo(92f, 226f)
                 close()
-            }
-            // I-beam cursor
-            path(
-                fill = null,
-                stroke = SolidColor(Color.Black),
-                strokeLineWidth = 2f,
-                strokeLineCap = StrokeCap.Butt,
-            ) {
-                moveTo(16f, 3f)
-                lineTo(20f, 3f)
-                moveTo(18f, 3f)
-                lineTo(18f, 21f)
-                moveTo(16f, 21f)
-                lineTo(20f, 21f)
+                moveTo(211f, 76f)
+                lineTo(232f, 76f)
+                lineTo(232f, 300f)
+                lineTo(211f, 300f)
+                close()
+                moveTo(199f, 76f)
+                lineTo(244f, 76f)
+                lineTo(244f, 93f)
+                lineTo(199f, 93f)
+                close()
+                moveTo(199f, 283f)
+                lineTo(244f, 283f)
+                lineTo(244f, 300f)
+                lineTo(199f, 300f)
+                close()
             }
         }.build()
     }
