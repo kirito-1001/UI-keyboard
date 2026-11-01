@@ -93,7 +93,7 @@ fun TextInputLayout(
                 }
             }
         }
-        UiLanguageMenu(modifier = Modifier.align(Alignment.TopStart))
+        UiLanguageMenu(modifier = Modifier.align(Alignment.TopCenter))
         }
     }
 }

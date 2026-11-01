@@ -19,6 +19,7 @@ package dev.patrickgold.florisboard.ime.uikb
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.awaitLongPressOrCancellation
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -65,6 +66,8 @@ import org.florisboard.lib.snygg.ui.SnyggRow
 import org.florisboard.lib.snygg.ui.SnyggText
 
 /** Size of the toolbar icons (30dp). */
+private val MenuHighlightColor = Color(0xFF2ECC71)
+
 private val ToolbarIconSize = 30.dp
 
 /**
@@ -202,6 +205,9 @@ fun UiLanguageMenu(modifier: Modifier = Modifier) {
     val density = androidx.compose.ui.platform.LocalDensity.current
     val bar = FlorisImeSizing.smartbarHeight
     val ui = FlorisImeSizing.keyboardUiHeight()
+    val keyColor = rememberSnyggThemeQuery(FlorisImeUi.Key.elementName).background(Color.Gray)
+    val outlineColor = rememberSnyggThemeQuery(FlorisImeUi.SmartbarActionKey.elementName)
+        .foreground(Color.Gray).copy(alpha = 0.5f)
     val visible = minOf(UiPanelState.MENU_VISIBLE, entries.size)
     val maxScroll = entries.size - visible
     val slot = minOf(bar, (bar + ui) / maxOf(visible - 1, 1))
@@ -218,22 +224,20 @@ fun UiLanguageMenu(modifier: Modifier = Modifier) {
     }
     Column(
         modifier = modifier
-            .absoluteOffset(x = 8.dp, y = -slot)
+            .absoluteOffset(y = -slot)
             .width(170.dp),
     ) {
         for (slotIndex in 0 until visible) {
             val index = UiPanelState.menuScroll + slotIndex
             val entry = entries.getOrNull(index) ?: continue
-            val fadeTop = slotIndex == 0 && UiPanelState.menuScroll > 0
-            val fadeBottom = slotIndex == visible - 1 && UiPanelState.menuScroll < maxScroll
-            SnyggBox(
-                elementName = FlorisImeUi.Key.elementName,
-                selector = if (index == UiPanelState.languageMenuHighlight) SnyggSelector.PRESSED else SnyggSelector.NONE,
+            val highlighted = index == UiPanelState.languageMenuHighlight
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(slot)
                     .padding(vertical = 4.dp)
-                    .alpha(if (fadeTop || fadeBottom) 0.35f else 1f),
+                    .background(if (highlighted) MenuHighlightColor else keyColor, RoundedCornerShape(14.dp))
+                    .border(1.5.dp, outlineColor, RoundedCornerShape(14.dp)),
                 contentAlignment = Alignment.Center,
             ) {
                 SnyggText(text = entry.label)
