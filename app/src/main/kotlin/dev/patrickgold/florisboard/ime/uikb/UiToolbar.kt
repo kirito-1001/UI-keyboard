@@ -174,7 +174,7 @@ fun UiToolbar(modifier: Modifier = Modifier) {
     val outlineColor = rememberSnyggThemeQuery(FlorisImeUi.SmartbarActionKey.elementName)
         .foreground(Color.Gray).copy(alpha = 0.5f)
     val lineWidth = 1.dp
-    val langOutline = Modifier.border(lineWidth, outlineColor, RoundedCornerShape(12.dp))
+    val langOutline = Modifier.border(lineWidth, outlineColor, RoundedCornerShape(10.dp))
 
     @Composable
     fun Divider() {
