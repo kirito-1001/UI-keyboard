@@ -352,7 +352,7 @@ fun UiClipboardChip(item: ClipboardItem, modifier: Modifier = Modifier) {
     val chipColor = keyStyle.background(Color.Gray)
     val textColor = keyStyle.foreground(Color.White)
     val label = if (item.isSensitive) "••••••" else (item.text ?: "").replace('\n', ' ').trim()
-    Row(
+    Box(
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 8.dp, vertical = 6.dp)
@@ -363,20 +363,21 @@ fun UiClipboardChip(item: ClipboardItem, modifier: Modifier = Modifier) {
                 UiPanelState.lastUsedClipText = item.text
             }
             .padding(horizontal = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
+        contentAlignment = Alignment.Center,
     ) {
         androidx.compose.material3.Icon(
-            modifier = Modifier.size(20.dp),
+            modifier = Modifier.size(20.dp).align(Alignment.CenterStart),
             imageVector = Icons.AutoMirrored.Outlined.Assignment,
             contentDescription = null,
             tint = textColor,
         )
-        Spacer(modifier = Modifier.width(8.dp))
+        // The text is centered in the whole chip; the side padding keeps it clear of the icon
         androidx.compose.material3.Text(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 28.dp),
             text = label,
             color = textColor,
             fontSize = 15.sp,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
             maxLines = 1,
             overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
         )
