@@ -41,6 +41,7 @@ import dev.patrickgold.florisboard.ime.theme.FlorisImeUi
 import dev.patrickgold.florisboard.ime.uikb.ActionsPanel
 import dev.patrickgold.florisboard.ime.uikb.EditTextPanel
 import dev.patrickgold.florisboard.ime.uikb.NumericPanel
+import dev.patrickgold.florisboard.app.settings.theme.ProvideKeyboardFont
 import dev.patrickgold.florisboard.ime.uikb.UiLanguageMenu
 import dev.patrickgold.florisboard.ime.uikb.UiPanel
 import dev.patrickgold.florisboard.ime.uikb.UiPanelState
@@ -86,11 +87,13 @@ fun TextInputLayout(
                             painter = painterResource(R.drawable.ic_incognito),
                         )
                     }
-                    when (UiPanelState.panel) {
-                        UiPanel.EDIT_TEXT -> EditTextPanel()
-                        UiPanel.NUMERIC -> NumericPanel()
-                        UiPanel.ACTIONS -> ActionsPanel()
-                        UiPanel.NONE -> TextKeyboardLayout(evaluator = evaluator)
+                    ProvideKeyboardFont {
+                        when (UiPanelState.panel) {
+                            UiPanel.EDIT_TEXT -> EditTextPanel()
+                            UiPanel.NUMERIC -> NumericPanel()
+                            UiPanel.ACTIONS -> ActionsPanel()
+                            UiPanel.NONE -> TextKeyboardLayout(evaluator = evaluator)
+                        }
                     }
                 }
             }

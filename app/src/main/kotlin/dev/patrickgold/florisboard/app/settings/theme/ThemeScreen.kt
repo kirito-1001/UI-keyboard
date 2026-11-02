@@ -121,6 +121,8 @@ fun ThemeScreen() = FlorisScreen {
             }
         )
 
+        KeyboardFontSettings()
+
         AddonManagementReferenceBox(type = ExtensionListScreenType.EXT_THEME)
     }
 }

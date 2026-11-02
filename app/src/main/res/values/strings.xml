@@ -1180,4 +1180,10 @@
     <string name="ui__feature__edit_text">Edit text</string>
     <string name="ui__feature__clipboard">Clipboard</string>
     <string name="ui__feature__voice">Voice input</string>
+    <string name="ui__font__title">Keyboard font</string>
+    <string name="ui__font__summary">The font used on the keyboard</string>
+    <string name="ui__font__pick_hint">Tap to choose a font (ttf / otf)</string>
+    <string name="ui__font__size">Size</string>
+    <string name="ui__font__reset">Remove font</string>
+    <string name="ui__font__invalid">This file is not a valid font (ttf / otf)</string>
 </resources>

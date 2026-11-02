@@ -56,6 +56,7 @@ fun SnyggText(
     modifier: Modifier = Modifier,
     text: String,
 ) {
+    val fontOverride = LocalSnyggFontOverride.current
     ProvideSnyggStyle(elementName, attributes, selector) { style ->
         Text(
             modifier = modifier
@@ -66,10 +67,16 @@ fun SnyggText(
                 .snyggPadding(style),
             text = text,
             color = style.foreground(),
-            fontSize = style.fontSize(),
+            fontSize = style.fontSize().let { size ->
+                if (fontOverride != null && fontOverride.fontSizeDelta != 0f && size.isSp) {
+                    (size.value + fontOverride.fontSizeDelta).coerceAtLeast(4f).sp
+                } else {
+                    size
+                }
+            },
             fontStyle = style.fontStyle(),
             fontWeight = style.fontWeight(),
-            fontFamily = style.fontFamily(LocalSnyggPreloadedCustomFontFamilies.current),
+            fontFamily = fontOverride?.fontFamily ?: style.fontFamily(LocalSnyggPreloadedCustomFontFamilies.current),
             letterSpacing = style.letterSpacing(),
             lineHeight = style.lineHeight(),
             textAlign = style.textAlign(),

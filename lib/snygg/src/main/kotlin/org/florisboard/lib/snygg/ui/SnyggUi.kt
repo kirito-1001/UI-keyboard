@@ -91,6 +91,14 @@ internal val LocalSnyggAssetResolver: ProvidableCompositionLocal<SnyggAssetResol
         error("ProvideSnyggTheme not called.")
     }
 
+/**
+ * Optional override of the font of all [SnyggText] composables below it: a font family which replaces the one of the
+ * stylesheet, and a size change (in sp) which is added to the font size of the stylesheet.
+ */
+class SnyggFontOverride(val fontFamily: FontFamily?, val fontSizeDelta: Float)
+
+val LocalSnyggFontOverride: ProvidableCompositionLocal<SnyggFontOverride?> = compositionLocalOf { null }
+
 internal val LocalSnyggPreloadedCustomFontFamilies: ProvidableCompositionLocal<CompiledFontFamilyData> =
     compositionLocalOf {
         error("ProvideSnyggTheme not called.")

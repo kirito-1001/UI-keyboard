@@ -949,4 +949,10 @@
     <string name="ui__feature__edit_text">تحرير النص</string>
     <string name="ui__feature__clipboard">الحافظة</string>
     <string name="ui__feature__voice">إدخال صوتي</string>
+    <string name="ui__font__title">الخط المستخدم</string>
+    <string name="ui__font__summary">الخط المستخدم في لوحة المفاتيح</string>
+    <string name="ui__font__pick_hint">اضغط لاختيار خط من ذاكرة الهاتف (ttf / otf)</string>
+    <string name="ui__font__size">الحجم</string>
+    <string name="ui__font__reset">إلغاء الخط</string>
+    <string name="ui__font__invalid">الملف ليس خطًا صالحًا (ttf / otf)</string>
 </resources>

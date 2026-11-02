@@ -800,6 +800,18 @@ abstract class FlorisPreferenceModel : PreferenceModel() {
             },
             serializer = ColorPreferenceSerializer,
         )
+        val keyboardFontPath = string(
+            key = "theme__keyboard_font_path",
+            default = "",
+        )
+        val keyboardFontName = string(
+            key = "theme__keyboard_font_name",
+            default = "",
+        )
+        val keyboardFontSizeDelta = int(
+            key = "theme__keyboard_font_size_delta",
+            default = 0,
+        )
         val sunriseTime = localTime(
             key = "theme__sunrise_time",
             default = LocalTime(6, 0),
