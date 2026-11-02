@@ -122,8 +122,14 @@ private fun Modifier.uiMenuGesture(
             val slot = UiPanelState.menuItemHeightPx
             val y = change.position.y
             if (!moved && kotlin.math.abs(y - startY) > slot / 3f) moved = true
-            // Item 0 starts one slot above the toolbar, item 1 is level with the toolbar, and so on.
-            val index = kotlin.math.floor((y + slot) / slot).toInt()
+            // Language menu: item 0 starts one slot above the toolbar, item 1 is level with the toolbar, and so on.
+            // Icon menu: item 0 is level with the toolbar (it replaces the pressed button), the rest goes downwards.
+            // The touch position is relative to the button, which has a 4dp padding inside the toolbar.
+            val index = if (iconAnchor != null) {
+                kotlin.math.floor((y + 4.dp.toPx()) / slot).toInt()
+            } else {
+                kotlin.math.floor((y + slot) / slot).toInt()
+            }
             UiPanelState.menuFingerSlot = if (moved && index in 0 until UiPanelState.MENU_VISIBLE) index else -1
             val released = !change.pressed
             change.consume()
@@ -351,7 +357,6 @@ fun UiLanguageMenu(modifier: Modifier = Modifier) {
             .absoluteOffset(
                 x = with(density) { (UiPanelState.menuAnchorLeftPx + UiPanelState.menuAnchorWidthPx / 2).toDp() } -
                     MenuIconBoxSize / 2,
-                y = -slot,
             )
             .width(MenuIconBoxSize)
     } else {
