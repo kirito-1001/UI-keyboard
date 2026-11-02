@@ -348,6 +348,7 @@ fun UiToolbar(modifier: Modifier = Modifier, middle: (@Composable BoxScope.() ->
 fun UiClipboardChip(item: ClipboardItem, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val editorInstance by context.editorInstance()
+    val haptic = androidx.compose.ui.platform.LocalHapticFeedback.current
     val keyStyle = rememberSnyggThemeQuery(FlorisImeUi.Key.elementName)
     val chipColor = keyStyle.background(Color.Gray)
     val textColor = keyStyle.foreground(Color.White)
@@ -367,10 +368,28 @@ fun UiClipboardChip(item: ClipboardItem, modifier: Modifier = Modifier) {
             .fillMaxSize()
             .padding(horizontal = 8.dp, vertical = 6.dp)
             .background(chipColor, RoundedCornerShape(50))
-            .clickable {
-                editorInstance.commitClipboardItem(item)
-                UiPanelState.lastUsedClipTimestamp = item.creationTimestampMs
-                UiPanelState.lastUsedClipText = item.text
+            .pointerInput(item) {
+                // Tap: paste the text. Holding for 3 seconds: dismiss the chip without pasting.
+                awaitEachGesture {
+                    awaitFirstDown(requireUnconsumed = false)
+                    // true: finger lifted (tap), false: gesture cancelled (finger moved away), null: 3 seconds passed
+                    val result = kotlinx.coroutines.withTimeoutOrNull(3000L) {
+                        androidx.compose.foundation.gestures.waitForUpOrCancellation() != null
+                    }
+                    when (result) {
+                        true -> {
+                            editorInstance.commitClipboardItem(item)
+                            UiPanelState.lastUsedClipTimestamp = item.creationTimestampMs
+                            UiPanelState.lastUsedClipText = item.text
+                        }
+                        false -> {}
+                        null -> {
+                            haptic.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress)
+                            UiPanelState.lastUsedClipTimestamp = item.creationTimestampMs
+                            UiPanelState.lastUsedClipText = item.text
+                        }
+                    }
+                }
             }
             .padding(horizontal = 12.dp),
         contentAlignment = Alignment.Center,
