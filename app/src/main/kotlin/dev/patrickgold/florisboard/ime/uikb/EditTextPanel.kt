@@ -137,7 +137,7 @@ fun EditTextPanel(modifier: Modifier = Modifier) {
                             editorInstance.deleteBackwards(OperationUnit.CHARACTERS)
                         }
                     },
-                    enabled = hasSelection,
+                    // Never dimmed (excluded from the enabled/disabled look)
                 ) {
                     UiKeyLabel(uiString(R.string.ui__edit__clear), Icons.Default.Delete)
                 }
