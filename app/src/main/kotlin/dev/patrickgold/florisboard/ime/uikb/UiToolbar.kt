@@ -363,20 +363,19 @@ fun UiLanguageMenu(modifier: Modifier = Modifier) {
         modifier.absoluteOffset(y = -slot).width(170.dp)
     }
     val textColor = rememberSnyggThemeQuery(FlorisImeUi.Key.elementName).foreground(Color.White)
-    val darkKeyColor = Color(keyColor.red * 0.8f, keyColor.green * 0.8f, keyColor.blue * 0.8f, keyColor.alpha)
     Column(modifier = menuModifier) {
         for (slotIndex in 0 until visible) {
             val index = UiPanelState.menuScroll + slotIndex
             val entry = entries.getOrNull(index) ?: continue
             val highlighted = index == UiPanelState.languageMenuHighlight
             if (iconOnly && entry.icon != null) {
-                // Icon menu: darker key background, the selected icon turns green.
+                // Icon menu: the key background of the theme, the selected icon turns green.
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(slot)
                         .padding(vertical = maxOf(0.dp, (slot - MenuIconBoxSize) / 2))
-                        .background(darkKeyColor, MenuShape)
+                        .background(keyColor, MenuShape)
                         .border(1.5.dp, outlineColor, MenuShape),
                     contentAlignment = Alignment.Center,
                 ) {
