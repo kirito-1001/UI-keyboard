@@ -352,6 +352,16 @@ fun UiClipboardChip(item: ClipboardItem, modifier: Modifier = Modifier) {
     val chipColor = keyStyle.background(Color.Gray)
     val textColor = keyStyle.foreground(Color.White)
     val label = if (item.isSensitive) "••••••" else (item.text ?: "").replace('\n', ' ').trim()
+    // The icon sits on the right of Arabic (right-to-left) text and on the left of any other text; a long text is cut
+    // at its end only, so the beginning of the sentence stays visible.
+    val isRtlText = remember(label) {
+        label.isNotEmpty() &&
+            android.text.TextDirectionHeuristics.FIRSTSTRONG_LTR.isRtl(label, 0, label.length)
+    }
+    androidx.compose.runtime.CompositionLocalProvider(
+        androidx.compose.ui.platform.LocalLayoutDirection provides
+            if (isRtlText) androidx.compose.ui.unit.LayoutDirection.Rtl else androidx.compose.ui.unit.LayoutDirection.Ltr,
+    ) {
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -381,6 +391,7 @@ fun UiClipboardChip(item: ClipboardItem, modifier: Modifier = Modifier) {
             maxLines = 1,
             overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
         )
+    }
     }
 }
 
