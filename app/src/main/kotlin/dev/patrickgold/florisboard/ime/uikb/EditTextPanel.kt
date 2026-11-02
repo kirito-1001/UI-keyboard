@@ -137,7 +137,7 @@ fun EditTextPanel(modifier: Modifier = Modifier) {
                             editorInstance.deleteBackwards(OperationUnit.CHARACTERS)
                         }
                     },
-                    // Never dimmed (excluded from the enabled/disabled look)
+                    enabled = hasSelection,
                 ) {
                     UiKeyLabel(uiString(R.string.ui__edit__clear), Icons.Default.Delete)
                 }
@@ -211,7 +211,6 @@ fun EditTextPanel(modifier: Modifier = Modifier) {
                 keyData = TextKeyData.DELETE,
                 inputEventDispatcher = dispatcher,
                 modifier = Modifier.weight(1f).fillMaxWidth(),
-                enabled = canLeft,
             ) {
                 Icon(Icons.AutoMirrored.Outlined.Backspace, contentDescription = null)
             }
