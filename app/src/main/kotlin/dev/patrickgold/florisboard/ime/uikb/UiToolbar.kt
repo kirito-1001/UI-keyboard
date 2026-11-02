@@ -360,7 +360,7 @@ fun UiLanguageMenu(modifier: Modifier = Modifier) {
             )
             .width(MenuIconBoxSize)
     } else {
-        modifier.absoluteOffset(y = -slot).width(170.dp)
+        modifier.absoluteOffset(y = -slot).width(190.dp)
     }
     val textColor = rememberSnyggThemeQuery(FlorisImeUi.Key.elementName).foreground(Color.White)
     Column(modifier = menuModifier) {
@@ -395,16 +395,25 @@ fun UiLanguageMenu(modifier: Modifier = Modifier) {
                 }
             } else {
                 // Language menu: the selected item is 10% bigger (box and text), green, and its text glows in the
-                // text color. The vertical padding is larger than before so the gap between items is kept.
+                // text color. The neighbours move away so the gaps stay equal.
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(slot)
-                        .padding(vertical = 5.dp)
+                        .padding(vertical = 3.dp)
                         .graphicsLayer {
                             val scale = if (highlighted) 1.1f else 1f
                             scaleX = scale
                             scaleY = scale
+                            // The selected item grows by 5% of its height on both sides; the items before and after it
+                            // move away by the same amount so that all gaps stay equal. Only the drawing moves, the
+                            // touch slots stay where they are.
+                            val sel = UiPanelState.languageMenuHighlight
+                            translationY = when {
+                                sel < 0 || index == sel -> 0f
+                                index < sel -> -0.05f * size.height
+                                else -> 0.05f * size.height
+                            }
                         }
                         .background(if (highlighted) MenuHighlightColor else keyColor, MenuShape)
                         .border(1.5.dp, outlineColor, MenuShape),
