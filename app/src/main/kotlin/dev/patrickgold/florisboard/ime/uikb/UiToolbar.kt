@@ -58,6 +58,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -356,27 +357,70 @@ fun UiLanguageMenu(modifier: Modifier = Modifier) {
     } else {
         modifier.absoluteOffset(y = -slot).width(170.dp)
     }
+    val textColor = rememberSnyggThemeQuery(FlorisImeUi.Key.elementName).foreground(Color.White)
+    val darkKeyColor = Color(keyColor.red * 0.8f, keyColor.green * 0.8f, keyColor.blue * 0.8f, keyColor.alpha)
     Column(modifier = menuModifier) {
         for (slotIndex in 0 until visible) {
             val index = UiPanelState.menuScroll + slotIndex
             val entry = entries.getOrNull(index) ?: continue
             val highlighted = index == UiPanelState.languageMenuHighlight
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(slot)
-                    .padding(vertical = if (iconOnly) maxOf(0.dp, (slot - MenuIconBoxSize) / 2) else 4.dp)
-                    .background(if (highlighted) MenuHighlightColor else keyColor, MenuShape)
-                    .border(1.5.dp, outlineColor, MenuShape),
-                contentAlignment = Alignment.Center,
-            ) {
-                if (iconOnly && entry.icon != null) {
-                    SnyggIcon(
-                        modifier = Modifier.size(if (entry.icon === UiIcons.EditText) EditTextIconSize else ToolbarIconSize),
-                        imageVector = entry.icon,
+            if (iconOnly && entry.icon != null) {
+                // Icon menu: darker key background, the selected icon turns green.
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(slot)
+                        .padding(vertical = maxOf(0.dp, (slot - MenuIconBoxSize) / 2))
+                        .background(darkKeyColor, MenuShape)
+                        .border(1.5.dp, outlineColor, MenuShape),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    val iconModifier = Modifier.size(
+                        if (entry.icon === UiIcons.EditText) EditTextIconSize else ToolbarIconSize,
                     )
-                } else {
-                    SnyggText(text = entry.label)
+                    if (highlighted) {
+                        androidx.compose.material3.Icon(
+                            modifier = iconModifier,
+                            imageVector = entry.icon,
+                            contentDescription = null,
+                            tint = MenuHighlightColor,
+                        )
+                    } else {
+                        SnyggIcon(modifier = iconModifier, imageVector = entry.icon)
+                    }
+                }
+            } else {
+                // Language menu: the selected item is 10% bigger (box and text), green, and its text glows in the
+                // text color. The vertical padding is larger than before so the gap between items is kept.
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(slot)
+                        .padding(vertical = 5.dp)
+                        .graphicsLayer {
+                            val scale = if (highlighted) 1.1f else 1f
+                            scaleX = scale
+                            scaleY = scale
+                        }
+                        .background(if (highlighted) MenuHighlightColor else keyColor, MenuShape)
+                        .border(1.5.dp, outlineColor, MenuShape),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    if (highlighted) {
+                        androidx.compose.material3.Text(
+                            text = entry.label,
+                            color = textColor,
+                            style = androidx.compose.ui.text.TextStyle(
+                                shadow = androidx.compose.ui.graphics.Shadow(
+                                    color = textColor,
+                                    offset = androidx.compose.ui.geometry.Offset.Zero,
+                                    blurRadius = 14f,
+                                ),
+                            ),
+                        )
+                    } else {
+                        SnyggText(text = entry.label)
+                    }
                 }
             }
         }
