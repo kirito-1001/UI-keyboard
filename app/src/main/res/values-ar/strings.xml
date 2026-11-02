@@ -835,6 +835,7 @@
     <string name="enum__swipe_action__delete_words_precisely" comment="Enum value label">حذف الكلمات بدقة</string>
     <string name="enum__swipe_action__hide_keyboard" comment="Enum value label">إخفاء لوحة المفاتيح</string>
     <string name="enum__swipe_action__insert_space" comment="Enum value label">إدراج مسافة</string>
+    <string name="enum__swipe_action__repeat_space" comment="Enum value label">تكرار المسافة</string>
     <string name="enum__swipe_action__move_cursor_up" comment="Enum value label">تحريك المؤشر إلى الأعلى</string>
     <string name="enum__swipe_action__move_cursor_down" comment="Enum value label">تحريك المؤشر إلى الأسفل</string>
     <string name="enum__swipe_action__move_cursor_left" comment="Enum value label">تحريك المؤشر إلى اليسار</string>

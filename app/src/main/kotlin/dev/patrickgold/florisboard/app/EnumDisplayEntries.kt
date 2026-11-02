@@ -649,6 +649,114 @@ private val ENUM_DISPLAY_ENTRIES = mapOf<Pair<KClass<*>, String>, @Composable ()
             )
         }
     },
+    SwipeAction::class to "spaceLongPress" to {
+        listPrefEntries {
+            entry(
+                key = SwipeAction.NO_ACTION,
+                label = stringRes(R.string.enum__swipe_action__no_action),
+            )
+            entry(
+                key = SwipeAction.REPEAT_SPACE,
+                label = stringRes(R.string.enum__swipe_action__repeat_space),
+            )
+            entry(
+                key = SwipeAction.CYCLE_TO_PREVIOUS_KEYBOARD_MODE,
+                label = stringRes(R.string.enum__swipe_action__cycle_to_previous_keyboard_mode),
+            )
+            entry(
+                key = SwipeAction.CYCLE_TO_NEXT_KEYBOARD_MODE,
+                label = stringRes(R.string.enum__swipe_action__cycle_to_next_keyboard_mode),
+            )
+            entry(
+                key = SwipeAction.DELETE_WORD,
+                label = stringRes(R.string.enum__swipe_action__delete_word),
+            )
+            entry(
+                key = SwipeAction.HIDE_KEYBOARD,
+                label = stringRes(R.string.enum__swipe_action__hide_keyboard),
+            )
+            entry(
+                key = SwipeAction.INSERT_SPACE,
+                label = stringRes(R.string.enum__swipe_action__insert_space),
+            )
+            entry(
+                key = SwipeAction.MOVE_CURSOR_UP,
+                label = stringRes(R.string.enum__swipe_action__move_cursor_up),
+            )
+            entry(
+                key = SwipeAction.MOVE_CURSOR_DOWN,
+                label = stringRes(R.string.enum__swipe_action__move_cursor_down),
+            )
+            entry(
+                key = SwipeAction.MOVE_CURSOR_LEFT,
+                label = stringRes(R.string.enum__swipe_action__move_cursor_left),
+            )
+            entry(
+                key = SwipeAction.MOVE_CURSOR_RIGHT,
+                label = stringRes(R.string.enum__swipe_action__move_cursor_right),
+            )
+            entry(
+                key = SwipeAction.MOVE_CURSOR_START_OF_LINE,
+                label = stringRes(R.string.enum__swipe_action__move_cursor_start_of_line),
+            )
+            entry(
+                key = SwipeAction.MOVE_CURSOR_END_OF_LINE,
+                label = stringRes(R.string.enum__swipe_action__move_cursor_end_of_line),
+            )
+            entry(
+                key = SwipeAction.MOVE_CURSOR_START_OF_PAGE,
+                label = stringRes(R.string.enum__swipe_action__move_cursor_start_of_page),
+            )
+            entry(
+                key = SwipeAction.MOVE_CURSOR_END_OF_PAGE,
+                label = stringRes(R.string.enum__swipe_action__move_cursor_end_of_page),
+            )
+            entry(
+                key = SwipeAction.SHIFT,
+                label = stringRes(R.string.enum__swipe_action__shift),
+            )
+            entry(
+                key = SwipeAction.REDO,
+                label = stringRes(R.string.enum__swipe_action__redo),
+            )
+            entry(
+                key = SwipeAction.UNDO,
+                label = stringRes(R.string.enum__swipe_action__undo),
+            )
+            entry(
+                key = SwipeAction.SWITCH_TO_CLIPBOARD_CONTEXT,
+                label = stringRes(R.string.enum__swipe_action__switch_to_clipboard_context),
+            )
+            entry(
+                key = SwipeAction.SWITCH_TO_MEDIA_CONTEXT,
+                label = stringRes(R.string.enum__swipe_action__switch_to_media_context)
+            )
+            entry(
+                key = SwipeAction.SHOW_INPUT_METHOD_PICKER,
+                label = stringRes(R.string.enum__swipe_action__show_input_method_picker),
+            )
+            entry(
+                key = SwipeAction.SHOW_SUBTYPE_PICKER,
+                label = "Show subtype picker"
+            )
+            entry(
+                key = SwipeAction.SWITCH_TO_PREV_SUBTYPE,
+                label = stringRes(R.string.enum__swipe_action__switch_to_prev_subtype),
+            )
+            entry(
+                key = SwipeAction.SWITCH_TO_NEXT_SUBTYPE,
+                label = stringRes(R.string.enum__swipe_action__switch_to_next_subtype),
+            )
+            entry(
+                key = SwipeAction.SWITCH_TO_PREV_KEYBOARD,
+                label = stringRes(R.string.enum__swipe_action__switch_to_prev_keyboard),
+            )
+            entry(
+                key = SwipeAction.TOGGLE_SMARTBAR_VISIBILITY,
+                label = stringRes(R.string.enum__swipe_action__toggle_smartbar_visibility),
+            )
+        }
+    },
     SwipeAction::class to "deleteSwipe" to {
         listPrefEntries {
             entry(

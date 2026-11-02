@@ -583,6 +583,8 @@ private class TextKeyboardLayoutController(
                     when (key.computedData.code) {
                         KeyCode.SPACE, KeyCode.CJK_SPACE -> {
                             when (prefs.gestures.spaceBarLongPress.get()) {
+                                // Not handled here: returning false lets the dispatcher repeat the space key.
+                                SwipeAction.REPEAT_SPACE -> return@onLongPress false
                                 SwipeAction.NO_ACTION,
                                 SwipeAction.INSERT_SPACE -> {
                                 }
@@ -618,6 +620,8 @@ private class TextKeyboardLayoutController(
                         }
                     }
                 },
+                repeat = (key.computedData.code == KeyCode.SPACE || key.computedData.code == KeyCode.CJK_SPACE) &&
+                    prefs.gestures.spaceBarLongPress.get() == SwipeAction.REPEAT_SPACE,
             )
             if (prefs.keyboard.popupEnabled.get() && popupUiController.isSuitableForPopups(key)) {
                 popupUiController.show(key)

@@ -64,7 +64,9 @@ class InputEventDispatcher private constructor(private val repeatableKeyCodes: I
     private fun determineLongPressDelay(data: KeyData): Long {
         val delayMillis = prefs.keyboard.longPressDelay.get().toLong()
         val factor = when (data.code) {
-            KeyCode.SPACE, KeyCode.CJK_SPACE, KeyCode.SHIFT -> 2.5f
+            KeyCode.SPACE, KeyCode.CJK_SPACE ->
+                if (prefs.gestures.spaceBarLongPress.get() == SwipeAction.REPEAT_SPACE) 1.0f else 2.5f
+            KeyCode.SHIFT -> 2.5f
             KeyCode.LANGUAGE_SWITCH -> 2.0f
             else -> 1.0f
         }
@@ -97,6 +99,7 @@ class InputEventDispatcher private constructor(private val repeatableKeyCodes: I
         data: KeyData,
         onLongPress: () -> Boolean = { false },
         onRepeat: () -> Boolean = { true },
+        repeat: Boolean = false,
     ) = runBlocking {
         flogDebug { data.toString() }
         val eventTime = SystemClock.uptimeMillis()
@@ -109,7 +112,7 @@ class InputEventDispatcher private constructor(private val repeatableKeyCodes: I
                     val longPressResult = withContext(Dispatchers.Main) { onLongPress() }
                     if (longPressResult) {
                         pressedKeyInfo.blockUp = true
-                    } else if (repeatableKeyCodes.contains(data.code)) {
+                    } else if (repeat || repeatableKeyCodes.contains(data.code)) {
                         val repeatData = determineRepeatData(data)
                         val repeatDelay = determineRepeatDelay(repeatData)
                         while (isActive) {

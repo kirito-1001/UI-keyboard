@@ -135,7 +135,7 @@ fun GesturesScreen() = FlorisScreen {
             ListPreference(
                 prefs.gestures.spaceBarLongPress,
                 title = stringRes(R.string.pref__gestures__space_bar_long_press__label),
-                entries = enumDisplayEntriesOf(SwipeAction::class, "general"),
+                entries = enumDisplayEntriesOf(SwipeAction::class, "spaceLongPress"),
             )
         }
 

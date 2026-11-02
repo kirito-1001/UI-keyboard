@@ -42,7 +42,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
+import dev.patrickgold.florisboard.app.FlorisPreferenceStore
 import dev.patrickgold.florisboard.ime.input.InputEventDispatcher
+import dev.patrickgold.florisboard.ime.text.gestures.SwipeAction
+import dev.patrickgold.florisboard.ime.text.key.KeyCode
 import dev.patrickgold.florisboard.ime.input.LocalInputFeedbackController
 import dev.patrickgold.florisboard.ime.keyboard.KeyData
 import dev.patrickgold.florisboard.ime.text.keyboard.TextKeyData
@@ -74,6 +77,7 @@ fun UiDispatchKey(
     val feedback = LocalInputFeedbackController.current
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
+    val prefs by FlorisPreferenceStore
     SnyggBox(
         elementName = FlorisImeUi.Key.elementName,
         attributes = mapOf(FlorisImeUi.Attr.Code to keyData.code),
@@ -88,7 +92,11 @@ fun UiDispatchKey(
                     if (down.pressed != down.previousPressed) down.consume()
                     val press = PressInteraction.Press(down.position)
                     interactionSource.tryEmit(press)
-                    inputEventDispatcher.sendDown(keyData)
+                    inputEventDispatcher.sendDown(
+                        keyData,
+                        repeat = keyData.code == KeyCode.SPACE &&
+                            prefs.gestures.spaceBarLongPress.get() == SwipeAction.REPEAT_SPACE,
+                    )
                     feedback.keyPress(keyData)
                     val up = waitForUpOrCancellation()
                     if (up != null) {
