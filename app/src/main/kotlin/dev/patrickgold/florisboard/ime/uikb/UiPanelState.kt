@@ -18,6 +18,7 @@ package dev.patrickgold.florisboard.ime.uikb
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -70,6 +71,10 @@ object UiPanelState {
     /** Left edge and width (pixels) of the button the icon-only menu is attached to. */
     var menuAnchorLeftPx by mutableIntStateOf(0)
     var menuAnchorWidthPx by mutableIntStateOf(0)
+
+    /** Identifies the clipboard item which was already pasted from the toolbar chip (timestamp and text). */
+    var lastUsedClipTimestamp by mutableLongStateOf(-1L)
+    var lastUsedClipText by mutableStateOf<String?>(null)
 
     /** Toggles [target]: shows it, or goes back to the letters if it is already shown. */
     fun toggle(target: UiPanel) {

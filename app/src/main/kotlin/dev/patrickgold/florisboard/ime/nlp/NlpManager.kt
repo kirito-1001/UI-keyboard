@@ -371,8 +371,9 @@ class NlpManager(context: Context) {
             allowPossiblyOffensive: Boolean,
             isPrivateSession: Boolean,
         ): List<SuggestionCandidate> {
-            // Check if enabled
-            if (!prefs.clipboard.suggestionEnabled.get()) return emptyList()
+            // Replaced by the recently-copied-text chip in the toolbar (see UiClipboardChip)
+            val replacedByToolbarChip = true
+            if (replacedByToolbarChip) return emptyList()
 
             val currentItem = validateClipboardItem(clipboardManager.primaryClip, lastClipboardItemId, content.text)
                 ?: return emptyList()

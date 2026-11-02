@@ -29,6 +29,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.Color
 import org.florisboard.lib.snygg.ui.rememberSnyggThemeQuery
 import androidx.compose.foundation.layout.Box
+import dev.patrickgold.florisboard.ime.clipboard.provider.ClipboardItem
+import dev.patrickgold.florisboard.editorInstance
+import androidx.compose.ui.unit.sp
+import androidx.compose.material.icons.automirrored.outlined.Assignment
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -151,7 +159,7 @@ private fun Modifier.uiMenuGesture(
  * Left to right: logo (opens the settings), edit-text panel, language box, emoji, hide keyboard.
  */
 @Composable
-fun UiToolbar(modifier: Modifier = Modifier) {
+fun UiToolbar(modifier: Modifier = Modifier, middle: (@Composable BoxScope.() -> Unit)? = null) {
     val context = LocalContext.current
     val keyboardManager by context.keyboardManager()
     val subtypeManager by context.subtypeManager()
@@ -278,49 +286,99 @@ fun UiToolbar(modifier: Modifier = Modifier) {
         }
     }
 
-    // Layout: [ logo | edit ]  [ language box, 140dp, centered ]  [ emoji | hide ]
-    // Each side takes half of the free space, and its divider is exactly in the middle of that side.
-    SnyggRow(
-        modifier = modifier.fillMaxWidth().height(barHeight),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Row(modifier = Modifier.weight(1f).fillMaxHeight(), verticalAlignment = Alignment.CenterVertically) {
-            Cell {
+    // Layout: [ logo ] | [ edit  language box (140dp)  emoji ] | [ hide ]
+    // Logo and hide always stay. The area between the two dividers is the "middle" and can be replaced by [middle]
+    // (the recently copied text or the word suggestions).
+    BoxWithConstraints(modifier = modifier.fillMaxWidth().height(barHeight)) {
+        val sideCell = (maxWidth - 140.dp) / 4
+        Row(modifier = Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
+            Box(modifier = Modifier.width(sideCell).fillMaxHeight(), contentAlignment = Alignment.Center) {
                 BarButton(onClick = { UiPanelState.toggle(UiPanel.ACTIONS) }) {
                     SnyggIcon(modifier = Modifier.size(ToolbarIconSize), imageVector = UiIcons.Logo)
                 }
             }
             Divider()
-            Cell { SlotButton(slotEdit, prefs.smartbar.uiSlotEdit) }
-        }
-
-        // Language box: tap switches to the next language, long press opens the popup menu.
-        SnyggBox(
-            elementName = FlorisImeUi.SmartbarActionKey.elementName,
-            selector = if (UiPanelState.languageMenuOpen) SnyggSelector.PRESSED else SnyggSelector.NONE,
-            modifier = Modifier.width(140.dp).height(barHeight).padding(vertical = 6.dp).then(langOutline),
-            clickAndSemanticsModifier = Modifier.uiMenuGesture(
-                key = subtypes,
-                onTap = {
-                    subtypeManager.switchToNextSubtype()
-                    UiPanelState.panel = UiPanel.NONE
-                },
-                entries = { buildEntries() },
-            ),
-            contentAlignment = Alignment.Center,
-        ) {
-            SnyggText(text = languageName(activeSubtype.primaryLocale.base))
-        }
-
-        Row(modifier = Modifier.weight(1f).fillMaxHeight(), verticalAlignment = Alignment.CenterVertically) {
-            Cell { SlotButton(slotEmoji, prefs.smartbar.uiSlotEmoji) }
+            Box(modifier = Modifier.weight(1f).fillMaxHeight(), contentAlignment = Alignment.Center) {
+                if (middle != null) {
+                    middle()
+                } else {
+                    Row(modifier = Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
+                        Box(modifier = Modifier.weight(1f).fillMaxHeight(), contentAlignment = Alignment.Center) {
+                            SlotButton(slotEdit, prefs.smartbar.uiSlotEdit)
+                        }
+                        // Language box: tap switches to the next language, long press opens the popup menu.
+                        SnyggBox(
+                            elementName = FlorisImeUi.SmartbarActionKey.elementName,
+                            selector = if (UiPanelState.languageMenuOpen) SnyggSelector.PRESSED else SnyggSelector.NONE,
+                            modifier = Modifier.width(140.dp).height(barHeight).padding(vertical = 6.dp).then(langOutline),
+                            clickAndSemanticsModifier = Modifier.uiMenuGesture(
+                                key = subtypes,
+                                onTap = {
+                                    subtypeManager.switchToNextSubtype()
+                                    UiPanelState.panel = UiPanel.NONE
+                                },
+                                entries = { buildEntries() },
+                            ),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            SnyggText(text = languageName(activeSubtype.primaryLocale.base))
+                        }
+                        Box(modifier = Modifier.weight(1f).fillMaxHeight(), contentAlignment = Alignment.Center) {
+                            SlotButton(slotEmoji, prefs.smartbar.uiSlotEmoji)
+                        }
+                    }
+                }
+            }
             Divider()
-            Cell {
+            Box(modifier = Modifier.width(sideCell).fillMaxHeight(), contentAlignment = Alignment.Center) {
                 BarButton(onClick = { dispatcher.sendDownUp(TextKeyData.IME_HIDE_UI) }) {
                     SnyggIcon(modifier = Modifier.size(ToolbarIconSize), imageVector = Icons.Default.ArrowDropDown)
                 }
             }
         }
+    }
+}
+
+/**
+ * The "recently copied text" chip. Fills the middle area of the toolbar, has the key color of the active theme,
+ * and pastes the text on tap.
+ */
+@Composable
+fun UiClipboardChip(item: ClipboardItem, modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+    val editorInstance by context.editorInstance()
+    val keyStyle = rememberSnyggThemeQuery(FlorisImeUi.Key.elementName)
+    val chipColor = keyStyle.background(Color.Gray)
+    val textColor = keyStyle.foreground(Color.White)
+    val label = if (item.isSensitive) "••••••" else (item.text ?: "").replace('\n', ' ').trim()
+    Row(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = 8.dp, vertical = 6.dp)
+            .background(chipColor, RoundedCornerShape(50))
+            .clickable {
+                editorInstance.commitClipboardItem(item)
+                UiPanelState.lastUsedClipTimestamp = item.creationTimestampMs
+                UiPanelState.lastUsedClipText = item.text
+            }
+            .padding(horizontal = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        androidx.compose.material3.Icon(
+            modifier = Modifier.size(20.dp),
+            imageVector = Icons.AutoMirrored.Outlined.Assignment,
+            contentDescription = null,
+            tint = textColor,
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        androidx.compose.material3.Text(
+            modifier = Modifier.weight(1f),
+            text = label,
+            color = textColor,
+            fontSize = 15.sp,
+            maxLines = 1,
+            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+        )
     }
 }
 

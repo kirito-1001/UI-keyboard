@@ -24,6 +24,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.absoluteOffset
@@ -61,6 +62,10 @@ import dev.patrickgold.florisboard.ime.smartbar.quickaction.QuickActionButton
 import dev.patrickgold.florisboard.ime.smartbar.quickaction.QuickActionsRow
 import dev.patrickgold.florisboard.ime.smartbar.quickaction.ToggleOverflowPanelAction
 import dev.patrickgold.florisboard.ime.theme.FlorisImeUi
+import dev.patrickgold.florisboard.clipboardManager
+import dev.patrickgold.florisboard.ime.clipboard.provider.ItemType
+import dev.patrickgold.florisboard.ime.uikb.UiClipboardChip
+import dev.patrickgold.florisboard.ime.uikb.UiPanelState
 import dev.patrickgold.florisboard.ime.uikb.UiToolbar
 import dev.patrickgold.florisboard.keyboardManager
 import dev.patrickgold.florisboard.nlpManager
@@ -324,15 +329,27 @@ private fun SmartbarMainRow(modifier: Modifier = Modifier) {
             .height(FlorisImeSizing.smartbarHeight),
     ) {
         val activeCandidates by nlpManager.activeCandidatesFlow.collectAsState()
-        if (shouldShowInlineSuggestionsUi) {
-            // Inline autofill suggestions replace the whole toolbar
-            InlineSuggestionsUi(inlineSuggestions)
-        } else if (activeCandidates.isNotEmpty()) {
-            // While typing, word suggestions replace the whole toolbar
-            CandidatesRow()
-        } else {
-            UiToolbar()
+        val clipboardManager by context.clipboardManager()
+        val primaryClip by clipboardManager.primaryClipFlow.collectAsState()
+        // The recently copied text stays until it is pasted (or replaced by a newer copy). It has priority over word
+        // suggestions. Logo and hide button always stay; only the middle area of the toolbar is replaced.
+        val clipForChip = primaryClip?.takeIf { clip ->
+            clip.type == ItemType.TEXT &&
+                !clip.text.isNullOrBlank() &&
+                !(clip.creationTimestampMs == UiPanelState.lastUsedClipTimestamp &&
+                    clip.text == UiPanelState.lastUsedClipText)
         }
+        val inlineContent: @Composable BoxScope.() -> Unit = { InlineSuggestionsUi(inlineSuggestions) }
+        val chipContent: @Composable BoxScope.() -> Unit = { clipForChip?.let { UiClipboardChip(it) } }
+        val candidatesContent: @Composable BoxScope.() -> Unit = { CandidatesRow() }
+        UiToolbar(
+            middle = when {
+                shouldShowInlineSuggestionsUi -> inlineContent
+                clipForChip != null -> chipContent
+                activeCandidates.isNotEmpty() -> candidatesContent
+                else -> null
+            },
+        )
     }
 }
 
