@@ -38,6 +38,17 @@ fun ClipboardScreen() = FlorisScreen {
     previewFieldVisible = true
 
     content {
+        PreferenceGroup(title = stringRes(R.string.ui__clipboard__recent_group)) {
+            DialogSliderPreference(
+                prefs.clipboard.recentChipHoldSeconds,
+                title = stringRes(R.string.ui__clipboard__recent_hold_time),
+                valueLabel = { stringRes(R.string.ui__clipboard__recent_hold_time_value, "v" to it) },
+                min = 1,
+                max = 10,
+                stepIncrement = 1,
+            )
+        }
+
         SwitchPreference(
             prefs.clipboard.useInternalClipboard,
             title = stringRes(R.string.pref__clipboard__use_internal_clipboard__label),

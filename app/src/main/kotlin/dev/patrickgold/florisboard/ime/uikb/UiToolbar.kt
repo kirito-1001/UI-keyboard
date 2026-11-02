@@ -349,6 +349,7 @@ fun UiClipboardChip(item: ClipboardItem, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val editorInstance by context.editorInstance()
     val haptic = androidx.compose.ui.platform.LocalHapticFeedback.current
+    val prefs by FlorisPreferenceStore
     val keyStyle = rememberSnyggThemeQuery(FlorisImeUi.Key.elementName)
     val chipColor = keyStyle.background(Color.Gray)
     val textColor = keyStyle.foreground(Color.White)
@@ -369,11 +370,12 @@ fun UiClipboardChip(item: ClipboardItem, modifier: Modifier = Modifier) {
             .padding(horizontal = 8.dp, vertical = 6.dp)
             .background(chipColor, RoundedCornerShape(50))
             .pointerInput(item) {
-                // Tap: paste the text. Holding for 3 seconds: dismiss the chip without pasting.
+                // Tap: paste the text. Holding for the chosen time (default 3 seconds): dismiss the chip without pasting.
                 awaitEachGesture {
                     awaitFirstDown(requireUnconsumed = false)
-                    // true: finger lifted (tap), false: gesture cancelled (finger moved away), null: 3 seconds passed
-                    val result = kotlinx.coroutines.withTimeoutOrNull(3000L) {
+                    // true: finger lifted (tap), false: gesture cancelled (finger moved away), null: the hold time passed
+                    val holdMillis = prefs.clipboard.recentChipHoldSeconds.get().coerceIn(1, 10) * 1000L
+                    val result = kotlinx.coroutines.withTimeoutOrNull(holdMillis) {
                         androidx.compose.foundation.gestures.waitForUpOrCancellation() != null
                     }
                     when (result) {

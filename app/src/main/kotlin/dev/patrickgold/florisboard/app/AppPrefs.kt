@@ -83,6 +83,10 @@ abstract class FlorisPreferenceModel : PreferenceModel() {
 
     val clipboard = Clipboard()
     inner class Clipboard {
+        val recentChipHoldSeconds = int(
+            key = "clipboard__recent_chip_hold_seconds",
+            default = 3,
+        )
         val useInternalClipboard = boolean(
             key = "clipboard__use_internal_clipboard",
             default = false,
