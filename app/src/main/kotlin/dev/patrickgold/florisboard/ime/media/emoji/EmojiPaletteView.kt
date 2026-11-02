@@ -34,7 +34,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -56,6 +58,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
@@ -165,13 +168,6 @@ fun EmojiPaletteView(
     val preferredSkinTone by prefs.emoji.preferredSkinTone.observeAsState()
     val emojiHistoryEnabled by prefs.emoji.historyEnabled.observeAsState()
 
-    var activeCategory by remember(emojiHistoryEnabled) {
-        if (emojiHistoryEnabled) {
-            mutableStateOf(EmojiCategory.RECENTLY_USED)
-        } else {
-            mutableStateOf(EmojiCategory.SMILEYS_EMOTION)
-        }
-    }
     var recentlyUsedVersion by remember { mutableIntStateOf(0) }
     val scope = rememberCoroutineScope()
 
@@ -278,117 +274,130 @@ fun EmojiPaletteView(
         }
     }
 
+    // One vertical list for all categories (like the emoji panel of WhatsApp): every category has a header, the tab
+    // row shows the category which is currently at the top, and a tab press scrolls to the start of its category.
+    val lazyGridState = rememberLazyGridState()
+    var pendingCategory by remember { mutableStateOf<EmojiCategory?>(null) }
+
+    val categories = remember(emojiHistoryEnabled) {
+        EmojiCategoryValues.filter { emojiHistoryEnabled || it != EmojiCategory.RECENTLY_USED }
+    }
+    val historyData = remember(recentlyUsedVersion, emojiHistoryEnabled) {
+        if (emojiHistoryEnabled) prefs.emoji.historyData.get() else null
+    }
+
+    val entries = remember(categories, emojiMappings, historyData, deviceLocked) {
+        buildList<EmojiGridEntry> {
+            for (category in categories) {
+                add(EmojiGridEntry.CategoryHeader(category, "header_${category.id}"))
+                if (category == EmojiCategory.RECENTLY_USED) {
+                    val pinned = historyData?.pinned.orEmpty()
+                    val recent = historyData?.recent.orEmpty()
+                    when {
+                        deviceLocked -> add(EmojiGridEntry.Message(category, "msg_locked", locked = true))
+                        pinned.isEmpty() && recent.isEmpty() ->
+                            add(EmojiGridEntry.Message(category, "msg_empty", locked = false))
+                        else -> {
+                            if (pinned.isNotEmpty()) {
+                                add(EmojiGridEntry.SubHeader(category, "sub_pinned", isPinned = true))
+                                pinned.forEachIndexed { i, e ->
+                                    add(EmojiGridEntry.Emoji(category, "pinned_$i", EmojiSet(listOf(e)), isPinned = true))
+                                }
+                            }
+                            if (recent.isNotEmpty()) {
+                                if (pinned.isNotEmpty()) {
+                                    add(EmojiGridEntry.SubHeader(category, "sub_recent", isPinned = false))
+                                }
+                                recent.forEachIndexed { i, e ->
+                                    add(EmojiGridEntry.Emoji(category, "recent_$i", EmojiSet(listOf(e)), isRecent = true))
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    emojiMappings[category].orEmpty().forEachIndexed { i, set ->
+                        add(EmojiGridEntry.Emoji(category, "${category.id}_$i", set))
+                    }
+                }
+            }
+        }
+    }
+    val categoryStartIndex = remember(entries) {
+        entries.withIndex()
+            .filter { it.value is EmojiGridEntry.CategoryHeader }
+            .associate { it.value.category to it.index }
+    }
+    val scrolledCategory by remember(entries) {
+        derivedStateOf {
+            entries.getOrNull(lazyGridState.firstVisibleItemIndex)?.category ?: categories.first()
+        }
+    }
+    val shownCategory = pendingCategory ?: scrolledCategory
+
+    // A manual drag cancels the category selected by a tab press
+    LaunchedEffect(lazyGridState) {
+        lazyGridState.interactionSource.interactions.collect { interaction ->
+            if (interaction is DragInteraction.Start) pendingCategory = null
+        }
+    }
+
     Column(
         modifier = modifier
     ) {
-        val pagerState = rememberPagerState(
-            pageCount = { calculatePageNumbers() }
-        )
-
-        // Reset the pager to the first page when emojiHistory is enabled
-        LaunchedEffect(emojiHistoryEnabled) {
-            pagerState.animateScrollToPage(0)
-        }
-
         EmojiCategoriesTabRow(
-            activeCategory = activeCategory,
+            activeCategory = shownCategory,
             onCategoryChange = { category ->
-                activeCategory = category
-                scope.launch { pagerState.animateScrollToPage(categoryToPageNumber(activeCategory)) }
+                pendingCategory = category
+                scope.launch {
+                    lazyGridState.animateScrollToItem(categoryStartIndex[category] ?: 0)
+                }
             },
         )
-        HorizontalPager(pagerState, beyondViewportPageCount = 1) { page ->
-            // Every page needs its own lazyGridState in order to scroll correctly
-            val lazyGridState = rememberLazyGridState()
-
-            // Update the lazyGridState and active category on scroll
-            LaunchedEffect(pagerState) {
-                snapshotFlow { pagerState.currentPage }.collect { page ->
-                    lazyGridState.scrollToItem(0)
-                    activeCategory = pageNumberToCategory(page)
-                    recentlyUsedVersion++
-                }
-            }
-
-            val category = pageNumberToCategory(page)
-            val emojiMapping = if (category == EmojiCategory.RECENTLY_USED) {
-                // Purposely using remember here to prevent recomposition, as this would cause rapid
-                // emoji changes for the user when in recently used category.
-                remember(recentlyUsedVersion) {
-                    val data = prefs.emoji.historyData.get()
-                    EmojiMappingForView(
-                        pinned = data.pinned.map { EmojiSet(listOf(it)) },
-                        recent = data.recent.map { EmojiSet(listOf(it)) },
-                        simple = emptyList(),
-                    )
-                }
-            } else {
-                EmojiMappingForView(
-                    pinned = emptyList(),
-                    recent = emptyList(),
-                    simple = emojiMappings[category]!!,
-                )
-            }
-
-            val isEmojiHistoryEmpty = emojiMapping.pinned.isEmpty() && emojiMapping.recent.isEmpty()
-            when (category) {
-                EmojiCategory.RECENTLY_USED if deviceLocked -> {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(all = 8.dp),
-                    ) {
-                        Text(
-                            text = stringRes(R.string.emoji__history__phone_locked_message),
-                        )
-                    }
-                }
-                EmojiCategory.RECENTLY_USED if isEmojiHistoryEmpty -> {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(all = 8.dp),
-                    ) {
-                        Text(
-                            text = stringRes(R.string.emoji__history__empty_message),
-                        )
-                        Text(
-                            modifier = Modifier.padding(top = 8.dp),
-                            text = stringRes(R.string.emoji__history__usage_tip),
-                            fontStyle = FontStyle.Italic,
-                        )
-                    }
-                }
-                else -> key(emojiMapping) {
-                    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-                        LazyVerticalGrid(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .florisScrollbar(lazyGridState),
-                            columns = GridCells.Adaptive(minSize = EmojiBaseWidth),
-                            state = lazyGridState,
-                        ) {
-                            if (emojiMapping.pinned.isNotEmpty()) {
-                                header("header_pinned") {
-                                    GridHeader(text = stringRes(R.string.emoji__history__pinned))
-                                }
-                                items(emojiMapping.pinned) { emojiSet ->
-                                    EmojiKeyWrapper(emojiSet, isPinned = true)
+        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+            LazyVerticalGrid(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .florisScrollbar(lazyGridState),
+                columns = GridCells.Adaptive(minSize = EmojiBaseWidth),
+                state = lazyGridState,
+            ) {
+                items(
+                    items = entries,
+                    key = { it.key },
+                    span = { entry ->
+                        when (entry) {
+                            is EmojiGridEntry.Emoji -> GridItemSpan(1)
+                            else -> GridItemSpan(maxLineSpan)
+                        }
+                    },
+                ) { entry ->
+                    when (entry) {
+                        is EmojiGridEntry.CategoryHeader -> {
+                            GridHeader(text = emojiCategoryName(entry.category))
+                        }
+                        is EmojiGridEntry.SubHeader -> {
+                            GridHeader(
+                                text = stringRes(
+                                    if (entry.isPinned) R.string.emoji__history__pinned else R.string.emoji__history__recent,
+                                ),
+                            )
+                        }
+                        is EmojiGridEntry.Message -> {
+                            Column(modifier = Modifier.fillMaxWidth().padding(all = 8.dp)) {
+                                if (entry.locked) {
+                                    Text(text = stringRes(R.string.emoji__history__phone_locked_message))
+                                } else {
+                                    Text(text = stringRes(R.string.emoji__history__empty_message))
+                                    Text(
+                                        modifier = Modifier.padding(top = 8.dp),
+                                        text = stringRes(R.string.emoji__history__usage_tip),
+                                        fontStyle = FontStyle.Italic,
+                                    )
                                 }
                             }
-                            if (emojiMapping.recent.isNotEmpty()) {
-                                header("header_recent") {
-                                    GridHeader(text = stringRes(R.string.emoji__history__recent))
-                                }
-                                items(emojiMapping.recent) { emojiSet ->
-                                    EmojiKeyWrapper(emojiSet, isRecent = true)
-                                }
-                            }
-                            if (emojiMapping.simple.isNotEmpty()) {
-                                items(emojiMapping.simple) { emojiSet ->
-                                    EmojiKeyWrapper(emojiSet)
-                                }
-                            }
+                        }
+                        is EmojiGridEntry.Emoji -> {
+                            EmojiKeyWrapper(entry.emojiSet, isPinned = entry.isPinned, isRecent = entry.isRecent)
                         }
                     }
                 }
@@ -396,6 +405,36 @@ fun EmojiPaletteView(
         }
     }
 }
+
+/** One cell of the single emoji list. */
+private sealed class EmojiGridEntry(val category: EmojiCategory, val key: String) {
+    class CategoryHeader(category: EmojiCategory, key: String) : EmojiGridEntry(category, key)
+    class SubHeader(category: EmojiCategory, key: String, val isPinned: Boolean) : EmojiGridEntry(category, key)
+    class Message(category: EmojiCategory, key: String, val locked: Boolean) : EmojiGridEntry(category, key)
+    class Emoji(
+        category: EmojiCategory,
+        key: String,
+        val emojiSet: EmojiSet,
+        val isPinned: Boolean = false,
+        val isRecent: Boolean = false,
+    ) : EmojiGridEntry(category, key)
+}
+
+@Composable
+private fun emojiCategoryName(category: EmojiCategory): String = stringRes(
+    when (category) {
+        EmojiCategory.RECENTLY_USED -> R.string.emoji__history__recent
+        EmojiCategory.SMILEYS_EMOTION -> R.string.emoji__category__smileys_emotion
+        EmojiCategory.PEOPLE_BODY -> R.string.emoji__category__people_body
+        EmojiCategory.ANIMALS_NATURE -> R.string.emoji__category__animals_nature
+        EmojiCategory.FOOD_DRINK -> R.string.emoji__category__food_drink
+        EmojiCategory.TRAVEL_PLACES -> R.string.emoji__category__travel_places
+        EmojiCategory.ACTIVITIES -> R.string.emoji__category__activities
+        EmojiCategory.OBJECTS -> R.string.emoji__category__objects
+        EmojiCategory.SYMBOLS -> R.string.emoji__category__symbols
+        EmojiCategory.FLAGS -> R.string.emoji__category__flags
+    },
+)
 
 @Composable
 private fun EmojiKey(
