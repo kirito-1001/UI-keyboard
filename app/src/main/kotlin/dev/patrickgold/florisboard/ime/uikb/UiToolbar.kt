@@ -19,6 +19,9 @@ package dev.patrickgold.florisboard.ime.uikb
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.awaitLongPressOrCancellation
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -396,26 +399,40 @@ fun UiLanguageMenu(modifier: Modifier = Modifier) {
             } else {
                 // Language menu: the selected item is 10% bigger (box and text), green, and its text glows in the
                 // text color. The neighbours move away so the gaps stay equal.
+                // The selected item grows by 5% of its height on both sides; the items before and after it move away
+                // by the same amount so that all gaps stay equal. Only the drawing moves (animated), the touch slots
+                // stay where they are.
+                val sel = UiPanelState.languageMenuHighlight
+                val scaleAnim by animateFloatAsState(
+                    targetValue = if (highlighted) 1.1f else 1f,
+                    animationSpec = tween(durationMillis = 120),
+                    label = "menuItemScale",
+                )
+                val shiftAnim by animateFloatAsState(
+                    targetValue = when {
+                        sel < 0 || index == sel -> 0f
+                        index < sel -> -1f
+                        else -> 1f
+                    },
+                    animationSpec = tween(durationMillis = 120),
+                    label = "menuItemShift",
+                )
+                val bgAnim by animateColorAsState(
+                    targetValue = if (highlighted) MenuHighlightColor else keyColor,
+                    animationSpec = tween(durationMillis = 120),
+                    label = "menuItemColor",
+                )
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(slot)
                         .padding(vertical = 3.dp)
                         .graphicsLayer {
-                            val scale = if (highlighted) 1.1f else 1f
-                            scaleX = scale
-                            scaleY = scale
-                            // The selected item grows by 5% of its height on both sides; the items before and after it
-                            // move away by the same amount so that all gaps stay equal. Only the drawing moves, the
-                            // touch slots stay where they are.
-                            val sel = UiPanelState.languageMenuHighlight
-                            translationY = when {
-                                sel < 0 || index == sel -> 0f
-                                index < sel -> -0.05f * size.height
-                                else -> 0.05f * size.height
-                            }
+                            scaleX = scaleAnim
+                            scaleY = scaleAnim
+                            translationY = shiftAnim * 0.05f * size.height
                         }
-                        .background(if (highlighted) MenuHighlightColor else keyColor, MenuShape)
+                        .background(bgAnim, MenuShape)
                         .border(1.5.dp, outlineColor, MenuShape),
                     contentAlignment = Alignment.Center,
                 ) {
