@@ -53,6 +53,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EditNote
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.EmojiEmotions
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.Composable
@@ -361,6 +362,9 @@ fun UiClipboardChip(item: ClipboardItem, modifier: Modifier = Modifier) {
         label.isNotEmpty() &&
             android.text.TextDirectionHeuristics.FIRSTSTRONG_LTR.isRtl(label, 0, label.length)
     }
+    val isPhone = remember(label, item.isSensitive) {
+        !item.isSensitive && dev.patrickgold.florisboard.lib.util.NetworkUtils.isPhoneNumber(label)
+    }
     androidx.compose.runtime.CompositionLocalProvider(
         androidx.compose.ui.platform.LocalLayoutDirection provides
             if (isRtlText) androidx.compose.ui.unit.LayoutDirection.Rtl else androidx.compose.ui.unit.LayoutDirection.Ltr,
@@ -402,7 +406,7 @@ fun UiClipboardChip(item: ClipboardItem, modifier: Modifier = Modifier) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             androidx.compose.material3.Icon(
                 modifier = Modifier.size(20.dp),
-                imageVector = Icons.AutoMirrored.Outlined.Assignment,
+                imageVector = if (isPhone) Icons.Default.Phone else Icons.AutoMirrored.Outlined.Assignment,
                 contentDescription = null,
                 tint = textColor,
             )
