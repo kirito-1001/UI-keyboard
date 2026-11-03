@@ -1190,4 +1190,6 @@
     <string name="ui__clipboard__recent_group">Recently copied text</string>
     <string name="ui__clipboard__recent_hold_time">Long-press time to dismiss the text</string>
     <string name="ui__clipboard__recent_hold_time_value">{v} s</string>
+    <string name="ui__changelog__version">Version: {v}</string>
+    <string name="ui__changelog__close">Close</string>
 </resources>

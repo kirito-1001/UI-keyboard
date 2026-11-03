@@ -33,6 +33,10 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Policy
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -60,6 +64,8 @@ fun AboutScreen() = FlorisScreen {
     val clipboardManager by context.clipboardManager()
 
     val appVersion = "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
+    var showChangelog by remember { mutableStateOf(false) }
+    if (showChangelog) UiChangelogDialog(onDismiss = { showChangelog = false })
 
     content {
         Column(
@@ -116,7 +122,7 @@ fun AboutScreen() = FlorisScreen {
             icon = Icons.Default.History,
             title = stringRes(R.string.about__changelog__title),
             summary = stringRes(R.string.about__changelog__summary),
-            onClick = { context.launchUrl(R.string.florisboard__changelog_url, "version" to BuildConfig.VERSION_NAME) },
+            onClick = { showChangelog = true },
         )
         Preference(
             icon = Icons.Default.Code,

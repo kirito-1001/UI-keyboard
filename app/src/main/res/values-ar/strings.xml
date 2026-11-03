@@ -959,4 +959,6 @@
     <string name="ui__clipboard__recent_group">النص المنسوخ حديثًا</string>
     <string name="ui__clipboard__recent_hold_time">مدة الضغط المطول لاختفاء النص</string>
     <string name="ui__clipboard__recent_hold_time_value">{v} ثوانٍ</string>
+    <string name="ui__changelog__version">رقم النسخة: {v}</string>
+    <string name="ui__changelog__close">إغلاق</string>
 </resources>
