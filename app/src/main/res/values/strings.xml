@@ -1180,7 +1180,7 @@
     <string name="ui__feature__edit_text">Edit text</string>
     <string name="ui__feature__clipboard">Clipboard</string>
     <string name="ui__feature__voice">Voice input</string>
-    <string name="ui__splash__developed_by">Developed by Khaled Yagami</string>
+    <string name="ui__splash__developed_by">Developed by</string>
     <string name="ui__font__title">Keyboard font</string>
     <string name="ui__font__summary">The font used on the keyboard</string>
     <string name="ui__font__pick_hint">Tap to choose a font (ttf / otf)</string>

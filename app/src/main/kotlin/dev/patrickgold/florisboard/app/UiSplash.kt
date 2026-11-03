@@ -48,8 +48,8 @@ import dev.patrickgold.florisboard.R
 private val BudokanFont = FontFamily(Font(R.font.budokan_rounded_bold))
 
 /**
- * Branded opening screen: the logo (uncropped) starts at the top of the lower third of the screen, followed by the
- * app name and the developer credit.
+ * Branded opening screen: logo (large, uncropped), app name, then the faded developer credit, all centred as one
+ * group in the middle of the screen.
  */
 @Composable
 fun UiSplashScreen(modifier: Modifier = Modifier) {
@@ -58,12 +58,11 @@ fun UiSplashScreen(modifier: Modifier = Modifier) {
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .pointerInput(Unit) { /* swallow touches while the opening screen is shown */ },
+        contentAlignment = Alignment.Center,
     ) {
-        val logoSize = min(maxWidth * 0.4f, maxHeight * 0.2f)
+        val logoSize = min(maxWidth * 0.58f, maxHeight * 0.34f)
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = maxHeight * 2 / 3),
+            modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Image(
@@ -72,20 +71,29 @@ fun UiSplashScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier.size(logoSize),
                 contentScale = ContentScale.Fit,
             )
-            Spacer(Modifier.height(18.dp))
+            Spacer(Modifier.height(30.dp))
             Text(
                 text = "UI Keyboard",
                 fontFamily = BudokanFont,
-                fontSize = 30.sp,
+                fontSize = 36.sp,
                 color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center,
+            )
+            Spacer(Modifier.height(40.dp))
+            Text(
+                text = stringRes(R.string.ui__splash__developed_by),
+                fontSize = 17.sp,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.alpha(0.55f),
                 textAlign = TextAlign.Center,
             )
             Spacer(Modifier.height(10.dp))
             Text(
-                text = stringRes(R.string.ui__splash__developed_by),
-                fontSize = 14.sp,
+                text = "Khaled Yagami",
+                fontFamily = BudokanFont,
+                fontSize = 21.sp,
                 color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.alpha(0.5f),
+                modifier = Modifier.alpha(0.55f),
                 textAlign = TextAlign.Center,
             )
         }
