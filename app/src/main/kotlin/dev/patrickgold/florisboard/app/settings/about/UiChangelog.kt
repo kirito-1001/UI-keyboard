@@ -53,6 +53,11 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "a23832c",
+        ar = listOf("خيار «حجم أيقونات شريط الأدوات» في إعدادات الشريط الذكي يتحكم الآن في حجم شعار لوحة المفاتيح وأيقونتي الزرين 1 و2 وزر الإخفاء (100% هو الحجم الحالي)."),
+        en = listOf("The «Toolbar icon size» option in Smartbar settings now controls the keyboard logo, slot buttons 1 and 2 and the hide button (100% is the current size)."),
+    ),
+    UiChangelogEntry(
         version = "c63798e",
         ar = listOf("أيقونة التطبيق بدقة أعلى لتظهر أوضح في قائمة التطبيقات على الشاشات عالية الكثافة."),
         en = listOf("App icon at a higher resolution so it looks sharper in the app list on high-density screens."),
