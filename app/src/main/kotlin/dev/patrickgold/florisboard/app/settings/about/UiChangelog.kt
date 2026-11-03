@@ -53,6 +53,11 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "340bab9",
+        ar = listOf("القائمة المنسدلة من الزرين 1 و2: الخيار المحدد يكبر 110% مع حركة سلسة، وتبتعد الخيارات المجاورة للحفاظ على المسافات (الألوان كما هي)."),
+        en = listOf("The menu opened from slot buttons 1 and 2: the selected option grows 110% with a smooth animation and neighbours move away to keep the gaps (colours unchanged)."),
+    ),
+    UiChangelogEntry(
         version = "a23832c",
         ar = listOf("خيار «حجم أيقونات شريط الأدوات» في إعدادات الشريط الذكي يتحكم الآن في حجم شعار لوحة المفاتيح وأيقونتي الزرين 1 و2 وزر الإخفاء (100% هو الحجم الحالي)."),
         en = listOf("The «Toolbar icon size» option in Smartbar settings now controls the keyboard logo, slot buttons 1 and 2 and the hide button (100% is the current size)."),
