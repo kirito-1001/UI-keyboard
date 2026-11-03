@@ -949,6 +949,7 @@
     <string name="ui__feature__edit_text">تحرير النص</string>
     <string name="ui__feature__clipboard">الحافظة</string>
     <string name="ui__feature__voice">إدخال صوتي</string>
+    <string name="ui__splash__developed_by">تم التطوير بواسطة Khaled Yagami</string>
     <string name="ui__font__title">الخط المستخدم</string>
     <string name="ui__font__summary">الخط المستخدم في لوحة المفاتيح</string>
     <string name="ui__font__pick_hint">اضغط لاختيار خط من ذاكرة الهاتف (ttf / otf)</string>

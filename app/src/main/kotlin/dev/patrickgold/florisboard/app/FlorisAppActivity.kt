@@ -22,6 +22,11 @@ import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.imePadding
@@ -33,6 +38,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
@@ -63,6 +69,7 @@ import org.florisboard.lib.compose.conditional
 import org.florisboard.lib.compose.stringRes
 import org.florisboard.lib.kotlin.collectIn
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlinx.coroutines.delay
 
 enum class AppTheme(val id: String) {
     AUTO("auto"),
@@ -126,8 +133,22 @@ class FlorisAppActivity : ComponentActivity() {
                     appName = R.string.app_name,
                 ) {
                     FlorisAppTheme(theme = appTheme) {
-                        Surface(color = MaterialTheme.colorScheme.background) {
-                            AppContent()
+                        var showSplash by rememberSaveable { mutableStateOf(true) }
+                        LaunchedEffect(Unit) {
+                            delay(1400)
+                            showSplash = false
+                        }
+                        Box {
+                            Surface(color = MaterialTheme.colorScheme.background) {
+                                AppContent()
+                            }
+                            AnimatedVisibility(
+                                visible = showSplash,
+                                enter = EnterTransition.None,
+                                exit = fadeOut(tween(300)),
+                            ) {
+                                UiSplashScreen()
+                            }
                         }
                     }
                 }
