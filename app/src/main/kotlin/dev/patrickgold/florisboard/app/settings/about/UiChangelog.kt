@@ -53,6 +53,11 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "e5bef3d",
+        ar = listOf("«سجل التغييرات» في «حول التطبيق» يفتح الآن نافذة داخل التطبيق بقائمة التعديلات لكل نسخة بدل فتح الموقع."),
+        en = listOf("«Changelog» in About now opens an in-app dialog listing the changes per version instead of the website."),
+    ),
+    UiChangelogEntry(
         version = "d62894d",
         ar = listOf(
             "في ميزة «النص المنسوخ حديثًا»: تظهر أيقونة الهاتف عند نسخ رقم هاتف.",
