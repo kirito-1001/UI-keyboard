@@ -53,6 +53,11 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "fbd590f",
+        ar = listOf("النافذة المنبثقة عند الضغط المطول على زر في لوحة الحروف أصبحت أكبر بنسبة 15%."),
+        en = listOf("The popup shown when long-pressing a key on the letters keyboard is now 15% bigger."),
+    ),
+    UiChangelogEntry(
         version = "e5bef3d",
         ar = listOf("«سجل التغييرات» في «حول التطبيق» يفتح الآن نافذة داخل التطبيق بقائمة التعديلات لكل نسخة بدل فتح الموقع."),
         en = listOf("«Changelog» in About now opens an in-app dialog listing the changes per version instead of the website."),
