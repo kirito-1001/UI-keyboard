@@ -70,6 +70,9 @@ val ExceptionsForKeyCodes = listOf(
     KeyCode.CHAR_WIDTH_SWITCHER,
 )
 
+/** The extended popup (long-press alternatives) is drawn this much bigger than the key. */
+const val ExtPopupScale = 1.15f
+
 @Suppress("unused")
 class PopupUiController(
     val context: Context,
@@ -187,7 +190,7 @@ class PopupUiController(
                     else -> 0.0f
                 }
                 while (offset > 0) {
-                    if (availableSpace >= offset * baseBounds.width) {
+                    if (availableSpace >= offset * baseBounds.width * ExtPopupScale) {
                         break
                     } else {
                         offset -= 1
@@ -275,20 +278,25 @@ class PopupUiController(
         }
 
         // Calculate layout params
-        val extWidth = row0count * baseBounds.width
+        val elemW = baseBounds.width * ExtPopupScale
+        val elemH = baseBounds.height * 0.4f * ExtPopupScale
+        val centerShift = (elemW - baseBounds.width) / 2.0f
+        val extWidth = row0count * elemW
         val extHeight = when {
-            row1count > 0 -> baseBounds.height * 0.4f * 2.0f
-            else -> baseBounds.height * 0.4f
+            row1count > 0 -> elemH * 2.0f
+            else -> elemH
         }
+        // The bigger window grows upwards, the elements stay centred over the key.
+        val growUp = extHeight - (if (row1count > 0) baseBounds.height * 0.4f * 2.0f else baseBounds.height * 0.4f)
         val x = ((key.visibleBounds.width - baseBounds.width) / 2.0f) + when {
-            anchorLeft -> -anchorOffset * baseBounds.width
-            anchorRight -> -extWidth + baseBounds.width + anchorOffset * baseBounds.width
+            anchorLeft -> -anchorOffset * elemW - centerShift
+            anchorRight -> -extWidth + baseBounds.width + centerShift + anchorOffset * elemW
             else -> 0.0f
         } + key.visibleBounds.left
         val y = -baseBounds.height - when {
             row1count > 0 -> (baseBounds.height * 0.4f).toInt()
             else -> 0
-        } + key.visibleBounds.bottom
+        } - growUp + key.visibleBounds.bottom
         val extBounds = FlorisRect.new(
             left = x, top = y, right = x + extWidth, bottom = y + extHeight,
         )
@@ -325,12 +333,15 @@ class PopupUiController(
         val baseBounds = extRenderInfo.baseBounds
         val keyPopupDiffX = (key.visibleBounds.width - baseBounds.width) / 2.0f
 
-        val x = xEvent - key.visibleBounds.left
+        val elemW = baseBounds.width * ExtPopupScale
+        val growUp = (ExtPopupScale - 1.0f) * baseBounds.height * 0.4f * (if (extRenderInfo.row1count > 0) 2 else 1)
+        // x is measured so that the element over the key starts at 0 (the elements are centred over the key)
+        val x = xEvent - key.visibleBounds.left + (elemW - baseBounds.width) / 2.0f
         val y = yEvent - key.visibleBounds.top
-        val kX = x / baseBounds.width
+        val kX = x / elemW
 
         // Check if out of boundary on y-axis
-        if (y < -baseBounds.height || y > 0.9f * baseBounds.height) {
+        if (y < -baseBounds.height - growUp || y > 0.9f * baseBounds.height) {
             return false
         }
 
@@ -338,8 +349,8 @@ class PopupUiController(
             activeElementIndex = when {
                 anchorLeft -> when {
                     // check if out of boundary on x-axis
-                    x < keyPopupDiffX - (anchorOffset + 1) * baseBounds.width ||
-                        x > (keyPopupDiffX + (row0count + 1 - anchorOffset) * baseBounds.width) -> {
+                    x < keyPopupDiffX - (anchorOffset + 1) * elemW ||
+                        x > (keyPopupDiffX + (row0count + 1 - anchorOffset) * elemW) -> {
                         return false
                     }
                     // row 1
@@ -359,8 +370,8 @@ class PopupUiController(
                 }
                 anchorRight -> when {
                     // check if out of boundary on x-axis
-                    x > key.visibleBounds.width - keyPopupDiffX + (anchorOffset + 1) * baseBounds.width ||
-                        x < (key.visibleBounds.width - keyPopupDiffX - (row0count + 1 - anchorOffset) * baseBounds.width) -> {
+                    x > key.visibleBounds.width - keyPopupDiffX + (anchorOffset + 1) * elemW ||
+                        x < (key.visibleBounds.width - keyPopupDiffX - (row0count + 1 - anchorOffset) * elemW) -> {
                         return false
                     }
                     // row 1
@@ -464,8 +475,8 @@ class PopupUiController(
         }
         extRenderInfo?.let { renderInfo ->
             val baseBounds = renderInfo.baseBounds
-            val elemWidth = baseBounds.width
-            val elemHeight = baseBounds.height * 0.4f
+            val elemWidth = baseBounds.width * ExtPopupScale
+            val elemHeight = baseBounds.height * 0.4f * ExtPopupScale
             PopupExtBox(
                 modifier = Modifier
                     .requiredSize(renderInfo.bounds.size.toDpSize())
@@ -480,6 +491,7 @@ class PopupUiController(
                 elemWidth = elemWidth.toDp(),
                 elemHeight = elemHeight.toDp(),
                 activeElementIndex = activeElementIndex,
+                contentScale = ExtPopupScale,
             )
         }
     }

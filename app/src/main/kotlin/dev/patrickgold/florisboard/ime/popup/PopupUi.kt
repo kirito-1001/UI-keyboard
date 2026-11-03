@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import dev.patrickgold.florisboard.ime.keyboard.Key
@@ -95,6 +96,7 @@ fun PopupExtBox(
     elemWidth: Dp,
     elemHeight: Dp,
     activeElementIndex: Int,
+    contentScale: Float = 1.0f,
 ): Unit = with(LocalDensity.current) {
     SnyggColumn(FlorisImeUi.KeyPopupBox.elementName, attributes, modifier = modifier) {
         for (row in elements.asReversed()) {
@@ -119,13 +121,13 @@ fun PopupExtBox(
                     ) {
                         element.label?.let { label ->
                             SnyggText(
-                                modifier = Modifier.align(Alignment.Center),
+                                modifier = Modifier.align(Alignment.Center).graphicsLayer(scaleX = contentScale, scaleY = contentScale),
                                 text = label,
                             )
                         }
                         element.icon?.let { icon ->
                             SnyggIcon(
-                                modifier = Modifier.align(Alignment.Center),
+                                modifier = Modifier.align(Alignment.Center).graphicsLayer(scaleX = contentScale, scaleY = contentScale),
                                 imageVector = icon,
                             )
                         }
