@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Backspace
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardReturn
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.ContentCut
@@ -48,8 +49,13 @@ import dev.patrickgold.florisboard.clipboardManager
 import dev.patrickgold.florisboard.editorInstance
 import dev.patrickgold.florisboard.ime.editor.OperationUnit
 import dev.patrickgold.florisboard.ime.keyboard.FlorisImeSizing
+import dev.patrickgold.florisboard.ime.keyboard.computeImageVector
+import dev.patrickgold.florisboard.ime.text.key.KeyCode
+import dev.patrickgold.florisboard.ime.text.key.KeyType
 import dev.patrickgold.florisboard.ime.text.keyboard.TextKeyData
 import dev.patrickgold.florisboard.keyboardManager
+
+private val EnterKeyData = TextKeyData(code = KeyCode.ENTER, type = KeyType.ENTER_EDITING, label = "enter")
 
 /**
  * The text editing panel which replaces the key area.
@@ -58,8 +64,8 @@ import dev.patrickgold.florisboard.keyboardManager
  * ```
  * select-all | up     | clear  | backspace
  * left       | select | right  | back
- * search     | down   | cancel | space (tall)
- * copy       | cut    | paste  | space
+ * search     | down   | cancel | space
+ * copy       | cut    | paste  | enter
  * ```
  */
 @Composable
@@ -69,6 +75,7 @@ fun EditTextPanel(modifier: Modifier = Modifier) {
     val editorInstance by context.editorInstance()
     val state by keyboardManager.activeState.collectAsState()
     val dispatcher = keyboardManager.inputEventDispatcher
+    val evaluator by keyboardManager.activeEvaluator.collectAsState()
 
     val content by editorInstance.activeContentFlow.collectAsState()
     val clipboardManager by context.clipboardManager()
@@ -223,9 +230,21 @@ fun EditTextPanel(modifier: Modifier = Modifier) {
             UiDispatchKey(
                 keyData = TextKeyData.SPACE,
                 inputEventDispatcher = dispatcher,
-                modifier = Modifier.weight(2f).fillMaxSize(),
+                modifier = Modifier.weight(1f).fillMaxWidth(),
             ) {
                 Icon(Icons.Default.SpaceBar, contentDescription = null)
+            }
+            // Enter key: same key code as on the letters keyboard, so it runs the editor action and takes the enter
+            // key colour of the theme. The icon follows the editor action (send, search, ...).
+            UiDispatchKey(
+                keyData = EnterKeyData,
+                inputEventDispatcher = dispatcher,
+                modifier = Modifier.weight(1f).fillMaxWidth(),
+            ) {
+                Icon(
+                    imageVector = evaluator.computeImageVector(EnterKeyData) ?: Icons.AutoMirrored.Filled.KeyboardReturn,
+                    contentDescription = null,
+                )
             }
         }
     }
