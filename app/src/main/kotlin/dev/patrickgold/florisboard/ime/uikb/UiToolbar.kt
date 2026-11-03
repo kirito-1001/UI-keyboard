@@ -296,7 +296,7 @@ fun UiToolbar(modifier: Modifier = Modifier, middle: (@Composable BoxScope.() ->
         Row(modifier = Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
             Box(modifier = Modifier.width(sideCell).fillMaxHeight(), contentAlignment = Alignment.Center) {
                 BarButton(onClick = { UiPanelState.toggle(UiPanel.ACTIONS) }) {
-                    SnyggIcon(modifier = Modifier.size(ToolbarIconSize), imageVector = UiIcons.Logo)
+                    SnyggIcon(modifier = Modifier.size(ToolbarIconSize), painter = painterResource(R.drawable.ui_toolbar_logo))
                 }
             }
             Divider()
