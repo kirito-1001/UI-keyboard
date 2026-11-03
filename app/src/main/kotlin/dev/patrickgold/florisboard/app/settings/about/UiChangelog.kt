@@ -53,6 +53,11 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "33c5e2a",
+        ar = listOf("أيقونة التطبيق في قائمة التطبيقات: رُفعت دقتها إلى الضعف لإزالة الضبابية."),
+        en = listOf("App icon in the launcher: resolution doubled to remove the blur."),
+    ),
+    UiChangelogEntry(
         version = "91cc23c",
         ar = listOf("لوحة تعديل النص: انقسم الزر الطويل إلى زر مسافة وزر إدخال، وزر الإدخال يُنفّذ إجراء الحقل (إرسال، بحث، سطر جديد…) ويتبع لون زر الإدخال في لوحة الأحرف."),
         en = listOf("Edit-text panel: the tall space key is now split into a space key and an enter key; enter runs the editor action and follows the enter key colour of the letters keyboard."),
