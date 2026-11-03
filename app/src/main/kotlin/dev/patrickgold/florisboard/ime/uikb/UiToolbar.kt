@@ -479,6 +479,23 @@ fun UiLanguageMenu(modifier: Modifier = Modifier) {
             val index = UiPanelState.menuScroll + slotIndex
             val entry = entries.getOrNull(index) ?: continue
             val highlighted = index == UiPanelState.languageMenuHighlight
+            // Both menus: the selected item is 10% bigger and the neighbours move away so the gaps stay equal. The
+            // scale and the shift are animated, only the drawing moves (the touch slots stay where they are).
+            val sel = UiPanelState.languageMenuHighlight
+            val scaleAnim by animateFloatAsState(
+                targetValue = if (highlighted) 1.1f else 1f,
+                animationSpec = tween(durationMillis = 120),
+                label = "menuItemScale",
+            )
+            val shiftAnim by animateFloatAsState(
+                targetValue = when {
+                    sel < 0 || index == sel -> 0f
+                    index < sel -> -1f
+                    else -> 1f
+                },
+                animationSpec = tween(durationMillis = 120),
+                label = "menuItemShift",
+            )
             if (iconOnly && entry.icon != null) {
                 // Icon menu: the key background of the theme, the selected icon turns green.
                 Box(
@@ -486,6 +503,11 @@ fun UiLanguageMenu(modifier: Modifier = Modifier) {
                         .fillMaxWidth()
                         .height(slot)
                         .padding(vertical = maxOf(0.dp, (slot - MenuIconBoxSize) / 2))
+                        .graphicsLayer {
+                            scaleX = scaleAnim
+                            scaleY = scaleAnim
+                            translationY = shiftAnim * 0.05f * size.height
+                        }
                         .background(keyColor, MenuShape)
                         .border(1.5.dp, outlineColor, MenuShape),
                     contentAlignment = Alignment.Center,
@@ -510,21 +532,6 @@ fun UiLanguageMenu(modifier: Modifier = Modifier) {
                 // The selected item grows by 5% of its height on both sides; the items before and after it move away
                 // by the same amount so that all gaps stay equal. Only the drawing moves (animated), the touch slots
                 // stay where they are.
-                val sel = UiPanelState.languageMenuHighlight
-                val scaleAnim by animateFloatAsState(
-                    targetValue = if (highlighted) 1.1f else 1f,
-                    animationSpec = tween(durationMillis = 120),
-                    label = "menuItemScale",
-                )
-                val shiftAnim by animateFloatAsState(
-                    targetValue = when {
-                        sel < 0 || index == sel -> 0f
-                        index < sel -> -1f
-                        else -> 1f
-                    },
-                    animationSpec = tween(durationMillis = 120),
-                    label = "menuItemShift",
-                )
                 val bgAnim by animateColorAsState(
                     targetValue = if (highlighted) MenuHighlightColor else keyColor,
                     animationSpec = tween(durationMillis = 120),
