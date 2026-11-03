@@ -17,6 +17,7 @@
 package dev.patrickgold.florisboard.ime.uikb
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathFillType
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
@@ -205,6 +206,29 @@ object UiIcons {
                 moveTo(12f, 17.7f)
                 lineTo(12f, 19.5f)
             }
+        }.build()
+    }
+
+    /**
+     * The "font" settings icon: a rounded square with a transparent (cut out) letter A. Drawn in a 24 x 24 viewport.
+     */
+    val FontSquare: ImageVector by lazy {
+        ImageVector.Builder(
+            name = "FontSquare",
+            defaultWidth = 24.dp,
+            defaultHeight = 24.dp,
+            viewportWidth = 24f,
+            viewportHeight = 24f,
+        ).apply {
+            addPath(
+                pathData = addPathNodes(
+                    "M6,2 H18 A4,4 0 0 1 22,6 V18 A4,4 0 0 1 18,22 H6 A4,4 0 0 1 2,18 V6 A4,4 0 0 1 6,2 Z " +
+                        "M6.2,18 L10.3,6 H13.7 L17.8,18 H15 L14.2,15.5 H9.8 L9,18 Z " +
+                        "M10.5,13.2 L12,8.6 L13.5,13.2 Z"
+                ),
+                pathFillType = PathFillType.EvenOdd,
+                fill = SolidColor(Color.Black),
+            )
         }.build()
     }
 

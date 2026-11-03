@@ -35,6 +35,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -53,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.patrickgold.florisboard.R
 import dev.patrickgold.florisboard.app.FlorisPreferenceStore
+import dev.patrickgold.florisboard.ime.uikb.UiIcons
 import dev.patrickgold.jetpref.datastore.model.observeAsState
 import kotlinx.coroutines.launch
 import org.florisboard.lib.compose.stringRes
@@ -162,13 +164,13 @@ fun KeyboardFontSettings() {
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Box(modifier = Modifier.size(24.dp), contentAlignment = Alignment.Center) {
-                Text(
-                    text = "A",
-                    color = MaterialTheme.colorScheme.primary,
-                    fontSize = 22.sp,
-                )
-            }
+            // Same colour as the icons of the other settings rows
+            Icon(
+                modifier = Modifier.size(24.dp),
+                imageVector = UiIcons.FontSquare,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
             Column(modifier = Modifier.padding(start = 16.dp)) {
                 Text(
                     text = stringRes(R.string.ui__font__title),
