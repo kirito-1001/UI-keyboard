@@ -33,6 +33,8 @@ import androidx.compose.foundation.layout.Box
 import dev.patrickgold.florisboard.ime.clipboard.provider.ClipboardItem
 import dev.patrickgold.florisboard.editorInstance
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.coerceAtMost
+import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.material.icons.automirrored.outlined.Assignment
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
@@ -214,6 +216,12 @@ fun UiToolbar(modifier: Modifier = Modifier, middle: (@Composable BoxScope.() ->
     val scope = rememberCoroutineScope()
     val slotEdit by prefs.smartbar.uiSlotEdit.observeAsState()
     val slotEmoji by prefs.smartbar.uiSlotEmoji.observeAsState()
+    // "Toolbar icon size" setting: 100 % is the normal size. The icon never gets bigger than the bar.
+    val iconScalePercent by prefs.smartbar.actionIconScale.observeAsState()
+    fun iconSize(base: androidx.compose.ui.unit.Dp): androidx.compose.ui.unit.Dp {
+        val scaled = base * (iconScalePercent / 100f)
+        return scaled.coerceAtMost(maxOf(barHeight - 8.dp, 12.dp)).coerceAtLeast(10.dp)
+    }
 
     fun runFeature(feature: UiFeature) {
         when (feature) {
@@ -262,7 +270,7 @@ fun UiToolbar(modifier: Modifier = Modifier, middle: (@Composable BoxScope.() ->
             contentAlignment = Alignment.Center,
         ) {
             SnyggIcon(
-                modifier = Modifier.size(if (feature == UiFeature.EDIT_TEXT) EditTextIconSize else ToolbarIconSize),
+                modifier = Modifier.size(iconSize(if (feature == UiFeature.EDIT_TEXT) EditTextIconSize else ToolbarIconSize)),
                 imageVector = feature.icon,
             )
         }
@@ -297,7 +305,7 @@ fun UiToolbar(modifier: Modifier = Modifier, middle: (@Composable BoxScope.() ->
         Row(modifier = Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
             Box(modifier = Modifier.width(sideCell).fillMaxHeight(), contentAlignment = Alignment.Center) {
                 BarButton(onClick = { UiPanelState.toggle(UiPanel.ACTIONS) }) {
-                    SnyggIcon(modifier = Modifier.size(ToolbarIconSize), painter = painterResource(R.drawable.ui_toolbar_logo))
+                    SnyggIcon(modifier = Modifier.size(iconSize(ToolbarIconSize)), painter = painterResource(R.drawable.ui_toolbar_logo))
                 }
             }
             Divider()
@@ -335,7 +343,7 @@ fun UiToolbar(modifier: Modifier = Modifier, middle: (@Composable BoxScope.() ->
             Divider()
             Box(modifier = Modifier.width(sideCell).fillMaxHeight(), contentAlignment = Alignment.Center) {
                 BarButton(onClick = { dispatcher.sendDownUp(TextKeyData.IME_HIDE_UI) }) {
-                    SnyggIcon(modifier = Modifier.size(ToolbarIconSize), imageVector = Icons.Default.ArrowDropDown)
+                    SnyggIcon(modifier = Modifier.size(iconSize(ToolbarIconSize)), imageVector = Icons.Default.ArrowDropDown)
                 }
             }
         }
