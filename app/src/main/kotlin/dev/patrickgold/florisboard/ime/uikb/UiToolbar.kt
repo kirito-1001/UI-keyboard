@@ -19,6 +19,7 @@ package dev.patrickgold.florisboard.ime.uikb
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.awaitLongPressOrCancellation
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -375,8 +376,8 @@ fun UiClipboardChip(item: ClipboardItem, modifier: Modifier = Modifier) {
                     awaitFirstDown(requireUnconsumed = false)
                     // true: finger lifted (tap), false: gesture cancelled (finger moved away), null: the hold time passed
                     val holdMillis = prefs.clipboard.recentChipHoldSeconds.get().coerceIn(1, 10) * 1000L
-                    val result = kotlinx.coroutines.withTimeoutOrNull(holdMillis) {
-                        androidx.compose.foundation.gestures.waitForUpOrCancellation() != null
+                    val result = withTimeoutOrNull(holdMillis) {
+                        waitForUpOrCancellation() != null
                     }
                     when (result) {
                         true -> {
