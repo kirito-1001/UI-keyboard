@@ -53,6 +53,11 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "91cc23c",
+        ar = listOf("لوحة تعديل النص: انقسم الزر الطويل إلى زر مسافة وزر إدخال، وزر الإدخال يُنفّذ إجراء الحقل (إرسال، بحث، سطر جديد…) ويتبع لون زر الإدخال في لوحة الأحرف."),
+        en = listOf("Edit-text panel: the tall space key is now split into a space key and an enter key; enter runs the editor action and follows the enter key colour of the letters keyboard."),
+    ),
+    UiChangelogEntry(
         version = "fbd590f",
         ar = listOf("النافذة المنبثقة عند الضغط المطول على زر في لوحة الحروف أصبحت أكبر بنسبة 15%."),
         en = listOf("The popup shown when long-pressing a key on the letters keyboard is now 15% bigger."),
