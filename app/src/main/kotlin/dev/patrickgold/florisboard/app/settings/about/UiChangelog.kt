@@ -53,6 +53,11 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "c63798e",
+        ar = listOf("أيقونة التطبيق بدقة أعلى لتظهر أوضح في قائمة التطبيقات على الشاشات عالية الكثافة."),
+        en = listOf("App icon at a higher resolution so it looks sharper in the app list on high-density screens."),
+    ),
+    UiChangelogEntry(
         version = "33c5e2a",
         ar = listOf("أيقونة التطبيق في قائمة التطبيقات: رُفعت دقتها إلى الضعف لإزالة الضبابية."),
         en = listOf("App icon in the launcher: resolution doubled to remove the blur."),
