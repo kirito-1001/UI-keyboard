@@ -559,6 +559,11 @@ abstract class FlorisPreferenceModel : PreferenceModel() {
             key = "keyboard__key_spacing_horizontal",
             default = 2.0f,
         )
+        /** Corner roundness of the keys in percent (0 = square, 100 = capsule). -1 = as defined by the theme. */
+        val keyCornerPercent = int(
+            key = "keyboard__key_corner_percent",
+            default = -1,
+        )
         val bottomOffsetPortrait = int(
             key = "keyboard__bottom_offset_portrait",
             default = 0,

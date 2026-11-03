@@ -17,6 +17,10 @@
 package dev.patrickgold.florisboard.app.settings.keyboard
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import dev.patrickgold.florisboard.R
 import dev.patrickgold.florisboard.app.LocalNavController
 import dev.patrickgold.florisboard.app.Routes
@@ -158,6 +162,13 @@ fun KeyboardScreen() = FlorisScreen {
                 min = 0,
                 max = 60,
                 stepIncrement = 1,
+            )
+            var showKeyCorners by remember { mutableStateOf(false) }
+            if (showKeyCorners) KeyCornersDialog(onDismiss = { showKeyCorners = false })
+            Preference(
+                title = stringRes(R.string.ui__key_corners__title),
+                summary = stringRes(R.string.ui__key_corners__summary),
+                onClick = { showKeyCorners = true },
             )
         }
 

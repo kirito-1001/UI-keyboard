@@ -66,9 +66,11 @@ fun SnyggBox(
     supportsBackgroundImage: Boolean = false,
     backgroundImageDescription: String? = null,
     allowClip: Boolean = true,
+    shapeOverride: androidx.compose.ui.graphics.Shape? = null,
     content: @Composable BoxScope.() -> Unit,
 ) {
     ProvideSnyggStyle(elementName, attributes, selector) { style ->
+        val shape = shapeOverride ?: style.shape()
         val assetResolver = LocalSnyggAssetResolver.current
         val context = LocalContext.current
         val imagePath = when {
@@ -82,9 +84,9 @@ fun SnyggBox(
         Box(
             modifier = modifier
                 .snyggMargin(style)
-                .snyggShadow(style)
-                .snyggBorder(style)
-                .snyggBackground(style, allowClip = allowClip)
+                .snyggShadow(style, shape = shape)
+                .snyggBorder(style, shape = shape)
+                .snyggBackground(style, shape = shape, allowClip = allowClip)
                 .then(clickAndSemanticsModifier)
                 .snyggPadding(style),
             contentAlignment = contentAlignment,

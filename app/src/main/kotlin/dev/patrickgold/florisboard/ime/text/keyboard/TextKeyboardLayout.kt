@@ -349,10 +349,12 @@ private fun TextKeyButton(
         }
     }
     CompositionLocalProvider(LocalSnyggColorOverride provides colorOverride) {
+    val keyShape = dev.patrickgold.florisboard.ime.uikb.rememberKeyShapeOverride()
     SnyggBox(
         FlorisImeUi.Key.elementName,
         attributes = attributes,
         selector = selector,
+        shapeOverride = keyShape,
         modifier = Modifier
             .requiredSize(size)
             .absoluteOffset { key.visibleBounds.topLeft.toIntOffset() },

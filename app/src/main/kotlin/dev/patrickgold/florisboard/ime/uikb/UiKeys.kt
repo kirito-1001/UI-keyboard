@@ -43,6 +43,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import dev.patrickgold.florisboard.app.FlorisPreferenceStore
+import dev.patrickgold.jetpref.datastore.model.observeAsState
 import dev.patrickgold.florisboard.ime.input.InputEventDispatcher
 import dev.patrickgold.florisboard.ime.text.gestures.SwipeAction
 import dev.patrickgold.florisboard.ime.text.key.KeyCode
@@ -61,6 +62,16 @@ private const val DisabledAlpha = 0.38f
 
 private val ActiveDotColor = Color(0xFF2ECC71)
 
+/** The shape override for keys chosen in Settings > Keyboard > Key corners, or null to use the theme shape. */
+@Composable
+fun rememberKeyShapeOverride(): androidx.compose.ui.graphics.Shape? {
+    val prefs by FlorisPreferenceStore
+    val percent by prefs.keyboard.keyCornerPercent.observeAsState()
+    return if (percent < 0) null else androidx.compose.foundation.shape.RoundedCornerShape(
+        percent = (percent / 2).coerceIn(0, 50),
+    )
+}
+
 /**
  * A key which looks like a normal keyboard key (same theme element) and sends a [KeyData] through the
  * [InputEventDispatcher], so repeat-on-hold, feedback and the normal key handling work as for the letter keys.
@@ -78,11 +89,13 @@ fun UiDispatchKey(
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
     val prefs by FlorisPreferenceStore
+    val keyShape = rememberKeyShapeOverride()
     SnyggBox(
         elementName = FlorisImeUi.Key.elementName,
         attributes = mapOf(FlorisImeUi.Attr.Code to keyData.code),
         selector = if (!enabled) SnyggSelector.DISABLED else if (isPressed) SnyggSelector.PRESSED else SnyggSelector.NONE,
         modifier = modifier.padding(2.dp).alpha(if (enabled) 1f else DisabledAlpha),
+        shapeOverride = keyShape,
         clickAndSemanticsModifier = Modifier
             .indication(interactionSource, ripple())
             .pointerInput(keyData, enabled) {
@@ -135,10 +148,12 @@ fun UiTapKey(
         isPressed -> SnyggSelector.PRESSED
         else -> SnyggSelector.NONE
     }
+    val keyShape = rememberKeyShapeOverride()
     SnyggBox(
         elementName = FlorisImeUi.Key.elementName,
         selector = selector,
         modifier = modifier.padding(2.dp).alpha(if (enabled) 1f else DisabledAlpha),
+        shapeOverride = keyShape,
         clickAndSemanticsModifier = Modifier.clickable(
             interactionSource = interactionSource,
             indication = ripple(),

@@ -961,4 +961,12 @@
     <string name="ui__clipboard__recent_hold_time_value">{v} ثوانٍ</string>
     <string name="ui__changelog__version">رقم النسخة: {v}</string>
     <string name="ui__changelog__close">إغلاق</string>
+    <string name="ui__key_corners__title">حواف المفاتيح</string>
+    <string name="ui__key_corners__summary">التحكم في انحناء حواف أزرار لوحة المفاتيح</string>
+    <string name="ui__key_corners__value">الانحناء: {v}%</string>
+    <string name="ui__key_corners__value_theme">الانحناء: حسب الثيم</string>
+    <string name="ui__key_corners__min">0% (حادة)</string>
+    <string name="ui__key_corners__max">100% (دائرية)</string>
+    <string name="ui__key_corners__done">تم</string>
+    <string name="ui__key_corners__reset">إعادة الضبط (حسب الثيم)</string>
 </resources>
