@@ -397,22 +397,25 @@ fun UiClipboardChip(item: ClipboardItem, modifier: Modifier = Modifier) {
             .padding(horizontal = 12.dp),
         contentAlignment = Alignment.Center,
     ) {
-        androidx.compose.material3.Icon(
-            modifier = Modifier.size(20.dp).align(Alignment.CenterStart),
-            imageVector = Icons.AutoMirrored.Outlined.Assignment,
-            contentDescription = null,
-            tint = textColor,
-        )
-        // The text is centered in the whole chip; the side padding keeps it clear of the icon
-        androidx.compose.material3.Text(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 28.dp),
-            text = label,
-            color = textColor,
-            fontSize = 15.sp,
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-            maxLines = 1,
-            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
-        )
+        // Icon and text form one group, centred in the chip. The icon sits next to the start of the text (left of
+        // Latin text, right of Arabic text); a long text is cut at its end only.
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            androidx.compose.material3.Icon(
+                modifier = Modifier.size(20.dp),
+                imageVector = Icons.AutoMirrored.Outlined.Assignment,
+                contentDescription = null,
+                tint = textColor,
+            )
+            Spacer(Modifier.width(6.dp))
+            androidx.compose.material3.Text(
+                modifier = Modifier.weight(1f, fill = false),
+                text = label,
+                color = textColor,
+                fontSize = 15.sp,
+                maxLines = 1,
+                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+            )
+        }
     }
     }
 }
