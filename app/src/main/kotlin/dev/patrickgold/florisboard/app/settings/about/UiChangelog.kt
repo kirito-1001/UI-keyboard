@@ -53,11 +53,6 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
-        version = "eb28f4b",
-        ar = listOf("أيقونة «الخط المستخدم» في الإعدادات: مربع بداخله حرف A شفاف، بلون باقي أيقونات قسم المظهر."),
-        en = listOf("«Keyboard font» settings icon: a square with a transparent letter A, in the same colour as the other Appearance icons."),
-    ),
-    UiChangelogEntry(
         version = "91cc23c",
         ar = listOf("لوحة تعديل النص: انقسم الزر الطويل إلى زر مسافة وزر إدخال، وزر الإدخال يُنفّذ إجراء الحقل (إرسال، بحث، سطر جديد…) ويتبع لون زر الإدخال في لوحة الأحرف."),
         en = listOf("Edit-text panel: the tall space key is now split into a space key and an enter key; enter runs the editor action and follows the enter key colour of the letters keyboard."),
