@@ -53,6 +53,11 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "e9c8c38",
+        ar = listOf("إضافة زر «حواف المفاتيح» في إعدادات لوحة المفاتيح (تحت الإزاحة السفلية): نافذة بشريط يتحكم في انحناء حواف أزرار الحروف والأرقام والرموز ولوحتي تعديل النص والأرقام، مع إعادة الضبط حسب الثيم."),
+        en = listOf("Added the «Key corners» button in Keyboard settings (below bottom offset): a dialog with a slider for the corner roundness of the letter, number and symbol keys and the edit-text and numeric panels, with a reset to the theme."),
+    ),
+    UiChangelogEntry(
         version = "340bab9",
         ar = listOf("القائمة المنسدلة من الزرين 1 و2: الخيار المحدد يكبر 110% مع حركة سلسة، وتبتعد الخيارات المجاورة للحفاظ على المسافات (الألوان كما هي)."),
         en = listOf("The menu opened from slot buttons 1 and 2: the selected option grows 110% with a smooth animation and neighbours move away to keep the gaps (colours unchanged)."),
