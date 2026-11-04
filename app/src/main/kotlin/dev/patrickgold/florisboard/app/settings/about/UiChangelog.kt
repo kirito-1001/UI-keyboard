@@ -53,6 +53,15 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "48eaaba",
+        ar = listOf(
+            "إضافة «الثيمات» (بأيقونة لوحة الألوان) إلى القائمة المنسدلة للزرين ١ و٢، وإلى لوحة الأدوات، وإلى قائمة أزرار شريط الأدوات في الإعدادات للتحكم بموضعها. الضغط عليها يفتح الإعدادات على قسم المظهر.",
+        ),
+        en = listOf(
+            "Added \"Themes\" (color-palette icon) to the dropdown of buttons 1 and 2, to the actions panel and to the toolbar buttons setting (so its position can be changed). Tapping it opens Settings on the Appearance section.",
+        ),
+    ),
+    UiChangelogEntry(
         version = "9d227a5",
         ar = listOf("ظل متدرج تحت شريط الأدوات عند اختيار صورة كخلفية، يتلاشى في المنطقة الفاصلة بين الشريط والمفاتيح."),
         en = listOf("A soft gradient shadow under the toolbar when a background picture is used, fading out in the gap between the toolbar and the keys."),
