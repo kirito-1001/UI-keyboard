@@ -530,7 +530,7 @@ fun UiLanguageMenu(modifier: Modifier = Modifier) {
                         val glowModifier = iconModifier.drawBehind {
                             drawCircle(
                                 brush = Brush.radialGradient(
-                                    colors = listOf(MenuHighlightColor.copy(alpha = 0.60f), Color.Transparent),
+                                    colors = listOf(MenuHighlightColor.copy(alpha = 0.30f), Color.Transparent),
                                     center = center,
                                     radius = size.minDimension * 0.95f,
                                 ),
