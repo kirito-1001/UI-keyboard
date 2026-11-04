@@ -40,7 +40,12 @@ import dev.patrickgold.jetpref.datastore.model.observeAsState
 import org.florisboard.lib.snygg.SnyggQueryAttributes
 import org.florisboard.lib.snygg.SnyggSelector
 import org.florisboard.lib.snygg.SnyggSinglePropertySet
+import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.unit.dp
+import dev.patrickgold.florisboard.ime.keyboard.FlorisImeSizing
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import org.florisboard.lib.snygg.ui.LocalSnyggBackdrop
@@ -192,8 +197,32 @@ fun UiThemeBackgroundImage(modifier: Modifier = Modifier) {
             contentDescription = null,
             contentScale = ContentScale.Crop,
         )
+        // Soft shadow under the toolbar: solid behind the toolbar, fading out over the gap above the keys
+        val smartbarEnabled by prefs.smartbar.enabled.observeAsState()
+        if (smartbarEnabled) {
+            val barHeight = FlorisImeSizing.smartbarHeight
+            Box(
+                modifier = modifier.drawBehind {
+                    val bar = barHeight.toPx()
+                    val fade = ToolbarShadowFade.toPx()
+                    val total = bar + fade
+                    drawRect(
+                        brush = Brush.verticalGradient(
+                            0f to Color.Black.copy(alpha = ToolbarShadowAlpha),
+                            (bar / total) to Color.Black.copy(alpha = ToolbarShadowAlpha),
+                            1f to Color.Transparent,
+                            endY = total,
+                        ),
+                        size = Size(size.width, total),
+                    )
+                },
+            )
+        }
     }
 }
+
+private const val ToolbarShadowAlpha = 0.35f
+private val ToolbarShadowFade = 44.dp
 
 /** Loads the picture at [path] off the main thread. */
 @Composable
