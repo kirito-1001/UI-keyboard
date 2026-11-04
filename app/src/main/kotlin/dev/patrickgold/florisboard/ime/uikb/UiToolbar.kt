@@ -27,6 +27,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import org.florisboard.lib.snygg.ui.rememberSnyggThemeQuery
 import androidx.compose.foundation.layout.Box
@@ -524,16 +526,27 @@ fun UiLanguageMenu(modifier: Modifier = Modifier) {
                         if (entry.icon === UiIcons.EditText) EditTextIconSize else ToolbarIconSize,
                     )
                     if (highlighted) {
+                        // Soft glow around the selected icon, in the icon's own (green) color
+                        val glowModifier = iconModifier.drawBehind {
+                            drawCircle(
+                                brush = Brush.radialGradient(
+                                    colors = listOf(MenuHighlightColor.copy(alpha = 0.60f), Color.Transparent),
+                                    center = center,
+                                    radius = size.minDimension * 0.95f,
+                                ),
+                                radius = size.minDimension * 0.95f,
+                            )
+                        }
                         if (entry.iconRes != null) {
                             androidx.compose.material3.Icon(
-                                modifier = iconModifier,
+                                modifier = glowModifier,
                                 painter = painterResource(entry.iconRes),
                                 contentDescription = null,
                                 tint = MenuHighlightColor,
                             )
                         } else {
                             androidx.compose.material3.Icon(
-                                modifier = iconModifier,
+                                modifier = glowModifier,
                                 imageVector = entry.icon!!,
                                 contentDescription = null,
                                 tint = MenuHighlightColor,
