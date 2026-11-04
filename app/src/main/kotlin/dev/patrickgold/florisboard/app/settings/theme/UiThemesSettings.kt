@@ -61,7 +61,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
+import androidx.compose.foundation.Image
+import dev.patrickgold.florisboard.ime.uikb.rememberUiThemeImage
 import dev.patrickgold.florisboard.R
 import dev.patrickgold.florisboard.app.FlorisPreferenceStore
 import dev.patrickgold.florisboard.ime.uikb.UiThemeDef
@@ -170,12 +171,15 @@ fun UiThemesSettings() {
                 checkColor = Color.White,
             ) {
                 if (hasImage) {
-                    AsyncImage(
-                        modifier = Modifier.fillMaxSize(),
-                        model = File(imagePath),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                    )
+                    val thumb = rememberUiThemeImage(imagePath)
+                    if (thumb != null) {
+                        Image(
+                            modifier = Modifier.fillMaxSize(),
+                            bitmap = thumb,
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                        )
+                    }
                 } else {
                     Column(
                         modifier = Modifier.align(Alignment.Center),

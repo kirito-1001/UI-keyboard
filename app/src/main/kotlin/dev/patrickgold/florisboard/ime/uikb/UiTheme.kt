@@ -18,15 +18,20 @@ package dev.patrickgold.florisboard.ime.uikb
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.foundation.Image
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import android.graphics.BitmapFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
 import dev.patrickgold.florisboard.app.FlorisPreferenceStore
 import dev.patrickgold.florisboard.ime.input.InputShiftState
 import dev.patrickgold.florisboard.ime.text.key.KeyCode
@@ -148,14 +153,28 @@ fun UiThemeBackgroundImage(modifier: Modifier = Modifier) {
     val index by prefs.theme.uiThemeIndex.observeAsState()
     val imagePath by prefs.theme.uiThemeImagePath.observeAsState()
     if (index >= 0 || imagePath.isBlank()) return
-    val context = LocalContext.current
-    val request = remember(imagePath) {
-        ImageRequest.Builder(context).data(File(imagePath)).allowHardware(false).build()
+    val bitmap = rememberUiThemeImage(imagePath)
+    bitmap?.let {
+        Image(
+            modifier = modifier,
+            bitmap = it,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+        )
     }
-    AsyncImage(
-        modifier = modifier,
-        model = request,
-        contentDescription = null,
-        contentScale = ContentScale.Crop,
-    )
+}
+
+/** Loads the picture at [path] off the main thread. */
+@Composable
+fun rememberUiThemeImage(path: String): ImageBitmap? {
+    val state = produceState<ImageBitmap?>(initialValue = null, path) {
+        value = if (path.isBlank()) {
+            null
+        } else {
+            withContext(Dispatchers.IO) {
+                runCatching { BitmapFactory.decodeFile(path)?.asImageBitmap() }.getOrNull()
+            }
+        }
+    }
+    return state.value
 }
