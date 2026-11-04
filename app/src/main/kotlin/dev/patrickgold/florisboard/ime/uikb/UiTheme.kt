@@ -86,7 +86,7 @@ fun uiThemeTextColor(background: Color): Color {
     return if (lum > 0.59f) Color(0xFF141418) else Color(0xFFF5F5F5)
 }
 
-private val ImageThemeKey = Color.Black.copy(alpha = 0.30f)
+private val ImageThemeKey = Color.Black.copy(alpha = 0.36f)
 private val ImageThemePopup = Color.Black.copy(alpha = 0.50f)
 private val ImageThemeAccent = Color(0xFF4CB6AC)
 
@@ -266,4 +266,4 @@ fun rememberUiThemeBlur(path: String): ImageBitmap? {
     return state.value
 }
 
-private const val BlurLongSide = 72
+private const val BlurLongSide = 48
