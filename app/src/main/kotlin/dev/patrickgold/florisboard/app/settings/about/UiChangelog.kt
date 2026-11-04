@@ -53,6 +53,11 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "c1cdd76",
+        ar = listOf("أيقونة الإيموجي في شريط الأدوات: حلقة سمكها 3dp مع العينين والفم والباقي فراغ."),
+        en = listOf("Emoji icon in the toolbar: a 3dp ring with the eyes and mouth, the rest empty."),
+    ),
+    UiChangelogEntry(
         version = "e9c8c38",
         ar = listOf("إضافة زر «حواف المفاتيح» في إعدادات لوحة المفاتيح (تحت الإزاحة السفلية): نافذة بشريط يتحكم في انحناء حواف أزرار الحروف والأرقام والرموز ولوحتي تعديل النص والأرقام، مع إعادة الضبط حسب الثيم."),
         en = listOf("Added the «Key corners» button in Keyboard settings (below bottom offset): a dialog with a slider for the corner roundness of the letter, number and symbol keys and the edit-text and numeric panels, with a reset to the theme."),
