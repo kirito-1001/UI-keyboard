@@ -63,6 +63,7 @@ fun SnyggColumn(
                 .snyggMargin(style)
                 .snyggShadow(style)
                 .snyggBorder(style)
+                .snyggBackdrop(elementName, style.shape())
                 .snyggBackground(style)
                 .snyggPadding(style),
             verticalArrangement = verticalArrangement,

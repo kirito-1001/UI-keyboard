@@ -40,6 +40,11 @@ import dev.patrickgold.jetpref.datastore.model.observeAsState
 import org.florisboard.lib.snygg.SnyggQueryAttributes
 import org.florisboard.lib.snygg.SnyggSelector
 import org.florisboard.lib.snygg.SnyggSinglePropertySet
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
+import org.florisboard.lib.snygg.ui.LocalSnyggBackdrop
+import org.florisboard.lib.snygg.ui.SnyggBackdrop
 import org.florisboard.lib.snygg.ui.LocalSnyggStyleTransform
 import org.florisboard.lib.snygg.ui.SnyggStyleTransform
 import org.florisboard.lib.snygg.ui.withColors
@@ -76,7 +81,8 @@ fun uiThemeTextColor(background: Color): Color {
     return if (lum > 0.59f) Color(0xFF141418) else Color(0xFFF5F5F5)
 }
 
-private val ImageThemeKey = Color.Black.copy(alpha = 0.38f)
+private val ImageThemeKey = Color.Black.copy(alpha = 0.30f)
+private val ImageThemePopup = Color.Black.copy(alpha = 0.50f)
 private val ImageThemeAccent = Color(0xFF4CB6AC)
 
 private class UiThemeTransform(
@@ -105,6 +111,19 @@ private class UiThemeTransform(
                 style.withColors(background = Color.Transparent, foreground = textBg)
             elementName.startsWith("smartbar") ->
                 style.withColors(foreground = textBg)
+            elementName == FlorisImeUi.KeyPopupBox.elementName ->
+                style.withColors(
+                    background = if (isImage) ImageThemePopup else lerp(key, textKey, 0.10f),
+                    foreground = textKey,
+                )
+            elementName == FlorisImeUi.KeyPopupElement.elementName ->
+                if (selector == SnyggSelector.FOCUS) {
+                    style.withColors(background = accent, foreground = textAccent)
+                } else {
+                    style.withColors(background = Color.Transparent, foreground = textKey)
+                }
+            elementName == FlorisImeUi.KeyPopupExtendedIndicator.elementName ->
+                style.withColors(foreground = textKey)
             elementName == FlorisImeUi.KeyHint.elementName ->
                 style.withColors(foreground = textKey.copy(alpha = 0.6f))
             elementName == FlorisImeUi.Key.elementName -> {
@@ -143,7 +162,15 @@ fun ProvideUiTheme(content: @Composable () -> Unit) {
             else -> null
         }
     }
-    CompositionLocalProvider(LocalSnyggStyleTransform provides transform, content = content)
+    val blurred = if (transform != null && index < 0) rememberUiThemeBlur(imagePath) else null
+    val backdrop = remember(blurred) {
+        blurred?.let { SnyggBackdrop(it, setOf(FlorisImeUi.Key.elementName, FlorisImeUi.KeyPopupBox.elementName)) }
+    }
+    CompositionLocalProvider(
+        LocalSnyggStyleTransform provides transform,
+        LocalSnyggBackdrop provides backdrop,
+        content = content,
+    )
 }
 
 /** Draws the chosen background picture (if any) behind the keys. */
@@ -154,9 +181,13 @@ fun UiThemeBackgroundImage(modifier: Modifier = Modifier) {
     val imagePath by prefs.theme.uiThemeImagePath.observeAsState()
     if (index >= 0 || imagePath.isBlank()) return
     val bitmap = rememberUiThemeImage(imagePath)
+    val backdrop = LocalSnyggBackdrop.current
     bitmap?.let {
         Image(
-            modifier = modifier,
+            modifier = modifier.onGloballyPositioned { coords ->
+                backdrop?.origin = coords.positionInRoot()
+                backdrop?.size = Size(coords.size.width.toFloat(), coords.size.height.toFloat())
+            },
             bitmap = it,
             contentDescription = null,
             contentScale = ContentScale.Crop,
@@ -178,3 +209,32 @@ fun rememberUiThemeImage(path: String): ImageBitmap? {
     }
     return state.value
 }
+
+/** A very small copy of the picture at [path]; scaled up smoothly it looks blurred (frosted glass behind the keys). */
+@Composable
+fun rememberUiThemeBlur(path: String): ImageBitmap? {
+    val state = produceState<ImageBitmap?>(initialValue = null, path) {
+        value = if (path.isBlank()) {
+            null
+        } else {
+            withContext(Dispatchers.IO) {
+                runCatching {
+                    val full = BitmapFactory.decodeFile(path) ?: return@runCatching null
+                    val longest = maxOf(full.width, full.height)
+                    val scale = BlurLongSide.toFloat() / longest
+                    val small = android.graphics.Bitmap.createScaledBitmap(
+                        full,
+                        (full.width * scale).toInt().coerceAtLeast(1),
+                        (full.height * scale).toInt().coerceAtLeast(1),
+                        true,
+                    )
+                    if (small !== full) full.recycle()
+                    small.asImageBitmap()
+                }.getOrNull()
+            }
+        }
+    }
+    return state.value
+}
+
+private const val BlurLongSide = 72

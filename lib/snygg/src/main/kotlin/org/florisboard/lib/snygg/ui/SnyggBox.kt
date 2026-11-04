@@ -86,6 +86,7 @@ fun SnyggBox(
                 .snyggMargin(style)
                 .snyggShadow(style, shape = shape)
                 .snyggBorder(style, shape = shape)
+                .snyggBackdrop(elementName, shape)
                 .snyggBackground(style, shape = shape, allowClip = allowClip)
                 .then(clickAndSemanticsModifier)
                 .snyggPadding(style),
