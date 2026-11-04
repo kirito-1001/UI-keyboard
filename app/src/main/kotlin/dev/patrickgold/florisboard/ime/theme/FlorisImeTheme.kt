@@ -79,7 +79,7 @@ fun FlorisImeTheme(content: @Composable () -> Unit) {
                 fontSizeMultiplier = fontSizeMultiplier,
                 assetResolver = assetResolver,
                 rootAttributes = attributes,
-                content = content,
+                content = { dev.patrickgold.florisboard.ime.uikb.ProvideUiTheme(content) },
                 materialYouFlags = activeConfig.materialYouFlags
             )
         }

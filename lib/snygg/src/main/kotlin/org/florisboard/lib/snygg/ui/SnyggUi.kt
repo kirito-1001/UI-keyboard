@@ -236,6 +236,33 @@ data class SnyggColorOverride(
 val LocalSnyggColorOverride: ProvidableCompositionLocal<SnyggColorOverride?> =
     compositionLocalOf { null }
 
+/**
+ * Optional global style transform. Applied to every queried style (also of custom elements using
+ * [rememberSnyggThemeQuery]), so an app can recolor all elements at once.
+ */
+fun interface SnyggStyleTransform {
+    fun transform(
+        elementName: String,
+        attributes: SnyggQueryAttributes,
+        selector: SnyggSelector?,
+        style: SnyggSinglePropertySet,
+    ): SnyggSinglePropertySet
+}
+
+/** Returns a copy of this style with the given colors replaced. */
+fun SnyggSinglePropertySet.withColors(
+    background: Color? = null,
+    foreground: Color? = null,
+): SnyggSinglePropertySet {
+    val map = properties.toMutableMap()
+    background?.let { map[Snygg.Background] = SnyggStaticColorValue(it) }
+    foreground?.let { map[Snygg.Foreground] = SnyggStaticColorValue(it) }
+    return SnyggSinglePropertySet(map)
+}
+
+val LocalSnyggStyleTransform: ProvidableCompositionLocal<SnyggStyleTransform?> =
+    compositionLocalOf { null }
+
 @Composable
 internal fun ProvideSnyggStyle(
     elementName: String?,
@@ -306,8 +333,9 @@ internal fun SnyggTheme.rememberQuery(
     val dynamicLightColorScheme = LocalSnyggDynamicLightColorScheme.current
     val dynamicDarkColorScheme = LocalSnyggDynamicDarkColorScheme.current
     val fontSizeMultiplier = LocalSnyggFontSizeMultiplier.current
-    return remember(this, elementName, attributes, mergedSelector, parentStyle, dynamicLightColorScheme, dynamicDarkColorScheme, fontSizeMultiplier) {
-        query(
+    val styleTransform = LocalSnyggStyleTransform.current
+    return remember(this, elementName, attributes, mergedSelector, parentStyle, dynamicLightColorScheme, dynamicDarkColorScheme, fontSizeMultiplier, styleTransform) {
+        val queried = query(
             elementName = elementName ?: "",
             attributes,
             mergedSelector,
@@ -316,6 +344,11 @@ internal fun SnyggTheme.rememberQuery(
             dynamicDarkColorScheme,
             fontSizeMultiplier,
         )
+        if (styleTransform != null && elementName != null) {
+            styleTransform.transform(elementName, attributes, selector ?: mergedSelector, queried)
+        } else {
+            queried
+        }
     }
 }
 

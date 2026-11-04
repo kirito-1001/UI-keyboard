@@ -1186,6 +1186,12 @@
     <string name="ui__font__pick_hint">Tap to choose a font (ttf / otf)</string>
     <string name="ui__font__size">Size</string>
     <string name="ui__font__reset">Remove font</string>
+    <string name="ui__themes__picture">Image</string>
+    <string name="ui__themes__title">Themes</string>
+    <string name="ui__themes__pick_image">Choose an image as background:</string>
+    <string name="ui__themes__ready">Ready-made themes:</string>
+    <string name="ui__themes__cancel">Cancel theme</string>
+    <string name="ui__themes__invalid">This image could not be loaded</string>
     <string name="ui__font__invalid">This file is not a valid font (ttf / otf)</string>
     <string name="ui__clipboard__recent_group">Recently copied text</string>
     <string name="ui__clipboard__recent_hold_time">Long-press time to dismiss the text</string>

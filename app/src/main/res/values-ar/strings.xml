@@ -955,6 +955,12 @@
     <string name="ui__font__pick_hint">اضغط لاختيار خط من ذاكرة الهاتف (ttf / otf)</string>
     <string name="ui__font__size">الحجم</string>
     <string name="ui__font__reset">إلغاء الخط</string>
+    <string name="ui__themes__picture">صورة</string>
+    <string name="ui__themes__title">الثيمات</string>
+    <string name="ui__themes__pick_image">اختيار صورة كخلفية:</string>
+    <string name="ui__themes__ready">ثيمات جاهزة:</string>
+    <string name="ui__themes__cancel">إلغاء تطبيق الثيمات</string>
+    <string name="ui__themes__invalid">تعذّر تحميل هذه الصورة</string>
     <string name="ui__font__invalid">الملف ليس خطًا صالحًا (ttf / otf)</string>
     <string name="ui__clipboard__recent_group">النص المنسوخ حديثًا</string>
     <string name="ui__clipboard__recent_hold_time">مدة الضغط المطول لاختفاء النص</string>

@@ -123,6 +123,8 @@ fun ThemeScreen() = FlorisScreen {
 
         KeyboardFontSettings()
 
+        UiThemesSettings()
+
         AddonManagementReferenceBox(type = ExtensionListScreenType.EXT_THEME)
     }
 }

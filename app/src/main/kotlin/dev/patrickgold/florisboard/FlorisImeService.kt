@@ -649,6 +649,7 @@ class FlorisImeService : LifecycleInputMethodService() {
                         modifier = Modifier.matchParentSize(),
                     )
                 }
+                dev.patrickgold.florisboard.ime.uikb.UiThemeBackgroundImage(Modifier.matchParentSize())
                 val configuration = LocalConfiguration.current
                 val bottomOffset by if (configuration.isOrientationPortrait()) {
                     prefs.keyboard.bottomOffsetPortrait

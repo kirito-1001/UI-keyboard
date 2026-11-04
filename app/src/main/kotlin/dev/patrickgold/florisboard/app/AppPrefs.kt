@@ -821,6 +821,14 @@ abstract class FlorisPreferenceModel : PreferenceModel() {
             key = "theme__keyboard_font_size_delta",
             default = 0,
         )
+        val uiThemeIndex = int(
+            key = "theme__ui_theme_index",
+            default = -1,
+        )
+        val uiThemeImagePath = string(
+            key = "theme__ui_theme_image_path",
+            default = "",
+        )
         val sunriseTime = localTime(
             key = "theme__sunrise_time",
             default = LocalTime(6, 0),
