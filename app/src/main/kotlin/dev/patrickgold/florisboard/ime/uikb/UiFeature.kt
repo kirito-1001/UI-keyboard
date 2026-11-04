@@ -19,7 +19,6 @@ package dev.patrickgold.florisboard.ime.uikb
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Assignment
-import androidx.compose.material.icons.filled.EmojiEmotions
 import androidx.compose.ui.graphics.vector.ImageVector
 import dev.patrickgold.florisboard.R
 
@@ -27,7 +26,7 @@ import dev.patrickgold.florisboard.R
  * Features which can be assigned to the two customizable toolbar buttons.
  */
 enum class UiFeature(@StringRes val labelRes: Int, val icon: ImageVector) {
-    EMOJI(R.string.ui__feature__emoji, Icons.Default.EmojiEmotions),
+    EMOJI(R.string.ui__feature__emoji, UiIcons.EmojiOutline),
     EDIT_TEXT(R.string.ui__feature__edit_text, UiIcons.EditText),
     CLIPBOARD(R.string.ui__feature__clipboard, Icons.AutoMirrored.Outlined.Assignment),
     VOICE(R.string.ui__feature__voice, UiIcons.Mic),

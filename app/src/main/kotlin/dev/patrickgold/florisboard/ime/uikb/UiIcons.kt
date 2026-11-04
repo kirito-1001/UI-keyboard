@@ -210,6 +210,44 @@ object UiIcons {
     }
 
     /**
+     * The emoji icon: only a ring (3dp thick at the normal 28dp icon size), the two eyes and the mouth are drawn, the
+     * rest is empty. Drawn in a 24 x 24 viewport (3dp of 28dp = 2.571 units).
+     */
+    val EmojiOutline: ImageVector by lazy {
+        ImageVector.Builder(
+            name = "EmojiOutline",
+            defaultWidth = 24.dp,
+            defaultHeight = 24.dp,
+            viewportWidth = 24f,
+            viewportHeight = 24f,
+        ).apply {
+            // Ring
+            addPath(
+                pathData = addPathNodes(
+                    "M1.286,12 a10.714,10.714 0 1,0 21.428,0 a10.714,10.714 0 1,0 -21.428,0 Z",
+                ),
+                stroke = SolidColor(Color.Black),
+                strokeLineWidth = 2.571f,
+            )
+            // Eyes
+            addPath(
+                pathData = addPathNodes(
+                    "M7.35,9.4 a1.45,1.45 0 1,0 2.9,0 a1.45,1.45 0 1,0 -2.9,0 Z " +
+                        "M13.75,9.4 a1.45,1.45 0 1,0 2.9,0 a1.45,1.45 0 1,0 -2.9,0 Z",
+                ),
+                fill = SolidColor(Color.Black),
+            )
+            // Mouth
+            addPath(
+                pathData = addPathNodes("M7.65,14.63 A4.8,4.8 0 0 0 16.35,14.63"),
+                stroke = SolidColor(Color.Black),
+                strokeLineWidth = 2.2f,
+                strokeLineCap = StrokeCap.Round,
+            )
+        }.build()
+    }
+
+    /**
      * The "font" settings icon: a rounded square with a transparent (cut out) letter A. Drawn in a 24 x 24 viewport.
      */
     val FontSquare: ImageVector by lazy {
