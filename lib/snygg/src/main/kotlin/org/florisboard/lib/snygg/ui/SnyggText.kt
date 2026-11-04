@@ -63,7 +63,9 @@ fun SnyggText(
                 .snyggMargin(style)
                 .snyggShadow(style)
                 .snyggBorder(style)
-                .snyggBackground(style, allowClip = false)
+                // A text without an own element name inherits the style of its parent, which already painted the
+                // background. Painting it again would stack semi-transparent colors into a visible square.
+                .then(if (elementName != null) Modifier.snyggBackground(style, allowClip = false) else Modifier)
                 .snyggPadding(style),
             text = text,
             color = style.foreground(),
