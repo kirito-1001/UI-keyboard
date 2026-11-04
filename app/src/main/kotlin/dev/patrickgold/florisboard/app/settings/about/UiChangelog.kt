@@ -53,6 +53,15 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "016a2b8",
+        ar = listOf(
+            "أيقونات جديدة للقائمة المنسدلة من الزرين ١ و٢ (الإيموجي، تعديل النص، الحافظة، الإدخال الصوتي) وللزرين نفسيهما في الشريط، وأيقونة جديدة لزر إخفاء اللوحة.",
+        ),
+        en = listOf(
+            "New icons for the dropdown of buttons 1 and 2 (emoji, edit text, clipboard, voice input) and for the two buttons themselves in the bar, and a new icon for the hide-keyboard button.",
+        ),
+    ),
+    UiChangelogEntry(
         version = "48eaaba",
         ar = listOf(
             "إضافة «الثيمات» (بأيقونة لوحة الألوان) إلى القائمة المنسدلة للزرين ١ و٢، وإلى لوحة الأدوات، وإلى قائمة أزرار شريط الأدوات في الإعدادات للتحكم بموضعها. الضغط عليها يفتح الإعدادات على قسم المظهر.",
