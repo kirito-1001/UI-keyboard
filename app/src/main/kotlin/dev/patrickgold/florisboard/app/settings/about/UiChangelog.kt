@@ -53,6 +53,19 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "e4b5dc7",
+        ar = listOf(
+            "عند اختيار صورة كخلفية: خلفية المفاتيح ضبابية (زجاج مصنفر) تظهر الجزء الذي خلف كل زر، في الحروف ولوحة تعديل النص ولوحة الأرقام.",
+            "النوافذ المنبثقة للحروف صارت تتبع الثيم (ضبابية مع الصورة، وبلون الثيم مع الثيمات الجاهزة).",
+            "إصلاح: مربع بلون مختلف حول الحرف داخل المفتاح عند اختيار صورة.",
+        ),
+        en = listOf(
+            "With a background picture: key backgrounds are blurred (frosted glass) showing the part behind each key, on the letters keyboard, the edit-text panel and the numeric panel.",
+            "Key popups now follow the theme (blurred over a picture, theme colors with ready-made themes).",
+            "Fix: a square of a different color around the letter inside a key when a picture is chosen.",
+        ),
+    ),
+    UiChangelogEntry(
         version = "cc3843b",
         ar = listOf(
             "قسم جديد «الثيمات» في الإعدادات > المظهر: اختيار صورة كخلفية للوحة، و18 ثيمًا جاهزًا (علامة ✓ على المستخدم)، وزر «إلغاء تطبيق الثيمات» للرجوع للافتراضي.",
