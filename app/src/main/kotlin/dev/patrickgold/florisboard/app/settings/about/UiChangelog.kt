@@ -53,6 +53,15 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "cc3843b",
+        ar = listOf(
+            "قسم جديد «الثيمات» في الإعدادات > المظهر: اختيار صورة كخلفية للوحة، و18 ثيمًا جاهزًا (علامة ✓ على المستخدم)، وزر «إلغاء تطبيق الثيمات» للرجوع للافتراضي.",
+        ),
+        en = listOf(
+            "New \"Themes\" section in Settings > Appearance: pick an image as keyboard background, 18 ready-made themes (✓ on the active one) and a button to cancel the theme and return to default.",
+        ),
+    ),
+    UiChangelogEntry(
         version = "c1cdd76",
         ar = listOf("أيقونة الإيموجي في شريط الأدوات: حلقة سمكها 3dp مع العينين والفم والباقي فراغ."),
         en = listOf("Emoji icon in the toolbar: a 3dp ring with the eyes and mouth, the rest empty."),
