@@ -239,7 +239,10 @@ fun rememberUiThemeImage(path: String): ImageBitmap? {
     return state.value
 }
 
-/** A very small copy of the picture at [path]; scaled up smoothly it looks blurred (frosted glass behind the keys). */
+/**
+ * A real gaussian-blurred copy of the picture at [path] (frosted glass behind the keys). It is blurred once, at a
+ * reduced size (the blur hides the missing detail), and then scaled up behind the keys.
+ */
 @Composable
 fun rememberUiThemeBlur(path: String): ImageBitmap? {
     val state = produceState<ImageBitmap?>(initialValue = null, path) {
@@ -249,15 +252,16 @@ fun rememberUiThemeBlur(path: String): ImageBitmap? {
             withContext(Dispatchers.IO) {
                 runCatching {
                     val full = BitmapFactory.decodeFile(path) ?: return@runCatching null
-                    val longest = maxOf(full.width, full.height)
-                    val scale = BlurLongSide.toFloat() / longest
-                    val small = android.graphics.Bitmap.createScaledBitmap(
-                        full,
-                        (full.width * scale).toInt().coerceAtLeast(1),
-                        (full.height * scale).toInt().coerceAtLeast(1),
-                        true,
-                    )
+                    val scale = BlurWorkSide.toFloat() / maxOf(full.width, full.height)
+                    val w = (full.width * scale).toInt().coerceAtLeast(1)
+                    val h = (full.height * scale).toInt().coerceAtLeast(1)
+                    val small = android.graphics.Bitmap.createScaledBitmap(full, w, h, true)
                     if (small !== full) full.recycle()
+                    val pixels = IntArray(w * h)
+                    small.getPixels(pixels, 0, w, 0, 0, w, h)
+                    // Three box blur passes approximate a gaussian blur
+                    repeat(3) { gaussianPass(pixels, w, h, BlurRadius) }
+                    small.setPixels(pixels, 0, w, 0, 0, w, h)
                     small.asImageBitmap()
                 }.getOrNull()
             }
@@ -266,4 +270,41 @@ fun rememberUiThemeBlur(path: String): ImageBitmap? {
     return state.value
 }
 
-private const val BlurLongSide = 48
+private const val BlurWorkSide = 360
+private const val BlurRadius = 10
+
+/** One horizontal + one vertical box blur pass over [px] (ARGB, edges clamped). */
+private fun gaussianPass(px: IntArray, w: Int, h: Int, r: Int) {
+    val tmp = IntArray(px.size)
+    boxBlur(px, tmp, w, h, r, horizontal = true)
+    boxBlur(tmp, px, w, h, r, horizontal = false)
+}
+
+private fun boxBlur(src: IntArray, dst: IntArray, w: Int, h: Int, r: Int, horizontal: Boolean) {
+    val lines = if (horizontal) h else w
+    val len = if (horizontal) w else h
+    val div = 2 * r + 1
+    for (line in 0 until lines) {
+        fun idx(i: Int): Int {
+            val c = i.coerceIn(0, len - 1)
+            return if (horizontal) line * w + c else c * w + line
+        }
+        var sr = 0
+        var sg = 0
+        var sb = 0
+        for (i in -r..r) {
+            val p = src[idx(i)]
+            sr += (p shr 16) and 0xFF
+            sg += (p shr 8) and 0xFF
+            sb += p and 0xFF
+        }
+        for (i in 0 until len) {
+            dst[idx(i)] = (0xFF shl 24) or ((sr / div) shl 16) or ((sg / div) shl 8) or (sb / div)
+            val add = src[idx(i + r + 1)]
+            val rem = src[idx(i - r)]
+            sr += ((add shr 16) and 0xFF) - ((rem shr 16) and 0xFF)
+            sg += ((add shr 8) and 0xFF) - ((rem shr 8) and 0xFF)
+            sb += (add and 0xFF) - (rem and 0xFF)
+        }
+    }
+}
