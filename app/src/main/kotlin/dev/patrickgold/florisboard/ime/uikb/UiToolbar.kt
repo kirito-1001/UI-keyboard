@@ -263,17 +263,24 @@ fun UiToolbar(modifier: Modifier = Modifier, middle: (@Composable BoxScope.() ->
                 onTap = { runFeature(feature) },
                 entries = {
                     UiFeature.entries.mapIndexed { i, f ->
-                        UiMenuEntry(featureLabels[i], f.icon) { scope.launch { pref.set(f) } }
+                        UiMenuEntry(featureLabels[i], f.icon, f.iconRes) { scope.launch { pref.set(f) } }
                     }
                 },
                 iconAnchor = { anchorLeft to anchorWidth },
             ),
             contentAlignment = Alignment.Center,
         ) {
-            SnyggIcon(
-                modifier = Modifier.size(iconSize(if (feature == UiFeature.EDIT_TEXT) EditTextIconSize else ToolbarIconSize)),
-                imageVector = feature.icon,
-            )
+            if (feature.iconRes != null) {
+                SnyggIcon(
+                    modifier = Modifier.size(iconSize(ToolbarIconSize)),
+                    painter = painterResource(feature.iconRes),
+                )
+            } else {
+                SnyggIcon(
+                    modifier = Modifier.size(iconSize(ToolbarIconSize)),
+                    imageVector = feature.icon!!,
+                )
+            }
         }
     }
 
@@ -344,7 +351,7 @@ fun UiToolbar(modifier: Modifier = Modifier, middle: (@Composable BoxScope.() ->
             Divider()
             Box(modifier = Modifier.width(sideCell).fillMaxHeight(), contentAlignment = Alignment.Center) {
                 BarButton(onClick = { dispatcher.sendDownUp(TextKeyData.IME_HIDE_UI) }) {
-                    SnyggIcon(modifier = Modifier.size(iconSize(ToolbarIconSize)), imageVector = Icons.Default.ArrowDropDown)
+                    SnyggIcon(modifier = Modifier.size(iconSize(ToolbarIconSize)), painter = painterResource(R.drawable.ui_icon_hide))
                 }
             }
         }
@@ -497,7 +504,7 @@ fun UiLanguageMenu(modifier: Modifier = Modifier) {
                 animationSpec = tween(durationMillis = 120),
                 label = "menuItemShift",
             )
-            if (iconOnly && entry.icon != null) {
+            if (iconOnly && (entry.icon != null || entry.iconRes != null)) {
                 // Icon menu: the key background of the theme, the selected icon turns green.
                 Box(
                     modifier = Modifier
@@ -517,14 +524,25 @@ fun UiLanguageMenu(modifier: Modifier = Modifier) {
                         if (entry.icon === UiIcons.EditText) EditTextIconSize else ToolbarIconSize,
                     )
                     if (highlighted) {
-                        androidx.compose.material3.Icon(
-                            modifier = iconModifier,
-                            imageVector = entry.icon,
-                            contentDescription = null,
-                            tint = MenuHighlightColor,
-                        )
+                        if (entry.iconRes != null) {
+                            androidx.compose.material3.Icon(
+                                modifier = iconModifier,
+                                painter = painterResource(entry.iconRes),
+                                contentDescription = null,
+                                tint = MenuHighlightColor,
+                            )
+                        } else {
+                            androidx.compose.material3.Icon(
+                                modifier = iconModifier,
+                                imageVector = entry.icon!!,
+                                contentDescription = null,
+                                tint = MenuHighlightColor,
+                            )
+                        }
+                    } else if (entry.iconRes != null) {
+                        SnyggIcon(modifier = iconModifier, painter = painterResource(entry.iconRes))
                     } else {
-                        SnyggIcon(modifier = iconModifier, imageVector = entry.icon)
+                        SnyggIcon(modifier = iconModifier, imageVector = entry.icon!!)
                     }
                 }
             } else {

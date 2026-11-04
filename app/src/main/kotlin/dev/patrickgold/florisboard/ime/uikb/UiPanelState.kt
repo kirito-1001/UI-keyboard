@@ -83,4 +83,9 @@ object UiPanelState {
 }
 
 /** One entry of the language popup menu. */
-class UiMenuEntry(val label: String, val icon: ImageVector? = null, val action: () -> Unit)
+class UiMenuEntry(
+    val label: String,
+    val icon: ImageVector? = null,
+    val iconRes: Int? = null,
+    val action: () -> Unit,
+)
