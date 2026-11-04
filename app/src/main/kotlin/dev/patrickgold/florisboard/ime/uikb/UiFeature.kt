@@ -18,6 +18,7 @@ package dev.patrickgold.florisboard.ime.uikb
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ColorLens
 import androidx.compose.material.icons.automirrored.outlined.Assignment
 import androidx.compose.ui.graphics.vector.ImageVector
 import dev.patrickgold.florisboard.R
@@ -30,4 +31,5 @@ enum class UiFeature(@StringRes val labelRes: Int, val icon: ImageVector) {
     EDIT_TEXT(R.string.ui__feature__edit_text, UiIcons.EditText),
     CLIPBOARD(R.string.ui__feature__clipboard, Icons.AutoMirrored.Outlined.Assignment),
     VOICE(R.string.ui__feature__voice, UiIcons.Mic),
+    THEMES(R.string.ui__feature__themes, Icons.Default.ColorLens),
 }

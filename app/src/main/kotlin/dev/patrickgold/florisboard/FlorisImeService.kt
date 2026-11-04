@@ -158,10 +158,15 @@ class FlorisImeService : LifecycleInputMethodService() {
         /**
          * Hides the IME and launches [FlorisAppActivity].
          */
-        fun launchSettings() {
+        fun launchSettings(deepLink: String? = null) {
             val ims = FlorisImeServiceReference.get() ?: return
             ims.requestHideSelf(0)
             ims.launchActivity(FlorisAppActivity::class) {
+                if (deepLink != null) {
+                    it.action = Intent.ACTION_VIEW
+                    it.addCategory(Intent.CATEGORY_BROWSABLE)
+                    it.data = android.net.Uri.parse(deepLink)
+                }
                 it.flags = Intent.FLAG_ACTIVITY_NEW_TASK or
                     Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED or
                     Intent.FLAG_ACTIVITY_CLEAR_TOP

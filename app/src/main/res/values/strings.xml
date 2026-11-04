@@ -83,6 +83,8 @@
     <string name="quick_action__language_switch__tooltip">Perform language switch</string>
     <string name="quick_action__settings" comment="Please mind the limited available space for the quick action strings">Settings</string>
     <string name="quick_action__settings__tooltip">Open settings</string>
+    <string name="quick_action__themes" comment="Please mind the limited available space for the quick action strings">Themes</string>
+    <string name="quick_action__themes__tooltip">Open themes (Appearance settings)</string>
     <string name="quick_action__undo" comment="Please mind the limited available space for the quick action strings">Undo</string>
     <string name="quick_action__undo__tooltip">Undo the last input</string>
     <string name="quick_action__redo" comment="Please mind the limited available space for the quick action strings">Redo</string>
@@ -1179,6 +1181,7 @@
     <string name="ui__feature__emoji">Emoji</string>
     <string name="ui__feature__edit_text">Edit text</string>
     <string name="ui__feature__clipboard">Clipboard</string>
+    <string name="ui__feature__themes">Themes</string>
     <string name="ui__feature__voice">Voice input</string>
     <string name="ui__splash__developed_by">Developed by</string>
     <string name="ui__font__title">Keyboard font</string>

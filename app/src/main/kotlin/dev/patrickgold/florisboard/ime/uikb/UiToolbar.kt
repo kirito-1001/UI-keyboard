@@ -235,6 +235,7 @@ fun UiToolbar(modifier: Modifier = Modifier, middle: (@Composable BoxScope.() ->
                 dispatcher.sendDownUp(TextKeyData.IME_UI_MODE_CLIPBOARD)
             }
             UiFeature.VOICE -> dispatcher.sendDownUp(TextKeyData.VOICE_INPUT)
+            UiFeature.THEMES -> dispatcher.sendDownUp(TextKeyData.THEMES)
         }
     }
 

@@ -48,6 +48,11 @@ fun ActionsPanel(modifier: Modifier = Modifier) {
     val actionArrangement by prefs.smartbar.actionArrangement.observeAsState()
     val evaluator by keyboardManager.activeSmartbarEvaluator.collectAsState()
 
+    androidx.compose.runtime.LaunchedEffect(actionArrangement) {
+        val updated = actionArrangement.withThemesAction()
+        if (updated != actionArrangement) prefs.smartbar.actionArrangement.set(updated)
+    }
+
     // Same list and order as set in Settings > Smartbar > Toolbar buttons; hidden actions are not shown
     val allActions = remember(actionArrangement) {
         actionArrangement.dynamicActions.filter { it !in actionArrangement.hiddenActions }.distinct()

@@ -61,6 +61,11 @@ fun ToolbarButtonsScreen() = FlorisScreen {
     val scope = rememberCoroutineScope()
     val arrangement by store.smartbar.actionArrangement.observeAsState()
 
+    androidx.compose.runtime.LaunchedEffect(arrangement) {
+        val updated = arrangement.withThemesAction()
+        if (updated != arrangement) store.smartbar.actionArrangement.set(updated)
+    }
+
     fun save(newArrangement: QuickActionArrangement) {
         scope.launch { store.smartbar.actionArrangement.set(newArrangement.distinct()) }
     }

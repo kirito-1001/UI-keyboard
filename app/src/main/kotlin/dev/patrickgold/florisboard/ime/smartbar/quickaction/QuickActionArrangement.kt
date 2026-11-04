@@ -50,6 +50,20 @@ data class QuickActionArrangement(
         return stickyAction == action || dynamicActions.contains(action) || hiddenActions.contains(action)
     }
 
+    /**
+     * Adds the "Themes" action (right after "Settings") for users whose saved arrangement was created before this
+     * action existed. An action the user hid stays hidden, because hidden actions count as present.
+     */
+    fun withThemesAction(): QuickActionArrangement {
+        val themes = QuickAction.InsertKey(TextKeyData.THEMES)
+        if (themes in this) return this
+        val settingsIndex = dynamicActions.indexOf(QuickAction.InsertKey(TextKeyData.SETTINGS))
+        val newDynamic = dynamicActions.toMutableList().apply {
+            if (settingsIndex >= 0) add(settingsIndex + 1, themes) else add(themes)
+        }
+        return copy(dynamicActions = newDynamic)
+    }
+
     fun distinct(): QuickActionArrangement {
         val distinctSet = mutableSetOf<QuickAction>()
         if (stickyAction != null) {
@@ -72,6 +86,7 @@ data class QuickActionArrangement(
                 QuickAction.InsertKey(TextKeyData.UNDO),
                 QuickAction.InsertKey(TextKeyData.REDO),
                 QuickAction.InsertKey(TextKeyData.SETTINGS),
+                QuickAction.InsertKey(TextKeyData.THEMES),
                 QuickAction.InsertKey(TextKeyData.TOGGLE_INCOGNITO_MODE),
                 QuickAction.InsertKey(TextKeyData.IME_UI_MODE_CLIPBOARD),
                 QuickAction.InsertKey(TextKeyData.IME_UI_MODE_MEDIA),
