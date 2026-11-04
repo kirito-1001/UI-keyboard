@@ -53,6 +53,11 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "9d227a5",
+        ar = listOf("ظل متدرج تحت شريط الأدوات عند اختيار صورة كخلفية، يتلاشى في المنطقة الفاصلة بين الشريط والمفاتيح."),
+        en = listOf("A soft gradient shadow under the toolbar when a background picture is used, fading out in the gap between the toolbar and the keys."),
+    ),
+    UiChangelogEntry(
         version = "e4b5dc7",
         ar = listOf(
             "عند اختيار صورة كخلفية: خلفية المفاتيح ضبابية (زجاج مصنفر) تظهر الجزء الذي خلف كل زر، في الحروف ولوحة تعديل النص ولوحة الأرقام.",
