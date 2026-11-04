@@ -29,6 +29,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.clipPath
@@ -68,7 +69,12 @@ internal fun Modifier.snyggBackdrop(elementName: String?, shape: Shape): Modifie
             val imageLeft = backdrop.origin.x + (area.width - dstW) / 2f
             val imageTop = backdrop.origin.y + (area.height - dstH) / 2f
             val outline = shape.createOutline(size, layoutDirection, this)
-            clipPath(Path().apply { addOutline(outline) }) {
+            val clip = when (outline) {
+                is Outline.Generic -> outline.path
+                is Outline.Rounded -> Path().apply { addRoundRect(outline.roundRect) }
+                is Outline.Rectangle -> Path().apply { addRect(outline.rect) }
+            }
+            clipPath(clip) {
                 translate(left = imageLeft - position.x, top = imageTop - position.y) {
                     drawImage(
                         image = image,
