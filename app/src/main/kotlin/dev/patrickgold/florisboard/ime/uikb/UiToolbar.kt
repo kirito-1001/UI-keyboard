@@ -202,7 +202,7 @@ fun UiToolbar(modifier: Modifier = Modifier, middle: (@Composable BoxScope.() ->
             dispatcher.sendDownUp(TextKeyData.VIEW_SYMBOLS)
         })
         add(UiMenuEntry(labelThemes, Icons.Default.ColorLens) { dispatcher.sendDownUp(TextKeyData.THEMES) })
-        add(UiMenuEntry(labelSettings, Icons.Default.Settings) { dispatcher.sendDownUp(TextKeyData.SETTINGS) })
+        add(UiMenuEntry(labelSettings, dev.patrickgold.florisboard.ime.uikb.UiIcons.Gear) { dispatcher.sendDownUp(TextKeyData.SETTINGS) })
     }
 
     val outlineColor = rememberSnyggThemeQuery(FlorisImeUi.SmartbarActionKey.elementName)

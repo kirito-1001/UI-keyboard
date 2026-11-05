@@ -253,7 +253,7 @@ fun ComputingEvaluator.computeImageVector(data: KeyData): ImageVector? {
             Icons.Default.Language
         }
         KeyCode.SETTINGS -> {
-            Icons.Default.Settings
+            dev.patrickgold.florisboard.ime.uikb.UiIcons.Gear
         }
         KeyCode.SUGGESTIONS_TOGGLE -> {
             dev.patrickgold.florisboard.ime.uikb.UiIcons.FontSquare
