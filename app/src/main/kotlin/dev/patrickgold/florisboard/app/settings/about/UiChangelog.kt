@@ -53,6 +53,15 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "370a4b6",
+        ar = listOf(
+            "الصفحة الرئيسية للإعدادات: كل خيار داخل بطاقة بحواف نصف دائرية، وخط القائمة أكبر بنسبة 35%.",
+        ),
+        en = listOf(
+            "Settings home page: every option is in a pill-shaped card, and the menu text is 35% larger.",
+        ),
+    ),
+    UiChangelogEntry(
         version = "33544a8",
         ar = listOf(
             "زر الإدخال صار أخضر افتراضياً بنفس درجة مفتاح الاقتراحات (إذا لم تختر ثيماً).",
