@@ -589,38 +589,44 @@ fun UiLanguageMenu(modifier: Modifier = Modifier) {
                         .border(1.5.dp, outlineColor, MenuShape),
                     contentAlignment = Alignment.Center,
                 ) {
-                    // The icon (if any) sits right next to the text, on the right side of it
+                    // The icons (if any) form one column at the right edge, so they all line up; the text stays
+                    // centered in the item.
                     androidx.compose.runtime.CompositionLocalProvider(
                         androidx.compose.ui.platform.LocalLayoutDirection provides androidx.compose.ui.unit.LayoutDirection.Rtl,
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(modifier = Modifier.fillMaxSize()) {
                             if (entry.icon != null) {
+                                val iconModifier = Modifier
+                                    .align(Alignment.CenterStart)
+                                    .padding(start = 18.dp)
+                                    .size(22.dp)
                                 if (highlighted) {
                                     androidx.compose.material3.Icon(
-                                        modifier = Modifier.size(22.dp),
+                                        modifier = iconModifier,
                                         imageVector = entry.icon,
                                         contentDescription = null,
                                         tint = textColor,
                                     )
                                 } else {
-                                    SnyggIcon(modifier = Modifier.size(22.dp), imageVector = entry.icon)
+                                    SnyggIcon(modifier = iconModifier, imageVector = entry.icon)
                                 }
-                                Spacer(Modifier.width(10.dp))
                             }
-                            if (highlighted) {
-                                androidx.compose.material3.Text(
-                                    text = entry.label,
-                                    color = textColor,
-                                    style = androidx.compose.ui.text.TextStyle(
-                                        shadow = androidx.compose.ui.graphics.Shadow(
-                                            color = textColor,
-                                            offset = androidx.compose.ui.geometry.Offset.Zero,
-                                            blurRadius = 14f,
+                            Box(modifier = Modifier.align(Alignment.Center)) {
+                                if (highlighted) {
+                                    androidx.compose.material3.Text(
+                                        text = entry.label,
+                                        color = textColor,
+                                        style = androidx.compose.ui.text.TextStyle(
+                                            shadow = androidx.compose.ui.graphics.Shadow(
+                                                color = textColor,
+                                                offset = androidx.compose.ui.geometry.Offset.Zero,
+                                                blurRadius = 14f,
+                                            ),
                                         ),
-                                    ),
-                                )
-                            } else {
-                                SnyggText(text = entry.label)
+                                    )
+                                } else {
+                                    SnyggText(text = entry.label)
+                                }
                             }
                         }
                     }
