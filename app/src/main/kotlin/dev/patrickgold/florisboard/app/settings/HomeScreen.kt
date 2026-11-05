@@ -34,6 +34,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.unit.dp
 import dev.patrickgold.florisboard.R
 import dev.patrickgold.florisboard.app.LocalNavController
@@ -177,7 +178,12 @@ private fun HomeCard(content: @androidx.compose.runtime.Composable () -> Unit) {
         androidx.compose.material3.Surface(
             modifier = Modifier.padding(horizontal = 14.dp, vertical = 5.dp),
             shape = androidx.compose.foundation.shape.RoundedCornerShape(percent = 50),
-            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f),
+            // Tinted with the accent colour plus a thin outline, so the cards stand out from any background
+            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.18f)
+                .compositeOver(MaterialTheme.colorScheme.surface),
+            border = androidx.compose.foundation.BorderStroke(
+                1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.45f),
+            ),
         ) {
             content()
         }
