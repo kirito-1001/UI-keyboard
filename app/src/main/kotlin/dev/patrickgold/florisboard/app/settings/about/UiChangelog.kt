@@ -53,6 +53,19 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "33544a8",
+        ar = listOf(
+            "زر الإدخال صار أخضر افتراضياً بنفس درجة مفتاح الاقتراحات (إذا لم تختر ثيماً).",
+            "الأخضر الجديد أُضيف أول خيار في لوحة «اللون الثانوي للإعدادات» ولوحة ألوان تخصيص المفاتيح.",
+            "إصلاح: مفتاح تشغيل الاقتراحات يظهر في كل اللغات، والاختيار من الاقتراحات يستبدل الكلمة كاملة.",
+        ),
+        en = listOf(
+            "The enter key is now green by default, the same shade as the suggestions key (when no theme is chosen).",
+            "The new green is the first choice in the settings accent colour and key customization palettes.",
+            "Fix: the suggestions key shows in every language, and choosing a suggestion replaces the whole word.",
+        ),
+    ),
+    UiChangelogEntry(
         version = "0d31700",
         ar = listOf(
             "توقّع الكلمة التالية صار يعتمد على آخر كلمتين وليس كلمة واحدة، مما يجعل الاقتراحات أدق.",
