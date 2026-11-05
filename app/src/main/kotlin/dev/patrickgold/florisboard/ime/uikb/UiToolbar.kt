@@ -598,7 +598,7 @@ fun UiLanguageMenu(modifier: Modifier = Modifier) {
                             if (entry.icon != null) {
                                 val iconModifier = Modifier
                                     .align(Alignment.CenterStart)
-                                    .padding(start = 18.dp)
+                                    .padding(start = 32.dp)
                                     .size(22.dp)
                                 if (highlighted) {
                                     androidx.compose.material3.Icon(
