@@ -53,6 +53,17 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "0f689c3",
+        ar = listOf(
+            "اقتراحات الكلمات (الدفعة الأولى): قاموس عربي وإنجليزي، وأثناء الكتابة تظهر في شريط الاقتراحات كلمات تكمل ما كتبته (الأكثر شيوعاً أولاً). في العربية لا يهم التشكيل ولا شكل الألف أو الهمزة.",
+            "قوائم الكلمات تُنزَّل وقت بناء التطبيق من مشروع FrequencyWords (ترخيص CC BY-SA 4.0)، ومصدرها مذكور في «حول».",
+        ),
+        en = listOf(
+            "Word suggestions (batch 1): Arabic and English dictionaries; while typing, the suggestion bar completes the word you are typing (most frequent first). In Arabic, diacritics and alef/hamza forms are ignored.",
+            "The word lists are downloaded when the app is built from the FrequencyWords project (CC BY-SA 4.0); the source is credited in About.",
+        ),
+    ),
+    UiChangelogEntry(
         version = "b4c24a9",
         ar = listOf(
             "قائمة اللغة: أيقونة بجانب نص كل خيار (على يمينه): كرة أرضية للغات، لوحة أرقام للأرقام، # للرموز، لوحة ألوان للثيمات، وترس للإعدادات.",
