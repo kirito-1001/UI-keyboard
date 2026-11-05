@@ -25,6 +25,7 @@ import dev.patrickgold.florisboard.ime.nlp.SpellingResult
 import dev.patrickgold.florisboard.ime.nlp.SuggestionCandidate
 import dev.patrickgold.florisboard.ime.nlp.SuggestionProvider
 import dev.patrickgold.florisboard.ime.nlp.UiDictionary
+import dev.patrickgold.florisboard.ime.nlp.UiLearned
 import dev.patrickgold.florisboard.ime.nlp.WordSuggestionCandidate
 import dev.patrickgold.florisboard.lib.devtools.flogDebug
 import kotlinx.coroutines.Dispatchers
@@ -110,21 +111,58 @@ class LatinLanguageProvider(context: Context) : SpellingProvider, SuggestionProv
         allowPossiblyOffensive: Boolean,
         isPrivateSession: Boolean,
     ): List<SuggestionCandidate> {
-        // Completes the word being typed from the bundled word list of the keyboard language
         val language = subtype.primaryLocale.language
-        val dictionary = UiDictionary.forLanguage(appContext, language) ?: return emptyList()
+        val limit = maxCandidateCount.coerceAtMost(5)
         val typed = content.composingText.ifBlank { content.currentWordText }
-        if (typed.isBlank()) return emptyList()
-        val completions = withContext(Dispatchers.Default) { dictionary.complete(typed, maxCandidateCount.coerceAtMost(5)) }
-        return completions.mapIndexed { index, word ->
+        val words = withContext(Dispatchers.Default) {
+            if (typed.isBlank()) {
+                // Nothing is being typed: learn the last finished word and predict the next one
+                val (previous, last) = lastWords(content.textBeforeSelection)
+                if (last == null) return@withContext emptyList<String>()
+                if (!isPrivateSession) learnOnce(language, previous, last, content.selection.start)
+                UiLearned.next(appContext, language, last, "", limit).map { it.first }
+            } else {
+                // A word is being typed: learned words first, then the bundled word list
+                val learned = UiLearned.complete(appContext, language, typed, limit).map { it.first }
+                val dictionary = UiDictionary.forLanguage(appContext, language)
+                val fromList = dictionary?.complete(typed, limit).orEmpty()
+                (learned + fromList).distinct().take(limit)
+            }
+        }
+        return words.mapIndexed { index, word ->
             WordSuggestionCandidate(
-                text = matchCase(typed, word),
+                text = if (typed.isBlank()) word else matchCase(typed, word),
                 confidence = 1.0 - index * 0.1,
                 isEligibleForAutoCommit = false,
                 isEligibleForUserRemoval = false,
                 sourceProvider = this,
             )
         }
+    }
+
+    private var lastLearnedKey: String? = null
+
+    /** Learns a finished word once, even if the suggestions are refreshed several times at the same cursor position. */
+    private fun learnOnce(language: String, previous: String?, word: String, position: Int) {
+        val key = "$language|$previous|$word|$position"
+        if (key == lastLearnedKey) return
+        lastLearnedKey = key
+        UiLearned.learn(appContext, language, previous, word)
+    }
+
+    /**
+     * Returns the last two finished words before the cursor (previous, last), only if the text ends with a space.
+     * Words are lowercased. [last] is null if there is no such word.
+     */
+    private fun lastWords(textBefore: String): Pair<String?, String?> {
+        if (textBefore.isEmpty() || !textBefore.last().isWhitespace()) return null to null
+        val tokens = textBefore.takeLast(120).split(Regex("[^\\p{L}\\p{M}']+")).filter { it.isNotEmpty() }
+        val last = tokens.lastOrNull()?.takeIf { it.length in 2..30 || it == "a" || it == "i" } ?: return null to null
+        val previous = tokens.getOrNull(tokens.size - 2)?.takeIf { it.length in 1..30 }
+        // Text ending in punctuation (not a plain word + space) is not learned
+        if (!textBefore.trimEnd().last().isLetter()) return null to null
+        val breaks = textBefore.trimEnd().dropLast(last.length).takeLast(3).any { it in ".!?؟\n" }
+        return (if (breaks) null else previous?.lowercase()) to last.lowercase()
     }
 
     /** Gives [word] the capitalization the user typed [typed] with (Abc -> Word, ABC -> WORD). */
