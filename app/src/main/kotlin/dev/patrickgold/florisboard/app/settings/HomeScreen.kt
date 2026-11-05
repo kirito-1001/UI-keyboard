@@ -33,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.unit.dp
 import dev.patrickgold.florisboard.R
 import dev.patrickgold.florisboard.app.LocalNavController
@@ -105,60 +106,80 @@ fun HomeScreen() = FlorisScreen {
                 }
             }
         }*/
-        Preference(
+        HomeCard { Preference(
             icon = Icons.Default.Language,
             title = stringRes(R.string.settings__localization__title),
             onClick = { navController.navigate(Routes.Settings.Localization) },
-        )
-        Preference(
+        ) }
+        HomeCard { Preference(
             icon = Icons.Outlined.Palette,
             title = stringRes(R.string.settings__theme__title),
             onClick = { navController.navigate(Routes.Settings.Theme) },
-        )
-        Preference(
+        ) }
+        HomeCard { Preference(
             icon = Icons.Outlined.Keyboard,
             title = stringRes(R.string.settings__keyboard__title),
             onClick = { navController.navigate(Routes.Settings.Keyboard) },
-        )
-        Preference(
+        ) }
+        HomeCard { Preference(
             icon = Icons.Default.SmartButton,
             title = stringRes(R.string.settings__smartbar__title),
             onClick = { navController.navigate(Routes.Settings.Smartbar) },
-        )
-        Preference(
+        ) }
+        HomeCard { Preference(
             icon = Icons.Default.Spellcheck,
             title = stringRes(R.string.settings__typing__title),
             onClick = { navController.navigate(Routes.Settings.Typing) },
-        )
-        Preference(
+        ) }
+        HomeCard { Preference(
             icon = Icons.Default.Gesture,
             title = stringRes(R.string.settings__gestures__title),
             onClick = { navController.navigate(Routes.Settings.Gestures) },
-        )
-        Preference(
+        ) }
+        HomeCard { Preference(
             icon = Icons.AutoMirrored.Outlined.Assignment,
             title = stringRes(R.string.settings__clipboard__title),
             onClick = { navController.navigate(Routes.Settings.Clipboard) },
-        )
-        Preference(
+        ) }
+        HomeCard { Preference(
             icon = Icons.Default.SentimentSatisfiedAlt,
             title = stringRes(R.string.settings__media__title),
             onClick = { navController.navigate(Routes.Settings.Media) },
-        )
-        Preference(
+        ) }
+        HomeCard { Preference(
             icon = Icons.Default.Extension,
             title = stringRes(R.string.ext__home__title),
             onClick = { navController.navigate(Routes.Ext.Home) },
-        )
-        Preference(
+        ) }
+        HomeCard { Preference(
             icon = Icons.Outlined.Build,
             title = stringRes(R.string.settings__other__title),
             onClick = { navController.navigate(Routes.Settings.Other) },
-        )
-        Preference(
+        ) }
+        HomeCard { Preference(
             icon = Icons.Outlined.Info,
             title = stringRes(R.string.about__title),
             onClick = { navController.navigate(Routes.Settings.About) },
-        )
+        ) }
+    }
+}
+
+/** A main-menu entry: pill-shaped (half-circle ends) card with 35% larger text. */
+@androidx.compose.runtime.Composable
+private fun HomeCard(content: @androidx.compose.runtime.Composable () -> Unit) {
+    val density = androidx.compose.ui.platform.LocalDensity.current
+    androidx.compose.runtime.CompositionLocalProvider(
+        androidx.compose.ui.platform.LocalDensity provides androidx.compose.ui.unit.Density(
+            density = density.density,
+            fontScale = density.fontScale * 1.35f,
+        ),
+    ) {
+        androidx.compose.material3.Surface(
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 5.dp),
+            shape = androidx.compose.foundation.shape.RoundedCornerShape(percent = 50),
+            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f),
+        ) {
+            content()
+        }
     }
 }
