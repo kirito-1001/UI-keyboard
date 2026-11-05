@@ -24,6 +24,8 @@ import dev.patrickgold.florisboard.ime.nlp.SpellingProvider
 import dev.patrickgold.florisboard.ime.nlp.SpellingResult
 import dev.patrickgold.florisboard.ime.nlp.SuggestionCandidate
 import dev.patrickgold.florisboard.ime.nlp.SuggestionProvider
+import dev.patrickgold.florisboard.ime.nlp.UiDictionary
+import dev.patrickgold.florisboard.ime.nlp.WordSuggestionCandidate
 import dev.patrickgold.florisboard.lib.devtools.flogDebug
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -68,6 +70,9 @@ class LatinLanguageProvider(context: Context) : SpellingProvider, SuggestionProv
         // The subtype we get here contains a lot of data, however we are only interested in subtype.primaryLocale and
         // subtype.secondaryLocales.
 
+        // Load the word list of the language in the background so the first suggestion is instant
+        UiDictionary.forLanguage(appContext, subtype.primaryLocale.language)
+
         wordData.withLock { wordData ->
             if (wordData.isEmpty()) {
                 // Here we use readText() because the test dictionary is a json dictionary
@@ -105,21 +110,30 @@ class LatinLanguageProvider(context: Context) : SpellingProvider, SuggestionProv
         allowPossiblyOffensive: Boolean,
         isPrivateSession: Boolean,
     ): List<SuggestionCandidate> {
-        return emptyList()
-        /*val word = content.composingText.ifBlank { "next" }
-        val suggestions = buildList {
-            for (n in 0 until maxCandidateCount) {
-                add(WordSuggestionCandidate(
-                    text = "$word$n",
-                    secondaryText = if (n % 2 == 1) "secondary" else null,
-                    confidence = 0.5,
-                    isEligibleForAutoCommit = false,//n == 0 && word.startsWith("auto"),
-                    // We set ourselves as the source provider so we can get notify events for our candidate
-                    sourceProvider = this@LatinLanguageProvider,
-                ))
-            }
+        // Completes the word being typed from the bundled word list of the keyboard language
+        val language = subtype.primaryLocale.language
+        val dictionary = UiDictionary.forLanguage(appContext, language) ?: return emptyList()
+        val typed = content.composingText.ifBlank { content.currentWordText }
+        if (typed.isBlank()) return emptyList()
+        val completions = withContext(Dispatchers.Default) { dictionary.complete(typed, maxCandidateCount.coerceAtMost(5)) }
+        return completions.mapIndexed { index, word ->
+            WordSuggestionCandidate(
+                text = matchCase(typed, word),
+                confidence = 1.0 - index * 0.1,
+                isEligibleForAutoCommit = false,
+                isEligibleForUserRemoval = false,
+                sourceProvider = this,
+            )
         }
-        return suggestions*/
+    }
+
+    /** Gives [word] the capitalization the user typed [typed] with (Abc -> Word, ABC -> WORD). */
+    private fun matchCase(typed: String, word: String): String {
+        if (typed.length > 1 && typed.all { !it.isLetter() || it.isUpperCase() } && typed.any { it.isUpperCase() }) {
+            return word.uppercase()
+        }
+        if (typed.first().isUpperCase()) return word.replaceFirstChar { it.uppercase() }
+        return word
     }
 
     override suspend fun notifySuggestionAccepted(subtype: Subtype, candidate: SuggestionCandidate) {

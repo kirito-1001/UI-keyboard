@@ -34,6 +34,10 @@ jobs:
             -PmavenCentralPublishing=false \
             -PmavenCentralAutomaticPublishing=false \
             -x test --console=plain 2>&1 | tee "$GITHUB_WORKSPACE/jetpref.log"
+      - name: Download word lists for suggestions
+        # Not fatal: without the lists the keyboard still works, just without word suggestions.
+        continue-on-error: true
+        run: python3 tools/build_dict.py
       - name: Build debug APK
         run: |
           set -o pipefail

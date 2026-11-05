@@ -1177,6 +1177,9 @@
     <string name="ui__edit__back">Back</string>
     <string name="ui__menu__numeric">Numeric</string>
     <string name="ui__menu__symbols">Symbols</string>
+    <string name="ui__about__dictionary__title">Word lists</string>
+    <string name="ui__about__dictionary__summary">Word suggestions use the FrequencyWords lists (hermitdave, based on OpenSubtitles), license CC BY-SA 4.0</string>
+    <string name="ui__about__dictionary__url" translatable="false">https://github.com/hermitdave/FrequencyWords</string>
     <string name="ui__menu__themes">Themes</string>
     <string name="ui__menu__settings">Settings</string>
     <string name="ui__feature__emoji">Emoji</string>

@@ -946,6 +946,8 @@
     <string name="ui__edit__back">رجوع</string>
     <string name="ui__menu__numeric">رقمي</string>
     <string name="ui__menu__symbols">الرموز</string>
+    <string name="ui__about__dictionary__title">قوائم الكلمات</string>
+    <string name="ui__about__dictionary__summary">اقتراحات الكلمات تستخدم قوائم FrequencyWords (من hermitdave، مبنية على OpenSubtitles)، بترخيص CC BY-SA 4.0</string>
     <string name="ui__menu__themes">الثيمات</string>
     <string name="ui__menu__settings">الإعدادات</string>
     <string name="ui__feature__emoji">إيموجي</string>

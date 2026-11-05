@@ -148,5 +148,11 @@ fun AboutScreen() = FlorisScreen {
             summary = stringRes(id = R.string.about__third_party_licenses__summary),
             onClick = { navController.navigate(Routes.Settings.ThirdPartyLicenses) },
         )
+        Preference(
+            icon = Icons.Outlined.Description,
+            title = stringRes(R.string.ui__about__dictionary__title),
+            summary = stringRes(R.string.ui__about__dictionary__summary),
+            onClick = { context.launchUrl(R.string.ui__about__dictionary__url) },
+        )
     }
 }
