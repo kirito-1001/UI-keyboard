@@ -53,6 +53,15 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "aff7b21",
+        ar = listOf(
+            "توقّع الكلمة التالية من أول استعمال: قائمة أزواج كلمات خفيفة (نحو 50 ألف زوج عربي و30 ألف إنجليزي) تُحسب وقت البناء من ويكيبيديا، فتقلّ اللهجات. ما تتعلمه من كتابتك يظهر قبلها.",
+        ),
+        en = listOf(
+            "Next-word suggestions from the first use: a light word-pair list (about 50k Arabic and 30k English pairs) built from Wikipedia at build time, so dialects are mostly left out. What you type yourself shows first.",
+        ),
+    ),
+    UiChangelogEntry(
         version = "d3224a7",
         ar = listOf(
             "إصلاح: تغيير اللغة وأنت في لوحة الأرقام أو الرموز يبقيك في نفس اللوحة بدل الرجوع إلى لوحة الأحرف.",
