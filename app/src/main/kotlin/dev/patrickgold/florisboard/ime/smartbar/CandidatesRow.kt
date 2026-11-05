@@ -79,11 +79,7 @@ fun CandidatesRow(modifier: Modifier = Modifier) {
             .conditional(displayMode == CandidatesDisplayMode.DYNAMIC_SCROLLABLE && candidates.size > 1) {
                 florisHorizontalScroll(scrollbarHeight = CandidatesRowScrollbarHeight)
             },
-        horizontalArrangement = if (candidates.size > 1) {
-            Arrangement.Start
-        } else {
-            Arrangement.Center
-        },
+        horizontalArrangement = Arrangement.Start,
     ) {
         if (candidates.isNotEmpty()) {
             val candidateModifier = if (candidates.size == 1) {
