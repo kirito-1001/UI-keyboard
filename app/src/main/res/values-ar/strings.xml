@@ -946,6 +946,7 @@
     <string name="ui__edit__back">رجوع</string>
     <string name="ui__menu__numeric">رقمي</string>
     <string name="ui__menu__symbols">الرموز</string>
+    <string name="ui__menu__themes">الثيمات</string>
     <string name="ui__menu__settings">الإعدادات</string>
     <string name="ui__feature__emoji">إيموجي</string>
     <string name="ui__feature__edit_text">تحرير النص</string>

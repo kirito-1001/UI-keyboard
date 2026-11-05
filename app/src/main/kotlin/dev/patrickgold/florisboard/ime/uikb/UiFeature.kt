@@ -36,5 +36,4 @@ enum class UiFeature(
     EDIT_TEXT(R.string.ui__feature__edit_text, null, R.drawable.ui_icon_edit_text),
     CLIPBOARD(R.string.ui__feature__clipboard, null, R.drawable.ui_icon_clipboard),
     VOICE(R.string.ui__feature__voice, null, R.drawable.ui_icon_voice),
-    THEMES(R.string.ui__feature__themes, Icons.Default.ColorLens),
 }

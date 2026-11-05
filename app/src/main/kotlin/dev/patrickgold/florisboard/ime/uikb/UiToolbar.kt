@@ -182,6 +182,7 @@ fun UiToolbar(modifier: Modifier = Modifier, middle: (@Composable BoxScope.() ->
 
     val labelNumeric = uiString(R.string.ui__menu__numeric)
     val labelSymbols = uiString(R.string.ui__menu__symbols)
+    val labelThemes = uiString(R.string.ui__menu__themes)
     val labelSettings = uiString(R.string.ui__menu__settings)
 
     fun buildEntries(): List<UiMenuEntry> = buildList {
@@ -196,6 +197,7 @@ fun UiToolbar(modifier: Modifier = Modifier, middle: (@Composable BoxScope.() ->
             UiPanelState.panel = UiPanel.NONE
             dispatcher.sendDownUp(TextKeyData.VIEW_SYMBOLS)
         })
+        add(UiMenuEntry(labelThemes) { dispatcher.sendDownUp(TextKeyData.THEMES) })
         add(UiMenuEntry(labelSettings) { dispatcher.sendDownUp(TextKeyData.SETTINGS) })
     }
 
@@ -237,7 +239,6 @@ fun UiToolbar(modifier: Modifier = Modifier, middle: (@Composable BoxScope.() ->
                 dispatcher.sendDownUp(TextKeyData.IME_UI_MODE_CLIPBOARD)
             }
             UiFeature.VOICE -> dispatcher.sendDownUp(TextKeyData.VOICE_INPUT)
-            UiFeature.THEMES -> dispatcher.sendDownUp(TextKeyData.THEMES)
         }
     }
 
