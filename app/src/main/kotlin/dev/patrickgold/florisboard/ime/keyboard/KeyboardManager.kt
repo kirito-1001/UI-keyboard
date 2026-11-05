@@ -758,6 +758,7 @@ class KeyboardManager(context: Context) : InputKeyEventReceiver {
             KeyCode.LANGUAGE_SWITCH -> handleLanguageSwitch()
             KeyCode.REDO -> editorInstance.performRedo()
             KeyCode.SETTINGS -> FlorisImeService.launchSettings()
+            KeyCode.SUGGESTIONS_TOGGLE -> prefs.suggestion.enabled.let { it.set(!it.get()) }
             KeyCode.THEMES -> FlorisImeService.launchSettings("ui://florisboard/settings/theme")
             KeyCode.SHIFT -> handleShiftUp(data)
             KeyCode.SPACE -> handleSpace(data)

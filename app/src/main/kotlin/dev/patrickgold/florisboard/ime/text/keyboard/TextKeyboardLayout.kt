@@ -332,7 +332,15 @@ private fun TextKeyButton(
     }
     val customizationPrefs by FlorisPreferenceStore
     val keyCustomizations by customizationPrefs.keyboard.keyCustomizations.observeAsState()
-    val colorOverride = remember(keyCustomizations, key.computedData.code, evaluator.keyboard.mode) {
+    val suggestionsOn by customizationPrefs.suggestion.enabled.observeAsState()
+    val colorOverride = remember(keyCustomizations, key.computedData.code, evaluator.keyboard.mode, suggestionsOn) {
+        if (key.computedData.code == KeyCode.SUGGESTIONS_TOGGLE && suggestionsOn) {
+            return@remember SnyggColorOverride(
+                elementName = FlorisImeUi.Key.elementName,
+                background = Color(0xFF43D17A),
+                foreground = Color.White,
+            )
+        }
         val custom = if (evaluator.keyboard.mode == KeyboardMode.CHARACTERS) {
             keyCustomizations.find(key.computedData.code)
         } else {

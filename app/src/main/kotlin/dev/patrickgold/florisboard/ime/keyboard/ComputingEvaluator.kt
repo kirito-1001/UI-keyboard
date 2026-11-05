@@ -255,6 +255,9 @@ fun ComputingEvaluator.computeImageVector(data: KeyData): ImageVector? {
         KeyCode.SETTINGS -> {
             Icons.Default.Settings
         }
+        KeyCode.SUGGESTIONS_TOGGLE -> {
+            dev.patrickgold.florisboard.ime.uikb.UiIcons.FontSquare
+        }
         KeyCode.THEMES -> {
             Icons.Default.ColorLens
         }

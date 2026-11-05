@@ -112,6 +112,7 @@ object KeyCode {
 
     const val SETTINGS =                    -301
     const val THEMES =                      -302
+    const val SUGGESTIONS_TOGGLE =          -303
 
     const val CURRENCY_SLOT_1 =             -801
     const val CURRENCY_SLOT_2 =             -802

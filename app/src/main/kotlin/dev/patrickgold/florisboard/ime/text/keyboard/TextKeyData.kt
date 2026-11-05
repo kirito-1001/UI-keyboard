@@ -490,6 +490,13 @@ data class TextKeyData(
             label = "themes",
         )
 
+        /** Predefined key data for [KeyCode.SUGGESTIONS_TOGGLE] */
+        val SUGGESTIONS_TOGGLE = TextKeyData(
+            type = KeyType.UNSPECIFIED,
+            code = KeyCode.SUGGESTIONS_TOGGLE,
+            label = "suggestions_toggle",
+        )
+
         /** Predefined key data for [KeyCode.VOICE_INPUT] */
         val VOICE_INPUT = TextKeyData(
             type = KeyType.UNSPECIFIED,

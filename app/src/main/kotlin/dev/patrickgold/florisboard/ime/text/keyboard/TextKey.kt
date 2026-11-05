@@ -46,7 +46,11 @@ class TextKey(override val data: AbstractKeyData) : Key(data) {
     fun compute(evaluator: ComputingEvaluator) {
         val keyboard = evaluator.keyboard as? TextKeyboard ?: return
         val keyboardMode = keyboard.mode
-        val computed = data.compute(evaluator)
+        // The comma key of the bottom row becomes the suggestions on/off key (the comma moves to the period key)
+        val computed = data.compute(evaluator).let {
+            if (keyboardMode == KeyboardMode.CHARACTERS && it != null && it.code == 44 &&
+                it.groupId == KeyData.GROUP_LEFT) TextKeyData.SUGGESTIONS_TOGGLE else it
+        }
         val prefs by FlorisPreferenceStore
         val hiddenByUser = computed != null && keyboardMode == KeyboardMode.CHARACTERS &&
             prefs.keyboard.keyCustomizations.get().isHidden(computed.code)
@@ -116,6 +120,17 @@ class TextKey(override val data: AbstractKeyData) : Key(data) {
                 computedPopups.apply {
                     keySpecificPopupSet?.let { merge(it, evaluator) }
                     popupSet?.let { merge(it, evaluator) }
+                }
+                if (computed.code == KeyCode.SUGGESTIONS_TOGGLE) {
+                    computedPopups.clear()
+                } else if (keyboardMode == KeyboardMode.CHARACTERS && computed.code == 46 &&
+                    computed.groupId == KeyData.GROUP_RIGHT) {
+                    // The comma lives on the period key as a long-press character
+                    val hasComma = computedPopups.main?.code == 44 || computedPopups.relevant.any { it.code == 44 }
+                    if (!hasComma) {
+                        val comma = TextKeyData(type = KeyType.CHARACTER, code = 44, label = ",")
+                        if (computedPopups.main == null) computedPopups.main = comma else computedPopups.relevant.add(0, comma)
+                    }
                 }
                 if (computed.type == KeyType.CHARACTER) {
                     addComputedHints(computed.code, evaluator, extendedPopups, extendedPopupsDefault)
