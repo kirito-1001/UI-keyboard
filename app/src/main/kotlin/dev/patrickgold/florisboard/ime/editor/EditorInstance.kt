@@ -34,6 +34,7 @@ import dev.patrickgold.florisboard.ime.input.InputShiftState
 import dev.patrickgold.florisboard.ime.keyboard.IncognitoMode
 import dev.patrickgold.florisboard.ime.keyboard.KeyboardMode
 import dev.patrickgold.florisboard.ime.nlp.SuggestionCandidate
+import dev.patrickgold.florisboard.ime.nlp.WordSuggestionCandidate
 import dev.patrickgold.florisboard.ime.text.composing.Appender
 import dev.patrickgold.florisboard.ime.text.composing.Composer
 import dev.patrickgold.florisboard.ime.text.key.KeyVariation
@@ -255,11 +256,17 @@ class EditorInstance(context: Context) : AbstractEditorInstance(context) {
         val content = activeContent
         return if (content.composing.isValid) {
             phantomSpace.setActive(showComposingRegion = false, candidate = candidate)
-            super.finalizeComposingText(text)
+            super.finalizeComposingText(text).also {
+                // A chosen word is followed by a real space (instead of the phantom space)
+                if (candidate is WordSuggestionCandidate) {
+                    phantomSpace.setInactive()
+                    super.commitText(SPACE)
+                }
+            }
         } else {
             val isPhantomSpaceActive = phantomSpace.determine(text)
             phantomSpace.setActive(showComposingRegion = false, candidate = candidate)
-            return if (isPhantomSpaceActive) {
+            val committed = if (isPhantomSpaceActive) {
                 super.commitText("$SPACE$text")
             } else {
                 super.commitText(text)
@@ -267,6 +274,12 @@ class EditorInstance(context: Context) : AbstractEditorInstance(context) {
                 // handled in finalizeComposingText if content.composing.isValid
                 updateLastCommitPosition()
             }
+            if (candidate is WordSuggestionCandidate) {
+                phantomSpace.setInactive()
+                super.commitText(SPACE)
+                updateLastCommitPosition()
+            }
+            return committed
         }
     }
 
