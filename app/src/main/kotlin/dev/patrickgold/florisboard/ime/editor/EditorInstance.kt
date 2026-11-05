@@ -253,16 +253,16 @@ class EditorInstance(context: Context) : AbstractEditorInstance(context) {
     fun commitCompletion(candidate: SuggestionCandidate): Boolean {
         val text = candidate.text.toString()
         if (text.isEmpty() || activeInfo.isRawInputEditor) return false
-        var content = activeContent
+        val content = activeContent
         // Cursor in the middle of a word: jump to the end of the word first, so the whole word gets replaced
         if (candidate is WordSuggestionCandidate && content.selection.isCursorMode) {
             val rest = content.textAfterSelection.takeWhile {
                 it.isLetter() || Character.getType(it) == Character.NON_SPACING_MARK.toInt() || it == '\''
             }.length
             if (rest > 0) {
-                val end = content.selection.start + rest
-                setSelection(end, end)
-                content = activeContent
+                // Remove the part of the word after the cursor, so the chosen word replaces the whole word.
+                // (Moving the cursor instead relied on the editor state being updated in time.)
+                currentInputConnection()?.deleteSurroundingText(0, rest)
             }
         }
         return if (content.composing.isValid) {
