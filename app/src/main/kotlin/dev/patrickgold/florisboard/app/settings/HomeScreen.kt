@@ -16,6 +16,7 @@
 
 package dev.patrickgold.florisboard.app.settings
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Assignment
@@ -34,7 +35,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.unit.dp
 import dev.patrickgold.florisboard.R
 import dev.patrickgold.florisboard.app.LocalNavController
@@ -49,7 +49,9 @@ import org.florisboard.lib.compose.stringRes
 
 @Composable
 fun HomeScreen() = FlorisScreen {
-    title = stringRes(R.string.settings__home__title)
+    // The welcome text is shown in a card inside the page instead of the top bar
+    val welcome = stringRes(R.string.settings__home__title)
+    title = ""
     navigationIconVisible = false
     previewFieldVisible = true
 
@@ -107,6 +109,19 @@ fun HomeScreen() = FlorisScreen {
                 }
             }
         }*/
+        run {
+            val cut = welcome.lastIndexOf(' ').coerceAtLeast(0)
+            HomeCard(fillWidth = 0.56f, topSpace = 28.dp, scaleText = false) {
+                androidx.compose.foundation.layout.Column(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 16.dp),
+                    horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
+                ) {
+                    val style = MaterialTheme.typography.titleLarge
+                    androidx.compose.material3.Text(welcome.substring(0, cut).trim(), style = style)
+                    androidx.compose.material3.Text(welcome.substring(cut).trim(), style = style)
+                }
+            }
+        }
         HomeCard { Preference(
             icon = Icons.Default.Language,
             title = stringRes(R.string.settings__localization__title),
@@ -165,27 +180,41 @@ fun HomeScreen() = FlorisScreen {
     }
 }
 
-/** A main-menu entry: pill-shaped (half-circle ends) card with 35% larger text. */
+/** A main-menu entry: pill-shaped (half-circle ends) light card with 35% larger text. */
 @androidx.compose.runtime.Composable
-private fun HomeCard(content: @androidx.compose.runtime.Composable () -> Unit) {
+private fun HomeCard(
+    fillWidth: Float = 1f,
+    topSpace: androidx.compose.ui.unit.Dp = 0.dp,
+    scaleText: Boolean = true,
+    content: @androidx.compose.runtime.Composable () -> Unit,
+) {
     val density = androidx.compose.ui.platform.LocalDensity.current
+    val dark = androidx.compose.ui.graphics.Color(0xFF1B1B1B)
+    val scheme = MaterialTheme.colorScheme.copy(onSurface = dark, onSurfaceVariant = dark, onBackground = dark)
     androidx.compose.runtime.CompositionLocalProvider(
         androidx.compose.ui.platform.LocalDensity provides androidx.compose.ui.unit.Density(
             density = density.density,
-            fontScale = density.fontScale * 1.35f,
+            fontScale = if (scaleText) density.fontScale * 1.35f else density.fontScale,
         ),
+        androidx.compose.material3.LocalContentColor provides dark,
     ) {
-        androidx.compose.material3.Surface(
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 5.dp),
-            shape = androidx.compose.foundation.shape.RoundedCornerShape(percent = 50),
-            // Tinted with the accent colour plus a thin outline, so the cards stand out from any background
-            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.18f)
-                .compositeOver(MaterialTheme.colorScheme.surface),
-            border = androidx.compose.foundation.BorderStroke(
-                1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.45f),
-            ),
-        ) {
-            content()
+        MaterialTheme(colorScheme = scheme) {
+            androidx.compose.foundation.layout.Box(
+                modifier = Modifier.fillMaxWidth().padding(top = topSpace),
+                contentAlignment = androidx.compose.ui.Alignment.Center,
+            ) {
+                androidx.compose.material3.Surface(
+                    modifier = Modifier
+                        .fillMaxWidth(fillWidth)
+                        .padding(horizontal = 14.dp, vertical = 5.dp),
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(percent = 50),
+                    // #FFC0FFFC made 40% lighter
+                    color = androidx.compose.ui.graphics.Color(0xFFD9FFFD),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, androidx.compose.ui.graphics.Color(0xFF9EDFDA)),
+                ) {
+                    content()
+                }
+            }
         }
     }
 }
