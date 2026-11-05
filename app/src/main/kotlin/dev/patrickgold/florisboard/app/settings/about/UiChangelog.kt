@@ -53,6 +53,15 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "b4c24a9",
+        ar = listOf(
+            "قائمة اللغة: أيقونة بجانب نص كل خيار (على يمينه): كرة أرضية للغات، لوحة أرقام للأرقام، # للرموز، لوحة ألوان للثيمات، وترس للإعدادات.",
+        ),
+        en = listOf(
+            "Language menu: an icon right next to the text of each entry (on its right): globe for languages, dialpad for numbers, # for symbols, palette for themes and a gear for settings.",
+        ),
+    ),
+    UiChangelogEntry(
         version = "57911db",
         ar = listOf(
             "خيار «الثيمات» انتقل من القائمة المنسدلة للزرين ١ و٢ إلى قائمة اللغة، بين «الرموز» و«الإعدادات».",
