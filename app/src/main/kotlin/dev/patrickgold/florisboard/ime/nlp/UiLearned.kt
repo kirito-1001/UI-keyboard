@@ -32,6 +32,7 @@ object UiLearned {
     private class Data {
         val words = HashMap<String, Int>()
         val pairs = HashMap<String, Int>() // "previous\u0000word" -> count
+        val triples = HashMap<String, Int>() // "previous2\u0000previous\u0000word" -> count
     }
 
     private val data = HashMap<String, Data>()
@@ -57,6 +58,9 @@ object UiLearned {
                         4 -> parts[3].toIntOrNull()?.let {
                             data.getOrPut(parts[0]) { Data() }.pairs[parts[1] + "\u0000" + parts[2]] = it
                         }
+                        5 -> parts[4].toIntOrNull()?.let {
+                            data.getOrPut(parts[0]) { Data() }.triples[parts[1] + "\u0000" + parts[2] + "\u0000" + parts[3]] = it
+                        }
                     }
                 }
             }
@@ -74,6 +78,7 @@ object UiLearned {
                 for ((lang, d) in data) {
                     for ((word, count) in d.words) w.write("$lang\t$word\t$count\n")
                     for ((pair, count) in d.pairs) w.write("$lang\t${pair.replace('\u0000', '\t')}\t$count\n")
+                    for ((triple, count) in d.triples) w.write("$lang\t${triple.replace('\u0000', '\t')}\t$count\n")
                 }
             }
             tmp.renameTo(f)
@@ -90,7 +95,7 @@ object UiLearned {
 
     /** Remembers that [word] was typed, after [previous] (if any). */
     @Synchronized
-    fun learn(context: Context, language: String, previous: String?, word: String) {
+    fun learn(context: Context, language: String, previous2: String?, previous: String?, word: String) {
         ensureLoaded(context)
         val d = data.getOrPut(language) { Data() }
         d.words[word] = (d.words[word] ?: 0) + 1
@@ -98,6 +103,11 @@ object UiLearned {
             val key = previous + "\u0000" + word
             d.pairs[key] = (d.pairs[key] ?: 0) + 1
         }
+        if (previous != null && previous2 != null) {
+            val key = previous2 + "\u0000" + previous + "\u0000" + word
+            d.triples[key] = (d.triples[key] ?: 0) + 1
+        }
+        if (d.triples.size > MAX_PAIRS_PER_LANGUAGE) prune(d.triples, MAX_PAIRS_PER_LANGUAGE * 9 / 10)
         if (d.words.size > MAX_WORDS_PER_LANGUAGE) prune(d.words, MAX_WORDS_PER_LANGUAGE * 9 / 10)
         if (d.pairs.size > MAX_PAIRS_PER_LANGUAGE) prune(d.pairs, MAX_PAIRS_PER_LANGUAGE * 9 / 10)
         dirty = true
@@ -135,6 +145,19 @@ object UiLearned {
             .map { it.key.substring(head.length) to it.value }
             .filter { key.isEmpty() || UiDictionary.normalize(it.first, language).startsWith(key) }
             .filter { it.first != prefix }
+            .sortedByDescending { it.second }
+            .take(limit)
+    }
+
+    /** Words that were typed after the two words [previous2] [previous], most used first. */
+    @Synchronized
+    fun nextAfterTwo(context: Context, language: String, previous2: String, previous: String, limit: Int): List<Pair<String, Int>> {
+        ensureLoaded(context)
+        val d = data[language] ?: return emptyList()
+        val head = previous2 + "\u0000" + previous + "\u0000"
+        return d.triples.entries
+            .filter { it.key.startsWith(head) }
+            .map { it.key.substring(head.length) to it.value }
             .sortedByDescending { it.second }
             .take(limit)
     }

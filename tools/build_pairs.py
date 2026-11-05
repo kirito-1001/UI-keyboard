@@ -19,6 +19,9 @@ DUMPS = {
     "en": ("https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2", 40_000_000),
 }
 MAX_PAIRS = {"ar": 50000, "en": 30000}
+MAX_TRIPLES = {"ar": 20000, "en": 15000}
+MIN_TRIPLE_COUNT = {"ar": 3, "en": 4}
+MAX_TRIPLE_ENTRIES = 5_000_000  # prune singletons when the counter gets this big
 MIN_COUNT = {"ar": 4, "en": 6}
 PER_WORD = 5
 
@@ -87,6 +90,7 @@ def build(lang):
     url, limit = DUMPS[lang]
     known = load_words(lang)
     pairs = Counter()
+    triples = Counter()
     for raw in stream_text(url, limit):
         line = clean_line(raw)
         if not line:
@@ -94,14 +98,20 @@ def build(lang):
         for sentence in SPLIT.split(line):
             toks = WORD[lang].findall(sentence)
             prev = None
+            prev2 = None
             for t in toks:
                 key = normalize(t, lang)
                 if key not in known:
-                    prev = None  # unknown word breaks the chain
+                    prev = prev2 = None  # unknown word breaks the chain
                     continue
                 if prev is not None:
                     pairs[(prev, known[key])] += 1
-                prev = key
+                    if prev2 is not None:
+                        triples[(prev2, prev, known[key])] += 1
+                prev2, prev = prev, key
+        if len(triples) > MAX_TRIPLE_ENTRIES:
+            for k in [k for k, c in triples.items() if c < 2]:
+                del triples[k]
     by_prev = defaultdict(list)
     for (p, n), c in pairs.items():
         if c >= MIN_COUNT[lang]:
@@ -111,7 +121,16 @@ def build(lang):
         lst.sort(reverse=True)
         kept.extend((c, p, n) for c, n in lst[:PER_WORD])
     kept.sort(reverse=True)
-    return kept[: MAX_PAIRS[lang]]
+    by_ctx = defaultdict(list)
+    for (a, b, n), c in triples.items():
+        if c >= MIN_TRIPLE_COUNT[lang]:
+            by_ctx[(a, b)].append((c, n))
+    kept3 = []
+    for (a, b), lst in by_ctx.items():
+        lst.sort(reverse=True)
+        kept3.extend((c, a, b, n) for c, n in lst[:3])
+    kept3.sort(reverse=True)
+    return kept[: MAX_PAIRS[lang]], kept3[: MAX_TRIPLES[lang]]
 
 
 def main():
@@ -119,7 +138,7 @@ def main():
     for lang in DUMPS:
         try:
             print(f"Building pairs for {lang} ...")
-            kept = build(lang)
+            kept, kept3 = build(lang)
             if len(kept) < 2000:
                 print(f"  only {len(kept)} pairs, skipping {lang}")
                 continue
@@ -127,6 +146,11 @@ def main():
                 for c, p, n in kept:
                     f.write(f"{p}\t{n}\t{c}\n")
             print(f"  wrote {len(kept)} pairs")
+            if len(kept3) >= 500:
+                with open(DICT / f"{lang}_triples.txt", "w", encoding="utf-8") as f:
+                    for c, a, b, n in kept3:
+                        f.write(f"{a}\t{b}\t{n}\t{c}\n")
+                print(f"  wrote {len(kept3)} triples")
             ok += 1
         except Exception as e:
             print(f"  failed for {lang}: {e}")

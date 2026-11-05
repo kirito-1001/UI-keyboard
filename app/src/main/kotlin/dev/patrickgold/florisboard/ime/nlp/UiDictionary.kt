@@ -76,6 +76,30 @@ class UiDictionary private constructor(
             return map[normalize(previous, language)].orEmpty().take(limit)
         }
 
+        private val tripleCache = HashMap<String, Map<String, List<String>>>()
+
+        /** Words that usually follow the two words [previous2] [previous], from `<language>_triples.txt`. */
+        fun nextWordsAfterTwo(context: Context, language: String, previous2: String, previous: String, limit: Int): List<String> {
+            val map = synchronized(tripleCache) {
+                tripleCache.getOrPut(language) { runCatching { loadTriples(context, language) }.getOrDefault(emptyMap()) }
+            }
+            val key = normalize(previous2, language) + "\t" + normalize(previous, language)
+            return map[key].orEmpty().take(limit)
+        }
+
+        private fun loadTriples(context: Context, language: String): Map<String, List<String>> {
+            val result = HashMap<String, MutableList<String>>()
+            context.assets.open("ime/dict/${language}_triples.txt").bufferedReader(Charsets.UTF_8).useLines { lines ->
+                for (line in lines) {
+                    val parts = line.split('\t')
+                    if (parts.size < 3) continue
+                    result.getOrPut(parts[0] + "\t" + parts[1]) { ArrayList(PAIRS_PER_WORD) }
+                        .let { if (it.size < PAIRS_PER_WORD) it.add(parts[2]) }
+                }
+            }
+            return result
+        }
+
         private fun loadPairs(context: Context, language: String): Map<String, List<String>> {
             val result = HashMap<String, MutableList<String>>()
             context.assets.open("ime/dict/${language}_pairs.txt").bufferedReader(Charsets.UTF_8).useLines { lines ->

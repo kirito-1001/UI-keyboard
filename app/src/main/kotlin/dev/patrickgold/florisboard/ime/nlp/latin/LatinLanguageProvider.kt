@@ -117,12 +117,17 @@ class LatinLanguageProvider(context: Context) : SpellingProvider, SuggestionProv
         val words = withContext(Dispatchers.Default) {
             if (typed.isBlank()) {
                 // Nothing is being typed: learn the last finished word and predict the next one
-                val (previous, last) = lastWords(content.textBeforeSelection)
+                val (previous2, previous, last) = lastWords(content.textBeforeSelection)
                 if (last == null) return@withContext emptyList<String>()
-                if (!isPrivateSession) learnOnce(language, previous, last, content.selection.start)
+                if (!isPrivateSession) learnOnce(language, previous2, previous, last, content.selection.start)
                 // What you wrote after this word before comes first, then the common pairs of the language
-                val learned = UiLearned.next(appContext, language, last, "", limit).map { it.first }
-                interleave(learned, UiDictionary.nextWords(appContext, language, last, limit)).take(limit)
+                // The last two words give the best guess, the last word alone is the fallback
+                val twoWords = previous != null
+                val learned = ((if (twoWords) UiLearned.nextAfterTwo(appContext, language, previous!!, last, limit) else emptyList()) +
+                    UiLearned.next(appContext, language, last, "", limit)).map { it.first }.distinct()
+                val listed = ((if (twoWords) UiDictionary.nextWordsAfterTwo(appContext, language, previous!!, last, limit) else emptyList()) +
+                    UiDictionary.nextWords(appContext, language, last, limit)).distinct()
+                interleave(learned, listed).take(limit)
             } else {
                 // A word is being typed: learned words first, then the bundled word list
                 val learned = UiLearned.complete(appContext, language, typed, limit).map { it.first }
@@ -155,26 +160,30 @@ class LatinLanguageProvider(context: Context) : SpellingProvider, SuggestionProv
     private var lastLearnedKey: String? = null
 
     /** Learns a finished word once, even if the suggestions are refreshed several times at the same cursor position. */
-    private fun learnOnce(language: String, previous: String?, word: String, position: Int) {
-        val key = "$language|$previous|$word|$position"
+    private fun learnOnce(language: String, previous2: String?, previous: String?, word: String, position: Int) {
+        val key = "$language|$previous2|$previous|$word|$position"
         if (key == lastLearnedKey) return
         lastLearnedKey = key
-        UiLearned.learn(appContext, language, previous, word)
+        UiLearned.learn(appContext, language, previous2, previous, word)
     }
 
+    /** The last three finished words of the current sentence (oldest first), lowercased; missing ones are null. */
+    private data class Recent(val previous2: String?, val previous: String?, val last: String?)
+
     /**
-     * Returns the last two finished words before the cursor (previous, last), only if the text ends with a space.
-     * Words are lowercased. [last] is null if there is no such word.
+     * Returns the last finished words before the cursor, only if the text ends with a space after a letter.
+     * Words from an earlier sentence are not used, as they are not related.
      */
-    private fun lastWords(textBefore: String): Pair<String?, String?> {
-        if (textBefore.isEmpty() || !textBefore.last().isWhitespace()) return null to null
-        val tokens = textBefore.takeLast(120).split(Regex("[^\\p{L}\\p{M}']+")).filter { it.isNotEmpty() }
-        val last = tokens.lastOrNull()?.takeIf { it.length in 2..30 || it == "a" || it == "i" } ?: return null to null
+    private fun lastWords(textBefore: String): Recent {
+        val none = Recent(null, null, null)
+        if (textBefore.isEmpty() || !textBefore.last().isWhitespace()) return none
+        if (!textBefore.trimEnd().last().isLetter()) return none
+        val sentence = textBefore.takeLast(200).split(Regex("[.!?؟\\n]+")).last()
+        val tokens = sentence.split(Regex("[^\\p{L}\\p{M}']+")).filter { it.isNotEmpty() }.takeLast(3)
+        val last = tokens.lastOrNull()?.takeIf { it.length in 2..30 || it == "a" || it == "i" } ?: return none
         val previous = tokens.getOrNull(tokens.size - 2)?.takeIf { it.length in 1..30 }
-        // Text ending in punctuation (not a plain word + space) is not learned
-        if (!textBefore.trimEnd().last().isLetter()) return null to null
-        val breaks = textBefore.trimEnd().dropLast(last.length).takeLast(3).any { it in ".!?؟\n" }
-        return (if (breaks) null else previous?.lowercase()) to last.lowercase()
+        val previous2 = if (previous != null) tokens.getOrNull(tokens.size - 3)?.takeIf { it.length in 1..30 } else null
+        return Recent(previous2?.lowercase(), previous?.lowercase(), last.lowercase())
     }
 
     /** Gives [word] the capitalization the user typed [typed] with (Abc -> Word, ABC -> WORD). */
