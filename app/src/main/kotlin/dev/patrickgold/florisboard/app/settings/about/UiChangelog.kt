@@ -53,6 +53,15 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "2bc0424",
+        ar = listOf(
+            "عند الضغط على كلمة من الاقتراحات تُضاف مسافة بعدها تلقائياً، وتظهر مباشرة اقتراحات الكلمة التالية.",
+        ),
+        en = listOf(
+            "Tapping a suggested word now adds a space after it automatically, and next-word suggestions appear right away.",
+        ),
+    ),
+    UiChangelogEntry(
         version = "0cccaed",
         ar = listOf(
             "اقتراحات الكلمات (الدفعة الثانية): الكيبورد يتعلّم الكلمات التي تكتبها ويقترحها أولاً، ويتوقّع الكلمة التالية بعد المسافة.",
