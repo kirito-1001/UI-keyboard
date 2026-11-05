@@ -53,6 +53,17 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "0d31700",
+        ar = listOf(
+            "توقّع الكلمة التالية صار يعتمد على آخر كلمتين وليس كلمة واحدة، مما يجعل الاقتراحات أدق.",
+            "قوائم جاهزة (نحو 20 ألف ثلاثية عربية و15 ألف إنجليزية) والكيبورد يتعلّم الثلاثيات من كتابتك أيضاً.",
+        ),
+        en = listOf(
+            "Next-word prediction now uses the last two words instead of one, so suggestions are more accurate.",
+            "Bundled lists (about 20k Arabic and 15k English word triples), and the keyboard learns triples from your typing too.",
+        ),
+    ),
+    UiChangelogEntry(
         version = "b98113d",
         ar = listOf(
             "زر جديد في الصف السفلي بدل زر الفاصلة (أيقونة الخط A): يشغّل الاقتراحات ويوقفها، ويصبح أخضر عندما تكون مشغّلة.",
