@@ -58,6 +58,11 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.ColorLens
+import androidx.compose.material.icons.filled.Dialpad
+import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Tag
 import androidx.compose.material.icons.filled.EmojiEmotions
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.Composable
@@ -187,18 +192,18 @@ fun UiToolbar(modifier: Modifier = Modifier, middle: (@Composable BoxScope.() ->
 
     fun buildEntries(): List<UiMenuEntry> = buildList {
         for (subtype in subtypes) {
-            add(UiMenuEntry(languageName(subtype.primaryLocale.base)) {
+            add(UiMenuEntry(languageName(subtype.primaryLocale.base), Icons.Default.Language) {
                 UiPanelState.panel = UiPanel.NONE
                 subtypeManager.switchToSubtypeById(subtype.id)
             })
         }
-        add(UiMenuEntry(labelNumeric) { UiPanelState.panel = UiPanel.NUMERIC })
-        add(UiMenuEntry(labelSymbols) {
+        add(UiMenuEntry(labelNumeric, Icons.Default.Dialpad) { UiPanelState.panel = UiPanel.NUMERIC })
+        add(UiMenuEntry(labelSymbols, Icons.Default.Tag) {
             UiPanelState.panel = UiPanel.NONE
             dispatcher.sendDownUp(TextKeyData.VIEW_SYMBOLS)
         })
-        add(UiMenuEntry(labelThemes) { dispatcher.sendDownUp(TextKeyData.THEMES) })
-        add(UiMenuEntry(labelSettings) { dispatcher.sendDownUp(TextKeyData.SETTINGS) })
+        add(UiMenuEntry(labelThemes, Icons.Default.ColorLens) { dispatcher.sendDownUp(TextKeyData.THEMES) })
+        add(UiMenuEntry(labelSettings, Icons.Default.Settings) { dispatcher.sendDownUp(TextKeyData.SETTINGS) })
     }
 
     val outlineColor = rememberSnyggThemeQuery(FlorisImeUi.SmartbarActionKey.elementName)
@@ -584,20 +589,40 @@ fun UiLanguageMenu(modifier: Modifier = Modifier) {
                         .border(1.5.dp, outlineColor, MenuShape),
                     contentAlignment = Alignment.Center,
                 ) {
-                    if (highlighted) {
-                        androidx.compose.material3.Text(
-                            text = entry.label,
-                            color = textColor,
-                            style = androidx.compose.ui.text.TextStyle(
-                                shadow = androidx.compose.ui.graphics.Shadow(
+                    // The icon (if any) sits right next to the text, on the right side of it
+                    androidx.compose.runtime.CompositionLocalProvider(
+                        androidx.compose.ui.platform.LocalLayoutDirection provides androidx.compose.ui.unit.LayoutDirection.Rtl,
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            if (entry.icon != null) {
+                                if (highlighted) {
+                                    androidx.compose.material3.Icon(
+                                        modifier = Modifier.size(22.dp),
+                                        imageVector = entry.icon,
+                                        contentDescription = null,
+                                        tint = textColor,
+                                    )
+                                } else {
+                                    SnyggIcon(modifier = Modifier.size(22.dp), imageVector = entry.icon)
+                                }
+                                Spacer(Modifier.width(10.dp))
+                            }
+                            if (highlighted) {
+                                androidx.compose.material3.Text(
+                                    text = entry.label,
                                     color = textColor,
-                                    offset = androidx.compose.ui.geometry.Offset.Zero,
-                                    blurRadius = 14f,
-                                ),
-                            ),
-                        )
-                    } else {
-                        SnyggText(text = entry.label)
+                                    style = androidx.compose.ui.text.TextStyle(
+                                        shadow = androidx.compose.ui.graphics.Shadow(
+                                            color = textColor,
+                                            offset = androidx.compose.ui.geometry.Offset.Zero,
+                                            blurRadius = 14f,
+                                        ),
+                                    ),
+                                )
+                            } else {
+                                SnyggText(text = entry.label)
+                            }
+                        }
                     }
                 }
             }
