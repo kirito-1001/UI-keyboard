@@ -193,7 +193,6 @@ fun UiToolbar(modifier: Modifier = Modifier, middle: (@Composable BoxScope.() ->
     fun buildEntries(): List<UiMenuEntry> = buildList {
         for (subtype in subtypes) {
             add(UiMenuEntry(languageName(subtype.primaryLocale.base), Icons.Default.Language) {
-                UiPanelState.panel = UiPanel.NONE
                 subtypeManager.switchToSubtypeById(subtype.id)
             })
         }
@@ -341,8 +340,8 @@ fun UiToolbar(modifier: Modifier = Modifier, middle: (@Composable BoxScope.() ->
                             clickAndSemanticsModifier = Modifier.uiMenuGesture(
                                 key = subtypes,
                                 onTap = {
+                                    // Stay on the current panel (numeric, symbols...) when the language changes
                                     subtypeManager.switchToNextSubtype()
-                                    UiPanelState.panel = UiPanel.NONE
                                 },
                                 entries = { buildEntries() },
                             ),
