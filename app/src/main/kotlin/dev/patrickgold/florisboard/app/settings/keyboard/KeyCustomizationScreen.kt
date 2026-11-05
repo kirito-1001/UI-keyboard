@@ -87,7 +87,7 @@ private fun friendlyLabel(code: Int, label: String): String = when (code) {
 }
 
 private val ColorPresets: List<Int> = listOf(
-    0xFFFFFFFF.toInt(), 0xFF000000.toInt(), 0xFFB0BEC5.toInt(), 0xFF455A64.toInt(),
+    0xFF43D17A.toInt(), 0xFFFFFFFF.toInt(), 0xFF000000.toInt(), 0xFFB0BEC5.toInt(), 0xFF455A64.toInt(),
     0xFFE53935.toInt(), 0xFFFB8C00.toInt(), 0xFFFDD835.toInt(), 0xFF43A047.toInt(),
     0xFF00ACC1.toInt(), 0xFF1E88E5.toInt(), 0xFF5E35B1.toInt(), 0xFFD81B60.toInt(),
 )

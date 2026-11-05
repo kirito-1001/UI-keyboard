@@ -333,7 +333,10 @@ private fun TextKeyButton(
     val customizationPrefs by FlorisPreferenceStore
     val keyCustomizations by customizationPrefs.keyboard.keyCustomizations.observeAsState()
     val suggestionsOn by customizationPrefs.suggestion.enabled.observeAsState()
-    val colorOverride = remember(keyCustomizations, key.computedData.code, evaluator.keyboard.mode, suggestionsOn) {
+    val uiThemeIndex by customizationPrefs.theme.uiThemeIndex.observeAsState()
+    val uiThemeImage by customizationPrefs.theme.uiThemeImagePath.observeAsState()
+    val noUiTheme = uiThemeIndex < 0 && uiThemeImage.isBlank()
+    val colorOverride = remember(keyCustomizations, key.computedData.code, evaluator.keyboard.mode, suggestionsOn, noUiTheme) {
         if (key.computedData.code == KeyCode.SUGGESTIONS_TOGGLE && suggestionsOn) {
             return@remember SnyggColorOverride(
                 elementName = FlorisImeUi.Key.elementName,
@@ -351,6 +354,13 @@ private fun TextKeyButton(
                 elementName = FlorisImeUi.Key.elementName,
                 background = custom.background?.let { Color(it) },
                 foreground = custom.foreground?.let { Color(it) },
+            )
+        } else if (key.computedData.code == KeyCode.ENTER && noUiTheme) {
+            // Default enter key colour: the same green as the active suggestions key
+            SnyggColorOverride(
+                elementName = FlorisImeUi.Key.elementName,
+                background = Color(0xFF43D17A),
+                foreground = Color.White,
             )
         } else {
             null

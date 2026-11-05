@@ -36,6 +36,7 @@ val DEFAULT_GREEN = Color(0xFF4CAF50)
 object ColorMappings {
 
     val colors = listOf(
+        Color(0xFF43D17A), // Same green as the suggestions key and the enter key
         DEFAULT_GREEN, // GREEN 500
         Color(0xFFF44336), // RED 500
         Color(0xFFE91E63), // PINK 500
