@@ -129,8 +129,8 @@ class TextKey(override val data: AbstractKeyData) : Key(data) {
                     // The comma (of this language) lives on the period key as a long-press character
                     val commaData = keyboard.keys().asSequence()
                         .filterIsInstance<TextKey>()
-                        .firstOrNull { it.data.groupId == KeyData.GROUP_LEFT }
-                        ?.data?.compute(evaluator)
+                        .mapNotNull { it.data.compute(evaluator) }
+                        .firstOrNull { it.groupId == KeyData.GROUP_LEFT }
                         ?.takeIf { it.code != 64 && it.code != 47 && it.type == KeyType.CHARACTER }
                     val commas = listOfNotNull(
                         commaData,
