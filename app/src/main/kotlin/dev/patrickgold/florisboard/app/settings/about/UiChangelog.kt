@@ -53,6 +53,15 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "bcd96d5",
+        ar = listOf(
+            "أيقونة جديدة للإعدادات (ترس بحواف ناعمة) تحل محل القديمة في قائمة اللغة وقائمة الإجراءات وإعدادات أزرار الشريط.",
+        ),
+        en = listOf(
+            "New settings icon (a soft-edged gear) replaces the old one in the language menu, the actions panel and the toolbar buttons settings.",
+        ),
+    ),
+    UiChangelogEntry(
         version = "370a4b6",
         ar = listOf(
             "الصفحة الرئيسية للإعدادات: كل خيار داخل بطاقة بحواف نصف دائرية، وخط القائمة أكبر بنسبة 35%.",
