@@ -120,7 +120,9 @@ class LatinLanguageProvider(context: Context) : SpellingProvider, SuggestionProv
                 val (previous, last) = lastWords(content.textBeforeSelection)
                 if (last == null) return@withContext emptyList<String>()
                 if (!isPrivateSession) learnOnce(language, previous, last, content.selection.start)
-                UiLearned.next(appContext, language, last, "", limit).map { it.first }
+                // What you wrote after this word before comes first, then the common pairs of the language
+                val learned = UiLearned.next(appContext, language, last, "", limit).map { it.first }
+                (learned + UiDictionary.nextWords(appContext, language, last, limit)).distinct().take(limit)
             } else {
                 // A word is being typed: learned words first, then the bundled word list
                 val learned = UiLearned.complete(appContext, language, typed, limit).map { it.first }

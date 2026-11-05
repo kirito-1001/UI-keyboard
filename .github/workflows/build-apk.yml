@@ -38,6 +38,10 @@ jobs:
         # Not fatal: without the lists the keyboard still works, just without word suggestions.
         continue-on-error: true
         run: python3 tools/build_dict.py
+      - name: Build next-word lists
+        # Not fatal: without them the next word is only predicted from what you typed before.
+        continue-on-error: true
+        run: python3 tools/build_pairs.py
       - name: Build debug APK
         run: |
           set -o pipefail

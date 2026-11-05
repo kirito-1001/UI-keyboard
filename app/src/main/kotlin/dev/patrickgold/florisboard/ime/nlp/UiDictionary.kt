@@ -63,6 +63,32 @@ class UiDictionary private constructor(
 
     companion object {
         private val cache = HashMap<String, UiDictionary?>()
+        private val pairCache = HashMap<String, Map<String, List<String>>>()
+
+        /**
+         * Words that usually follow [previous], from the bundled pair list `assets/ime/dict/<language>_pairs.txt`
+         * (`previous<TAB>next<TAB>count`, most frequent first). Empty if there is no such list.
+         */
+        fun nextWords(context: Context, language: String, previous: String, limit: Int): List<String> {
+            val map = synchronized(pairCache) {
+                pairCache.getOrPut(language) { runCatching { loadPairs(context, language) }.getOrDefault(emptyMap()) }
+            }
+            return map[normalize(previous, language)].orEmpty().take(limit)
+        }
+
+        private fun loadPairs(context: Context, language: String): Map<String, List<String>> {
+            val result = HashMap<String, MutableList<String>>()
+            context.assets.open("ime/dict/${language}_pairs.txt").bufferedReader(Charsets.UTF_8).useLines { lines ->
+                for (line in lines) {
+                    val parts = line.split('\t')
+                    if (parts.size < 2) continue
+                    result.getOrPut(parts[0]) { ArrayList(PAIRS_PER_WORD) }.let { if (it.size < PAIRS_PER_WORD) it.add(parts[1]) }
+                }
+            }
+            return result
+        }
+
+        private const val PAIRS_PER_WORD = 5
 
         /** Loads (once) the dictionary for [language] ("ar", "en"); null if no word list is bundled for it. */
         @Synchronized
