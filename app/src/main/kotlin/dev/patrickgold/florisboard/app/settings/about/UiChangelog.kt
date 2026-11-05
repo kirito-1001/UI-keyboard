@@ -53,6 +53,15 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "d257984",
+        ar = listOf(
+            "تخطيط جديد للصفحة الرئيسية للإعدادات: بطاقة ترحيب أضيق في الأعلى («مرحبا بكم في» ثم «UI Keyboard») وتحتها بقية الخيارات في بطاقات نصف دائرية بلون سماوي فاتح.",
+        ),
+        en = listOf(
+            "New settings home layout: a narrower welcome card on top (\"Welcome to\" then \"UI Keyboard\") with the other options below in light cyan pill cards.",
+        ),
+    ),
+    UiChangelogEntry(
         version = "bcd96d5",
         ar = listOf(
             "أيقونة جديدة للإعدادات (ترس بحواف ناعمة) تحل محل القديمة في قائمة اللغة وقائمة الإجراءات وإعدادات أزرار الشريط.",
