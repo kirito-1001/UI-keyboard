@@ -53,6 +53,15 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "d3224a7",
+        ar = listOf(
+            "إصلاح: تغيير اللغة وأنت في لوحة الأرقام أو الرموز يبقيك في نفس اللوحة بدل الرجوع إلى لوحة الأحرف.",
+        ),
+        en = listOf(
+            "Fix: switching language while on the numeric or symbols panel now keeps you on that panel instead of going back to letters.",
+        ),
+    ),
+    UiChangelogEntry(
         version = "2bc0424",
         ar = listOf(
             "عند الضغط على كلمة من الاقتراحات تُضاف مسافة بعدها تلقائياً، وتظهر مباشرة اقتراحات الكلمة التالية.",
