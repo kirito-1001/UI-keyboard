@@ -122,13 +122,13 @@ class LatinLanguageProvider(context: Context) : SpellingProvider, SuggestionProv
                 if (!isPrivateSession) learnOnce(language, previous, last, content.selection.start)
                 // What you wrote after this word before comes first, then the common pairs of the language
                 val learned = UiLearned.next(appContext, language, last, "", limit).map { it.first }
-                (learned + UiDictionary.nextWords(appContext, language, last, limit)).distinct().take(limit)
+                interleave(learned, UiDictionary.nextWords(appContext, language, last, limit)).take(limit)
             } else {
                 // A word is being typed: learned words first, then the bundled word list
                 val learned = UiLearned.complete(appContext, language, typed, limit).map { it.first }
                 val dictionary = UiDictionary.forLanguage(appContext, language)
                 val fromList = dictionary?.complete(typed, limit).orEmpty()
-                (learned + fromList).distinct().take(limit)
+                interleave(learned, fromList).take(limit)
             }
         }
         return words.mapIndexed { index, word ->
@@ -140,6 +140,16 @@ class LatinLanguageProvider(context: Context) : SpellingProvider, SuggestionProv
                 sourceProvider = this,
             )
         }
+    }
+
+    /** Slot 1 = the best word learned from the user, slot 2 = the best word of the word list, then the rest. */
+    private fun interleave(learned: List<String>, listed: List<String>): List<String> {
+        val result = LinkedHashSet<String>()
+        learned.firstOrNull()?.let { result.add(it) }
+        listed.firstOrNull { it !in result }?.let { result.add(it) }
+        result.addAll(learned)
+        result.addAll(listed)
+        return result.toList()
     }
 
     private var lastLearnedKey: String? = null
