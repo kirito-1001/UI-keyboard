@@ -53,6 +53,15 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "57911db",
+        ar = listOf(
+            "خيار «الثيمات» انتقل من القائمة المنسدلة للزرين ١ و٢ إلى قائمة اللغة، بين «الرموز» و«الإعدادات».",
+        ),
+        en = listOf(
+            "\"Themes\" moved from the dropdown of buttons 1 and 2 to the language menu, between \"Symbols\" and \"Settings\".",
+        ),
+    ),
+    UiChangelogEntry(
         version = "016a2b8",
         ar = listOf(
             "أيقونات جديدة للقائمة المنسدلة من الزرين ١ و٢ (الإيموجي، تعديل النص، الحافظة، الإدخال الصوتي) وللزرين نفسيهما في الشريط، وأيقونة جديدة لزر إخفاء اللوحة.",
