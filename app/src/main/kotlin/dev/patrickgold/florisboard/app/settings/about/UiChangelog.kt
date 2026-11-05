@@ -53,6 +53,17 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "b98113d",
+        ar = listOf(
+            "زر جديد في الصف السفلي بدل زر الفاصلة (أيقونة الخط A): يشغّل الاقتراحات ويوقفها، ويصبح أخضر عندما تكون مشغّلة.",
+            "الفاصلة انتقلت إلى زر النقطة: اضغط مطولاً على النقطة لكتابتها.",
+        ),
+        en = listOf(
+            "New key in the bottom row replacing the comma key (the font \"A\" icon): turns suggestions on and off, and is green while they are on.",
+            "The comma moved to the period key: long-press the period to type it.",
+        ),
+    ),
+    UiChangelogEntry(
         version = "aff7b21",
         ar = listOf(
             "توقّع الكلمة التالية من أول استعمال: قائمة أزواج كلمات خفيفة (نحو 50 ألف زوج عربي و30 ألف إنجليزي) تُحسب وقت البناء من ويكيبيديا، فتقلّ اللهجات. ما تتعلمه من كتابتك يظهر قبلها.",
