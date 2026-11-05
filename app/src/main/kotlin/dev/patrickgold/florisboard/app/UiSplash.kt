@@ -45,7 +45,7 @@ import androidx.compose.runtime.Composable
 import org.florisboard.lib.compose.stringRes
 import dev.patrickgold.florisboard.R
 
-private val BudokanFont = FontFamily(Font(R.font.budokan_rounded_bold))
+internal val BudokanFont = FontFamily(Font(R.font.budokan_rounded_bold))
 
 /**
  * Branded opening screen: logo (large, uncropped), app name, then the faded developer credit, all centred as one

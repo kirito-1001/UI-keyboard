@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import dev.patrickgold.florisboard.R
 import dev.patrickgold.florisboard.app.LocalNavController
 import dev.patrickgold.florisboard.app.Routes
@@ -110,15 +111,22 @@ fun HomeScreen() = FlorisScreen {
             }
         }*/
         run {
-            val cut = welcome.lastIndexOf(' ').coerceAtLeast(0)
-            HomeCard(fillWidth = 0.56f, topSpace = 28.dp, scaleText = false) {
+            // "Welcome to" on the first line, the whole app name on the second (in the opening screen's font)
+            val nameAt = welcome.indexOf("UI Keyboard").takeIf { it >= 0 }
+            val first = if (nameAt != null) welcome.substring(0, nameAt).trim() else welcome
+            HomeCard(fillWidth = 0.8f, topSpace = 28.dp, scaleText = false) {
                 androidx.compose.foundation.layout.Column(
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 16.dp),
                     horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
                 ) {
-                    val style = MaterialTheme.typography.titleLarge
-                    androidx.compose.material3.Text(welcome.substring(0, cut).trim(), style = style)
-                    androidx.compose.material3.Text(welcome.substring(cut).trim(), style = style)
+                    androidx.compose.material3.Text(first, style = MaterialTheme.typography.titleLarge)
+                    if (nameAt != null) {
+                        androidx.compose.material3.Text(
+                            "UI Keyboard",
+                            fontFamily = dev.patrickgold.florisboard.app.BudokanFont,
+                            fontSize = 30.sp,
+                        )
+                    }
                 }
             }
         }
@@ -190,7 +198,13 @@ private fun HomeCard(
 ) {
     val density = androidx.compose.ui.platform.LocalDensity.current
     val dark = androidx.compose.ui.graphics.Color(0xFF1B1B1B)
-    val scheme = MaterialTheme.colorScheme.copy(onSurface = dark, onSurfaceVariant = dark, onBackground = dark)
+    val fill = androidx.compose.ui.graphics.Color(0xFFD9FFFD) // #FFC0FFFC made 40% lighter
+    // The entries draw their own surface, so the card colour has to be part of the colour scheme too
+    val scheme = MaterialTheme.colorScheme.copy(
+        onSurface = dark, onSurfaceVariant = dark, onBackground = dark,
+        surface = fill, background = fill, surfaceVariant = fill, surfaceContainer = fill,
+        surfaceContainerHigh = fill, surfaceContainerHighest = fill, surfaceContainerLow = fill,
+    )
     androidx.compose.runtime.CompositionLocalProvider(
         androidx.compose.ui.platform.LocalDensity provides androidx.compose.ui.unit.Density(
             density = density.density,
@@ -209,7 +223,7 @@ private fun HomeCard(
                         .padding(horizontal = 14.dp, vertical = 5.dp),
                     shape = androidx.compose.foundation.shape.RoundedCornerShape(percent = 50),
                     // #FFC0FFFC made 40% lighter
-                    color = androidx.compose.ui.graphics.Color(0xFFD9FFFD),
+                    color = fill,
                     border = androidx.compose.foundation.BorderStroke(1.dp, androidx.compose.ui.graphics.Color(0xFF9EDFDA)),
                 ) {
                     content()
