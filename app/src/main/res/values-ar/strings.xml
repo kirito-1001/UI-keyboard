@@ -981,4 +981,9 @@
     <string name="ui__key_corners__max">100% (دائرية)</string>
     <string name="ui__key_corners__done">تم</string>
     <string name="ui__key_corners__reset">إعادة الضبط (حسب الثيم)</string>
+    <string name="ui__learned__clear__title">مسح ما تعلّمه الكيبورد</string>
+    <string name="ui__learned__clear__summary">يحذف الكلمات التي تعلّمها من كتابتك، ولا يمكن التراجع.</string>
+    <string name="ui__learned__clear__confirm">حذف كل الكلمات المتعلَّمة؟</string>
+    <string name="ui__learned__clear__yes">حذف</string>
+    <string name="ui__learned__clear__no">إلغاء</string>
 </resources>

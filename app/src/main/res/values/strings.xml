@@ -1213,4 +1213,9 @@
     <string name="ui__key_corners__max">100% (capsule)</string>
     <string name="ui__key_corners__done">Done</string>
     <string name="ui__key_corners__reset">Reset (theme)</string>
+    <string name="ui__learned__clear__title">Clear what the keyboard learned</string>
+    <string name="ui__learned__clear__summary">Deletes the words learned from your typing. This cannot be undone.</string>
+    <string name="ui__learned__clear__confirm">Delete all learned words?</string>
+    <string name="ui__learned__clear__yes">Delete</string>
+    <string name="ui__learned__clear__no">Cancel</string>
 </resources>

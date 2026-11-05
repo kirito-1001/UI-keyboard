@@ -53,6 +53,19 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "0cccaed",
+        ar = listOf(
+            "اقتراحات الكلمات (الدفعة الثانية): الكيبورد يتعلّم الكلمات التي تكتبها ويقترحها أولاً، ويتوقّع الكلمة التالية بعد المسافة.",
+            "التعلّم يبقى على جوالك فقط، ويتوقف في الوضع المخفي وحقول كلمات المرور.",
+            "زر جديد في إعدادات الكتابة «مسح ما تعلّمه الكيبورد».",
+        ),
+        en = listOf(
+            "Word suggestions (batch 2): the keyboard learns the words you type, suggests them first, and predicts the next word after a space.",
+            "Learning stays on your phone only, and is off in incognito mode and password fields.",
+            "New button in Typing settings: \"Clear what the keyboard learned\".",
+        ),
+    ),
+    UiChangelogEntry(
         version = "70da520",
         ar = listOf(
             "إصلاح: إعداد «حجم نص الاقتراحات» يغيّر الآن حجم الكلمات المعروضة في شريط الأدوات.",

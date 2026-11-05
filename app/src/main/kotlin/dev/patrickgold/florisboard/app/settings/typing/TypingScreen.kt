@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.LibraryBooks
 import androidx.compose.material.icons.filled.Contacts
+import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.SpaceBar
 import androidx.compose.material3.Card
@@ -102,6 +103,31 @@ fun TypingScreen() = FlorisScreen {
                 title = stringRes(R.string.pref__suggestion__incognito_mode__label),
                 entries = enumDisplayEntriesOf(IncognitoMode::class),
             )
+            val learnedContext = androidx.compose.ui.platform.LocalContext.current
+            var showClearLearned by remember { mutableStateOf(false) }
+            Preference(
+                icon = Icons.Default.DeleteSweep,
+                title = stringRes(R.string.ui__learned__clear__title),
+                summary = stringRes(R.string.ui__learned__clear__summary),
+                onClick = { showClearLearned = true },
+            )
+            if (showClearLearned) {
+                androidx.compose.material3.AlertDialog(
+                    onDismissRequest = { showClearLearned = false },
+                    text = { Text(stringRes(R.string.ui__learned__clear__confirm)) },
+                    confirmButton = {
+                        androidx.compose.material3.TextButton(onClick = {
+                            dev.patrickgold.florisboard.ime.nlp.UiLearned.clear(learnedContext)
+                            showClearLearned = false
+                        }) { Text(stringRes(R.string.ui__learned__clear__yes)) }
+                    },
+                    dismissButton = {
+                        androidx.compose.material3.TextButton(onClick = { showClearLearned = false }) {
+                            Text(stringRes(R.string.ui__learned__clear__no))
+                        }
+                    },
+                )
+            }
         }
 
         PreferenceGroup(title = stringRes(R.string.pref__correction__title)) {
