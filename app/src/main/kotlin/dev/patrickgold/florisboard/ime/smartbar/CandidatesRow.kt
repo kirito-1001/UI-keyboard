@@ -157,6 +157,10 @@ private fun CandidateItem(
     val attributes = mapOf("auto-commit" to if (candidate.isEligibleForAutoCommit) 1 else 0)
     val selector = if (isPressed) SnyggSelector.PRESSED else SnyggSelector.NONE
 
+    // The text size setting scales the font size of the candidate element itself (the text inside inherits it)
+    val scalePrefs by FlorisPreferenceStore
+    val textScale by scalePrefs.suggestion.textSizeFactor.observeAsTransformingState { it.toFloat() / 100f }
+    ProvideSnyggFontScale(textScale) {
     SnyggRow(
         elementName = elementName,
         attributes = attributes,
@@ -202,9 +206,7 @@ private fun CandidateItem(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            val scalePrefs by FlorisPreferenceStore
-            val textScale by scalePrefs.suggestion.textSizeFactor.observeAsTransformingState { it.toFloat() / 100f }
-            ProvideSnyggFontScale(textScale) {
+            run {
                 SnyggText(
                     elementName = "$elementName-text",
                     attributes = attributes,
@@ -221,5 +223,6 @@ private fun CandidateItem(
                 }
             }
         }
+    }
     }
 }
