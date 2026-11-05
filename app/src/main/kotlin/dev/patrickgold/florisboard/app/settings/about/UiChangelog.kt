@@ -53,6 +53,15 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "70da520",
+        ar = listOf(
+            "إصلاح: إعداد «حجم نص الاقتراحات» يغيّر الآن حجم الكلمات المعروضة في شريط الأدوات.",
+        ),
+        en = listOf(
+            "Fix: the \"suggestion text size\" setting now changes the size of the words shown in the toolbar.",
+        ),
+    ),
+    UiChangelogEntry(
         version = "0f689c3",
         ar = listOf(
             "اقتراحات الكلمات (الدفعة الأولى): قاموس عربي وإنجليزي، وأثناء الكتابة تظهر في شريط الاقتراحات كلمات تكمل ما كتبته (الأكثر شيوعاً أولاً). في العربية لا يهم التشكيل ولا شكل الألف أو الهمزة.",
