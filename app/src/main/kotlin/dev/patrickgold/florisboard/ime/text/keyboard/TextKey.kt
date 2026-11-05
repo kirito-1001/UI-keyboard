@@ -48,8 +48,9 @@ class TextKey(override val data: AbstractKeyData) : Key(data) {
         val keyboardMode = keyboard.mode
         // The comma key of the bottom row becomes the suggestions on/off key (the comma moves to the period key)
         val computed = data.compute(evaluator).let {
-            if (keyboardMode == KeyboardMode.CHARACTERS && it != null && it.code == 44 &&
-                it.groupId == KeyData.GROUP_LEFT) TextKeyData.SUGGESTIONS_TOGGLE else it
+            if (keyboardMode == KeyboardMode.CHARACTERS && it != null && it.type == KeyType.CHARACTER &&
+                it.groupId == KeyData.GROUP_LEFT && it.code != 64 /* @ */ && it.code != 47 /* / */
+            ) TextKeyData.SUGGESTIONS_TOGGLE else it
         }
         val prefs by FlorisPreferenceStore
         val hiddenByUser = computed != null && keyboardMode == KeyboardMode.CHARACTERS &&
@@ -125,10 +126,19 @@ class TextKey(override val data: AbstractKeyData) : Key(data) {
                     computedPopups.clear()
                 } else if (keyboardMode == KeyboardMode.CHARACTERS && computed.code == 46 &&
                     computed.groupId == KeyData.GROUP_RIGHT) {
-                    // The comma lives on the period key as a long-press character
-                    val hasComma = computedPopups.main?.code == 44 || computedPopups.relevant.any { it.code == 44 }
-                    if (!hasComma) {
-                        val comma = TextKeyData(type = KeyType.CHARACTER, code = 44, label = ",")
+                    // The comma (of this language) lives on the period key as a long-press character
+                    val commaData = keyboard.keys().asSequence()
+                        .filterIsInstance<TextKey>()
+                        .firstOrNull { it.data.groupId == KeyData.GROUP_LEFT }
+                        ?.data?.compute(evaluator)
+                        ?.takeIf { it.code != 64 && it.code != 47 && it.type == KeyType.CHARACTER }
+                    val commas = listOfNotNull(
+                        commaData,
+                        TextKeyData(type = KeyType.CHARACTER, code = 44, label = ",").takeIf { commaData?.code != 44 },
+                    )
+                    for (comma in commas.reversed()) {
+                        val has = computedPopups.main?.code == comma.code || computedPopups.relevant.any { it.code == comma.code }
+                        if (has) continue
                         if (computedPopups.main == null) computedPopups.main = comma else computedPopups.relevant.add(0, comma)
                     }
                 }

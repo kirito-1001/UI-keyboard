@@ -255,10 +255,13 @@ class EditorInstance(context: Context) : AbstractEditorInstance(context) {
         if (text.isEmpty() || activeInfo.isRawInputEditor) return false
         var content = activeContent
         // Cursor in the middle of a word: jump to the end of the word first, so the whole word gets replaced
-        if (candidate is WordSuggestionCandidate && !content.composing.isValid && content.selection.isCursorMode) {
-            val word = content.currentWord
-            if (word.isValid && word.end > content.selection.start && content.currentWordText.isNotBlank()) {
-                setSelection(word.end, word.end)
+        if (candidate is WordSuggestionCandidate && content.selection.isCursorMode) {
+            val rest = content.textAfterSelection.takeWhile {
+                it.isLetter() || Character.getType(it) == Character.NON_SPACING_MARK.toInt() || it == '\''
+            }.length
+            if (rest > 0) {
+                val end = content.selection.start + rest
+                setSelection(end, end)
                 content = activeContent
             }
         }
