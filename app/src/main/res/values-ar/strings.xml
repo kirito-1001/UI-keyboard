@@ -472,7 +472,7 @@
     <string name="backup_and_restore__back_up__destination_file_sys">الملفات المحلية</string>
     <string name="backup_and_restore__back_up__destination_share_intent">تطبيق الجهة الخارجية عبر ميزة المشاركة</string>
     <string name="backup_and_restore__back_up__files">حدد ما يتم نسخه احتياطيا</string>
-    <string name="backup_and_restore__back_up__files_jetpref_datastore">تفضيلات</string>
+    <string name="backup_and_restore__back_up__files_jetpref_datastore">الإعدادات الحالية (التفضيلات)</string>
     <string name="backup_and_restore__back_up__files_ime_keyboard">ملحقات لوحة المفاتيح</string>
     <string name="backup_and_restore__back_up__files_ime_spelling">ملحقات التهجئة/ القاموس</string>
     <string name="backup_and_restore__back_up__files_ime_theme">ملحقات السمات</string>
