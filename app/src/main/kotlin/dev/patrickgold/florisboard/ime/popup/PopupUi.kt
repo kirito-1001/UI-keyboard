@@ -24,11 +24,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import org.florisboard.lib.snygg.ui.rememberSnyggThemeQuery
 import androidx.compose.runtime.DisposableEffect
@@ -108,19 +106,34 @@ fun PopupExtBox(
     // Thin dividers between the characters, in the text colour of the popup elements
     val dividerColor = rememberSnyggThemeQuery(FlorisImeUi.KeyPopupElement.elementName, attributes)
         .foreground(Color.Gray).copy(alpha = 0.55f)
-    val isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
     val rowsTopToBottom = elements.asReversed()
     SnyggColumn(FlorisImeUi.KeyPopupBox.elementName, attributes, modifier = modifier) {
+        val columns = (rowsTopToBottom.maxOfOrNull { it.size } ?: 1)
+        val rowCount = rowsTopToBottom.size.coerceAtLeast(1)
+        androidx.compose.foundation.layout.Column(
+            modifier = Modifier.drawWithContent {
+                drawContent()
+                // The full grid, also through empty cells
+                val stroke = 1.dp.toPx()
+                val inset = size.height / rowCount * 0.14f
+                for (c in 1 until columns) {
+                    val x = size.width / columns * c
+                    drawLine(dividerColor, Offset(x, inset), Offset(x, size.height - inset), stroke)
+                }
+                for (r in 1 until rowCount) {
+                    val y = size.height / rowCount * r
+                    drawLine(dividerColor, Offset(inset, y), Offset(size.width - inset, y), stroke)
+                }
+            },
+        ) {
         for ((rowIndex, row) in rowsTopToBottom.withIndex()) {
-            val isLastRow = rowIndex == rowsTopToBottom.lastIndex
             SnyggRow(
                 modifier = Modifier
                     .fillMaxWidth()
                     .requiredHeight(elemHeight),
                 horizontalArrangement = elemArrangement,
             ) {
-                for ((elementIndex, element) in row.withIndex()) {
-                    val isLastInRow = elementIndex == row.lastIndex
+                for (element in row) {
                     val selector = if (activeElementIndex == element.orderedIndex) {
                         SnyggSelector.FOCUS
                     } else {
@@ -131,18 +144,7 @@ fun PopupExtBox(
                         elementName = FlorisImeUi.KeyPopupElement.elementName,
                         attributes = localAttrs,
                         selector = selector,
-                        modifier = Modifier.size(elemWidth, elemHeight).drawBehind {
-                            val stroke = 1.dp.toPx()
-                            val inset = size.height * 0.14f
-                            if (!isLastInRow) {
-                                val x = if (isLtr) size.width - stroke / 2 else stroke / 2
-                                drawLine(dividerColor, Offset(x, inset), Offset(x, size.height - inset), stroke)
-                            }
-                            if (!isLastRow) {
-                                val y = size.height - stroke / 2
-                                drawLine(dividerColor, Offset(0f, y), Offset(size.width, y), stroke)
-                            }
-                        },
+                        modifier = Modifier.size(elemWidth, elemHeight)
                     ) {
                         element.label?.let { label ->
                             SnyggText(
@@ -159,6 +161,7 @@ fun PopupExtBox(
                     }
                 }
             }
+        }
         }
     }
 }
