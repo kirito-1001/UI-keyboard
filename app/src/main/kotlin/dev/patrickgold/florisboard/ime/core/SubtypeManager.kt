@@ -19,6 +19,10 @@ package dev.patrickgold.florisboard.ime.core
 import android.content.Context
 import dev.patrickgold.florisboard.app.FlorisPreferenceStore
 import dev.patrickgold.florisboard.ime.keyboard.CurrencySet
+import dev.patrickgold.florisboard.ime.keyboard.extCoreComposer
+import dev.patrickgold.florisboard.ime.keyboard.extCoreCurrencySet
+import dev.patrickgold.florisboard.ime.keyboard.extCoreLayout
+import dev.patrickgold.florisboard.ime.keyboard.extCorePopupMapping
 import dev.patrickgold.florisboard.keyboardManager
 import dev.patrickgold.florisboard.lib.FlorisLocale
 import dev.patrickgold.florisboard.lib.devtools.flogDebug
@@ -65,9 +69,35 @@ class SubtypeManager(context: Context) {
             } else {
                 emptyList()
             }
+            if (list.isEmpty() && !prefs.localization.defaultSubtypesAdded.get()) {
+                // First start: English and Arabic are there from the beginning
+                prefs.localization.defaultSubtypesAdded.set(true)
+                persistNewSubtypeList(uiDefaultSubtypes())
+                return@collectLatestIn
+            }
             subtypes = list
             evaluateActiveSubtype(list)
         }
+    }
+
+    private fun uiDefaultSubtypes(): List<Subtype> {
+        val now = System.currentTimeMillis()
+        val english = Subtype.DEFAULT.copy(id = now)
+        val arabic = Subtype(
+            id = now + 1,
+            primaryLocale = FlorisLocale.from("ar"),
+            secondaryLocales = emptyList(),
+            composer = extCoreComposer("appender"),
+            currencySet = extCoreCurrencySet("rial"),
+            popupMapping = extCorePopupMapping("ar"),
+            layoutMap = SubtypeLayoutMap(
+                characters = extCoreLayout("arabic"),
+                symbols = extCoreLayout("eastern"),
+                symbols2 = extCoreLayout("eastern"),
+                numericRow = extCoreLayout("eastern_arabic"),
+            ),
+        )
+        return listOf(english, arabic)
     }
 
     private fun persistNewSubtypeList(list: List<Subtype>) = scope.launch {

@@ -644,6 +644,11 @@ abstract class FlorisPreferenceModel : PreferenceModel() {
             key = "localization__subtypes",
             default = "[]",
         )
+        // Set once English and Arabic have been added as the default languages
+        val defaultSubtypesAdded = boolean(
+            key = "localization__ui_default_subtypes_added",
+            default = false,
+        )
     }
 
     val other = Other()
