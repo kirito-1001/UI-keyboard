@@ -177,7 +177,8 @@ class LatinLanguageProvider(context: Context) : SpellingProvider, SuggestionProv
     private fun lastWords(textBefore: String): Recent {
         val none = Recent(null, null, null)
         if (textBefore.isEmpty() || !textBefore.last().isWhitespace()) return none
-        if (!textBefore.trimEnd().last().isLetter()) return none
+        // Text that is only spaces has no finished word
+        if (textBefore.trimEnd().lastOrNull()?.isLetter() != true) return none
         val sentence = textBefore.takeLast(200).split(Regex("[.!?؟\\n]+")).last()
         val tokens = sentence.split(Regex("[^\\p{L}\\p{M}']+")).filter { it.isNotEmpty() }.takeLast(3)
         val last = tokens.lastOrNull()?.takeIf { it.length in 2..30 || it == "a" || it == "i" } ?: return none
