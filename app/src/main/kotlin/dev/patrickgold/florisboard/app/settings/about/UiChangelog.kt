@@ -53,6 +53,15 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "9a2fe6f",
+        ar = listOf(
+            "تخطيط جديد للصفحة الرئيسية للإعدادات: خلفية فاتحة، وعنوان الترحيب في الأعلى، والخيارات داخل لوحة واحدة بحواف علوية دائرية يفصل بينها خطوط رفيعة.",
+        ),
+        en = listOf(
+            "New settings home layout: a light page, the welcome title on top, and all options in one sheet with rounded top corners and thin dividers.",
+        ),
+    ),
+    UiChangelogEntry(
         version = "c5822c9",
         ar = listOf(
             "القائمة المنبثقة عند الضغط المطوّل على الحروف: خطوط فاصلة رفيعة بين الحروف (وبين الصفوف إن كانت أكثر من صف).",
