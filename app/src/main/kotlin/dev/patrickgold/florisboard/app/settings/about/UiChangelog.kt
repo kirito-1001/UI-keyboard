@@ -53,6 +53,15 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "c5822c9",
+        ar = listOf(
+            "القائمة المنبثقة عند الضغط المطوّل على الحروف: خطوط فاصلة رفيعة بين الحروف (وبين الصفوف إن كانت أكثر من صف).",
+        ),
+        en = listOf(
+            "Long-press popup: thin divider lines between the characters (and between rows when there is more than one).",
+        ),
+    ),
+    UiChangelogEntry(
         version = "d257984",
         ar = listOf(
             "تخطيط جديد للصفحة الرئيسية للإعدادات: بطاقة ترحيب أضيق في الأعلى («مرحبا بكم في» ثم «UI Keyboard») وتحتها بقية الخيارات في بطاقات نصف دائرية بلون سماوي فاتح.",
