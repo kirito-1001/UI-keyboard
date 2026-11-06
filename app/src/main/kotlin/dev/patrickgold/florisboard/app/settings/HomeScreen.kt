@@ -18,6 +18,17 @@ package dev.patrickgold.florisboard.app.settings
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.Alignment
+import androidx.compose.material3.Surface
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.background
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Assignment
 import androidx.compose.material.icons.filled.Extension
@@ -35,6 +46,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.patrickgold.florisboard.R
@@ -110,125 +122,120 @@ fun HomeScreen() = FlorisScreen {
                 }
             }
         }*/
-        run {
-            // "Welcome to" on the first line, the whole app name on the second (in the opening screen's font)
-            val nameAt = welcome.indexOf("UI Keyboard").takeIf { it >= 0 }
-            val first = if (nameAt != null) welcome.substring(0, nameAt).trim() else welcome
-            HomeCard(fillWidth = 0.8f, topSpace = 28.dp, scaleText = false) {
-                androidx.compose.foundation.layout.Column(
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 16.dp),
-                    horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
-                ) {
-                    androidx.compose.material3.Text(first, style = MaterialTheme.typography.titleLarge)
-                    if (nameAt != null) {
-                        androidx.compose.material3.Text(
-                            "UI Keyboard",
-                            fontFamily = dev.patrickgold.florisboard.app.BudokanFont,
-                            fontSize = 30.sp,
-                        )
-                    }
+        // Page: light background, the welcome text on top and the options in one rounded white sheet
+        val darkPage = MaterialTheme.colorScheme.background.luminance() < 0.5f
+        val pageBg = if (darkPage) Color(0xFF121212) else Color(0xFFF0F0F0)
+        val sheetBg = if (darkPage) Color(0xFF1E1E1E) else Color.White
+        val lineColor = if (darkPage) Color(0xFFDDDDDD) else Color(0xFF222222)
+        val nameAt = welcome.indexOf("UI Keyboard").takeIf { it >= 0 }
+        val first = if (nameAt != null) welcome.substring(0, nameAt).trim() else welcome
+        Column(
+            modifier = Modifier.fillMaxWidth().background(pageBg),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Spacer(modifier = Modifier.height(36.dp))
+            Text(first, style = MaterialTheme.typography.titleLarge, textAlign = TextAlign.Center)
+            if (nameAt != null) {
+                Text(
+                    "UI Keyboard",
+                    fontFamily = dev.patrickgold.florisboard.app.BudokanFont,
+                    fontSize = 30.sp,
+                    textAlign = TextAlign.Center,
+                )
+            }
+            Spacer(modifier = Modifier.height(28.dp))
+            Surface(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp),
+                shape = RoundedCornerShape(topStart = 44.dp, topEnd = 44.dp),
+                color = sheetBg,
+            ) {
+                Column(modifier = Modifier.padding(top = 10.dp, bottom = 24.dp)) {
+                    HomeSheetItem(sheetBg) { Preference(
+                    icon = Icons.Default.Language,
+                    title = stringRes(R.string.settings__localization__title),
+                    onClick = { navController.navigate(Routes.Settings.Localization) },
+                    ) }
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 26.dp), thickness = 1.dp, color = lineColor)
+                    HomeSheetItem(sheetBg) { Preference(
+                    icon = Icons.Outlined.Palette,
+                    title = stringRes(R.string.settings__theme__title),
+                    onClick = { navController.navigate(Routes.Settings.Theme) },
+                    ) }
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 26.dp), thickness = 1.dp, color = lineColor)
+                    HomeSheetItem(sheetBg) { Preference(
+                    icon = Icons.Outlined.Keyboard,
+                    title = stringRes(R.string.settings__keyboard__title),
+                    onClick = { navController.navigate(Routes.Settings.Keyboard) },
+                    ) }
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 26.dp), thickness = 1.dp, color = lineColor)
+                    HomeSheetItem(sheetBg) { Preference(
+                    icon = Icons.Default.SmartButton,
+                    title = stringRes(R.string.settings__smartbar__title),
+                    onClick = { navController.navigate(Routes.Settings.Smartbar) },
+                    ) }
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 26.dp), thickness = 1.dp, color = lineColor)
+                    HomeSheetItem(sheetBg) { Preference(
+                    icon = Icons.Default.Spellcheck,
+                    title = stringRes(R.string.settings__typing__title),
+                    onClick = { navController.navigate(Routes.Settings.Typing) },
+                    ) }
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 26.dp), thickness = 1.dp, color = lineColor)
+                    HomeSheetItem(sheetBg) { Preference(
+                    icon = Icons.Default.Gesture,
+                    title = stringRes(R.string.settings__gestures__title),
+                    onClick = { navController.navigate(Routes.Settings.Gestures) },
+                    ) }
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 26.dp), thickness = 1.dp, color = lineColor)
+                    HomeSheetItem(sheetBg) { Preference(
+                    icon = Icons.AutoMirrored.Outlined.Assignment,
+                    title = stringRes(R.string.settings__clipboard__title),
+                    onClick = { navController.navigate(Routes.Settings.Clipboard) },
+                    ) }
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 26.dp), thickness = 1.dp, color = lineColor)
+                    HomeSheetItem(sheetBg) { Preference(
+                    icon = Icons.Default.SentimentSatisfiedAlt,
+                    title = stringRes(R.string.settings__media__title),
+                    onClick = { navController.navigate(Routes.Settings.Media) },
+                    ) }
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 26.dp), thickness = 1.dp, color = lineColor)
+                    HomeSheetItem(sheetBg) { Preference(
+                    icon = Icons.Default.Extension,
+                    title = stringRes(R.string.ext__home__title),
+                    onClick = { navController.navigate(Routes.Ext.Home) },
+                    ) }
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 26.dp), thickness = 1.dp, color = lineColor)
+                    HomeSheetItem(sheetBg) { Preference(
+                    icon = Icons.Outlined.Build,
+                    title = stringRes(R.string.settings__other__title),
+                    onClick = { navController.navigate(Routes.Settings.Other) },
+                    ) }
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 26.dp), thickness = 1.dp, color = lineColor)
+                    HomeSheetItem(sheetBg) { Preference(
+                    icon = Icons.Outlined.Info,
+                    title = stringRes(R.string.about__title),
+                    onClick = { navController.navigate(Routes.Settings.About) },
+                    ) }
                 }
             }
         }
-        HomeCard { Preference(
-            icon = Icons.Default.Language,
-            title = stringRes(R.string.settings__localization__title),
-            onClick = { navController.navigate(Routes.Settings.Localization) },
-        ) }
-        HomeCard { Preference(
-            icon = Icons.Outlined.Palette,
-            title = stringRes(R.string.settings__theme__title),
-            onClick = { navController.navigate(Routes.Settings.Theme) },
-        ) }
-        HomeCard { Preference(
-            icon = Icons.Outlined.Keyboard,
-            title = stringRes(R.string.settings__keyboard__title),
-            onClick = { navController.navigate(Routes.Settings.Keyboard) },
-        ) }
-        HomeCard { Preference(
-            icon = Icons.Default.SmartButton,
-            title = stringRes(R.string.settings__smartbar__title),
-            onClick = { navController.navigate(Routes.Settings.Smartbar) },
-        ) }
-        HomeCard { Preference(
-            icon = Icons.Default.Spellcheck,
-            title = stringRes(R.string.settings__typing__title),
-            onClick = { navController.navigate(Routes.Settings.Typing) },
-        ) }
-        HomeCard { Preference(
-            icon = Icons.Default.Gesture,
-            title = stringRes(R.string.settings__gestures__title),
-            onClick = { navController.navigate(Routes.Settings.Gestures) },
-        ) }
-        HomeCard { Preference(
-            icon = Icons.AutoMirrored.Outlined.Assignment,
-            title = stringRes(R.string.settings__clipboard__title),
-            onClick = { navController.navigate(Routes.Settings.Clipboard) },
-        ) }
-        HomeCard { Preference(
-            icon = Icons.Default.SentimentSatisfiedAlt,
-            title = stringRes(R.string.settings__media__title),
-            onClick = { navController.navigate(Routes.Settings.Media) },
-        ) }
-        HomeCard { Preference(
-            icon = Icons.Default.Extension,
-            title = stringRes(R.string.ext__home__title),
-            onClick = { navController.navigate(Routes.Ext.Home) },
-        ) }
-        HomeCard { Preference(
-            icon = Icons.Outlined.Build,
-            title = stringRes(R.string.settings__other__title),
-            onClick = { navController.navigate(Routes.Settings.Other) },
-        ) }
-        HomeCard { Preference(
-            icon = Icons.Outlined.Info,
-            title = stringRes(R.string.about__title),
-            onClick = { navController.navigate(Routes.Settings.About) },
-        ) }
     }
 }
 
-/** A main-menu entry: pill-shaped (half-circle ends) light card with 35% larger text. */
+/** One entry of the main menu: 35% larger text, drawn on the sheet colour. */
 @androidx.compose.runtime.Composable
-private fun HomeCard(
-    fillWidth: Float = 1f,
-    topSpace: androidx.compose.ui.unit.Dp = 0.dp,
-    scaleText: Boolean = true,
-    content: @androidx.compose.runtime.Composable () -> Unit,
-) {
+private fun HomeSheetItem(sheetBg: Color, content: @androidx.compose.runtime.Composable () -> Unit) {
     val density = androidx.compose.ui.platform.LocalDensity.current
-    val dark = androidx.compose.ui.graphics.Color(0xFF1B1B1B)
-    val fill = androidx.compose.ui.graphics.Color(0xFFD9FFFD) // #FFC0FFFC made 40% lighter
-    // The entries draw their own surface, so the card colour has to be part of the colour scheme too
+    // The entries draw their own surface, so the sheet colour has to be part of the colour scheme too
     val scheme = MaterialTheme.colorScheme.copy(
-        onSurface = dark, onSurfaceVariant = dark, onBackground = dark,
-        surface = fill, background = fill, surfaceVariant = fill, surfaceContainer = fill,
-        surfaceContainerHigh = fill, surfaceContainerHighest = fill, surfaceContainerLow = fill,
+        surface = sheetBg, background = sheetBg, surfaceVariant = sheetBg, surfaceContainer = sheetBg,
+        surfaceContainerHigh = sheetBg, surfaceContainerHighest = sheetBg, surfaceContainerLow = sheetBg,
     )
     androidx.compose.runtime.CompositionLocalProvider(
         androidx.compose.ui.platform.LocalDensity provides androidx.compose.ui.unit.Density(
             density = density.density,
-            fontScale = if (scaleText) density.fontScale * 1.35f else density.fontScale,
+            fontScale = density.fontScale * 1.35f,
         ),
-        androidx.compose.material3.LocalContentColor provides dark,
     ) {
-        MaterialTheme(colorScheme = scheme) {
-            androidx.compose.foundation.layout.Box(
-                modifier = Modifier.fillMaxWidth().padding(top = topSpace),
-                contentAlignment = androidx.compose.ui.Alignment.Center,
-            ) {
-                androidx.compose.material3.Surface(
-                    modifier = Modifier
-                        .fillMaxWidth(fillWidth)
-                        .padding(horizontal = 14.dp, vertical = 5.dp),
-                    shape = androidx.compose.foundation.shape.RoundedCornerShape(percent = 50),
-                    // #FFC0FFFC made 40% lighter
-                    color = fill,
-                    border = androidx.compose.foundation.BorderStroke(1.dp, androidx.compose.ui.graphics.Color(0xFF9EDFDA)),
-                ) {
-                    content()
-                }
-            }
-        }
+        MaterialTheme(colorScheme = scheme) { content() }
     }
 }
