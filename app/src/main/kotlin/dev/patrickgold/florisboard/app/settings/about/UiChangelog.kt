@@ -53,6 +53,15 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "8078825",
+        ar = listOf(
+            "قاموس أكبر للاقتراحات: نحو 150 ألف كلمة عربية و100 ألف إنجليزية بدل 50 ألفاً، مع حذف الكلمات النادرة جداً والمكتوبة بأخطاء.",
+        ),
+        en = listOf(
+            "Bigger suggestion dictionary: about 150k Arabic and 100k English words instead of 50k, with very rare and misspelled words removed.",
+        ),
+    ),
+    UiChangelogEntry(
         version = "9a2fe6f",
         ar = listOf(
             "تخطيط جديد للصفحة الرئيسية للإعدادات: خلفية فاتحة، وعنوان الترحيب في الأعلى، والخيارات داخل لوحة واحدة بحواف علوية دائرية يفصل بينها خطوط رفيعة.",
