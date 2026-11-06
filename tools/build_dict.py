@@ -13,10 +13,12 @@ from pathlib import Path
 OUT = Path(__file__).resolve().parent.parent / "app/src/main/assets/ime/dict"
 BASE = "https://raw.githubusercontent.com/hermitdave/FrequencyWords/master/content"
 SOURCES = {
-    "ar": [f"{BASE}/2018/ar/ar_50k.txt", f"{BASE}/2018/ar/ar_full.txt", f"{BASE}/2016/ar/ar_50k.txt"],
-    "en": [f"{BASE}/2018/en/en_50k.txt", f"{BASE}/2018/en/en_full.txt", f"{BASE}/2016/en/en_50k.txt"],
+    # The "full" lists first (sorted by frequency, so we can cut them), the 50k lists only as a fallback
+    "ar": [f"{BASE}/2018/ar/ar_full.txt", f"{BASE}/2018/ar/ar_50k.txt", f"{BASE}/2016/ar/ar_50k.txt"],
+    "en": [f"{BASE}/2018/en/en_full.txt", f"{BASE}/2018/en/en_50k.txt", f"{BASE}/2016/en/en_50k.txt"],
 }
-LIMIT = 50000
+LIMIT = {"ar": 150000, "en": 100000}
+MIN_COUNT = 3  # words seen fewer times are mostly typos
 
 AR_WORD = re.compile(r"^[ء-غف-يٱپچڤگ]{1,20}$")
 EN_WORD = re.compile(r"^[a-z][a-z']{0,24}$")
@@ -34,24 +36,30 @@ def fetch(urls):
     raise RuntimeError(f"all sources failed: {last}")
 
 
+JUNK = re.compile(r"(.)\1\1")  # the same letter three times in a row: "aaah", "هههه"
+
+
 def clean(lang, text):
     pattern = AR_WORD if lang == "ar" else EN_WORD
-    words = []
+    counts = {}
     for line in text.splitlines():
         parts = line.split()
         if len(parts) != 2 or not parts[1].isdigit():
             continue
         word, count = parts[0], int(parts[1])
+        if count < MIN_COUNT and len(counts) >= 5000:
+            continue
         if lang == "en":
             word = word.lower()
             if len(word) == 1 and word not in ("a", "i"):
                 continue
-        if not pattern.match(word):
+        if not pattern.match(word) or JUNK.search(word):
             continue
-        words.append((word, count))
-        if len(words) >= LIMIT:
+        counts[word] = counts.get(word, 0) + count
+        if len(counts) >= LIMIT[lang] * 1.2:
             break
-    return words
+    ranked = sorted(counts.items(), key=lambda kv: -kv[1])
+    return ranked[: LIMIT[lang]]
 
 
 def main():
