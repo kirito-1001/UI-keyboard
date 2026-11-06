@@ -61,7 +61,23 @@ import org.florisboard.lib.compose.FlorisWarningCard
 import org.florisboard.lib.compose.stringRes
 
 @Composable
-fun HomeScreen() = FlorisScreen {
+fun HomeScreen() {
+    // The whole screen (also the top bar) gets the light page colour, so there is no differently coloured strip on top
+    val base = MaterialTheme.colorScheme
+    val dark = base.background.luminance() < 0.5f
+    val page = if (dark) Color(0xFF121212) else Color(0xFFF0F0F0)
+    MaterialTheme(
+        colorScheme = base.copy(
+            background = page, surface = page, surfaceContainer = page, surfaceContainerLow = page,
+            surfaceContainerHigh = page, surfaceContainerHighest = page, surfaceContainerLowest = page,
+        ),
+    ) {
+        HomeScreenContent()
+    }
+}
+
+@Composable
+private fun HomeScreenContent() = FlorisScreen {
     // The welcome text is shown in a card inside the page instead of the top bar
     val welcome = stringRes(R.string.settings__home__title)
     title = ""
@@ -146,10 +162,10 @@ fun HomeScreen() = FlorisScreen {
             Spacer(modifier = Modifier.height(28.dp))
             Surface(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp),
-                shape = RoundedCornerShape(topStart = 44.dp, topEnd = 44.dp),
+                shape = RoundedCornerShape(44.dp),
                 color = sheetBg,
             ) {
-                Column(modifier = Modifier.padding(top = 10.dp, bottom = 24.dp)) {
+                Column(modifier = Modifier.padding(vertical = 14.dp)) {
                     HomeSheetItem(sheetBg) { Preference(
                     icon = Icons.Default.Language,
                     title = stringRes(R.string.settings__localization__title),
@@ -217,6 +233,7 @@ fun HomeScreen() = FlorisScreen {
                     ) }
                 }
             }
+            Spacer(modifier = Modifier.height(28.dp))
         }
     }
 }
