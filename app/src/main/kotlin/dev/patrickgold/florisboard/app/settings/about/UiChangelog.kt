@@ -53,6 +53,15 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "97f9051",
+        ar = listOf(
+            "اللغتان الإنجليزية والعربية موجودتان في «اللغات والتخطيطات» من أول تشغيل، بدون الحاجة لإضافتهما.",
+        ),
+        en = listOf(
+            "English and Arabic are in \"Languages & layouts\" from the first start, with no need to add them.",
+        ),
+    ),
+    UiChangelogEntry(
         version = "8078825",
         ar = listOf(
             "قاموس أكبر للاقتراحات: نحو 150 ألف كلمة عربية و100 ألف إنجليزية بدل 50 ألفاً، مع حذف الكلمات النادرة جداً والمكتوبة بأخطاء.",
