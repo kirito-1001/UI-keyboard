@@ -53,6 +53,15 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "05cea6d",
+        ar = listOf(
+            "تم اجراء مراجعه وتصحيح اخطاء هذه النسخه بواسطة السيد الكبير الرهيب وليد ابوطبنجه ابن عزبه زنكت البار.....واهي كلها بترزق",
+        ),
+        en = listOf(
+            "This version was reviewed and debugged by the Great and Terrible Mr. Waleed Abu Tabanja, son of Ezbet Zankat al-Bar..... and it's all just making a living.",
+        ),
+    ),
+    UiChangelogEntry(
         version = "97f9051",
         ar = listOf(
             "اللغتان الإنجليزية والعربية موجودتان في «اللغات والتخطيطات» من أول تشغيل، بدون الحاجة لإضافتهما.",
