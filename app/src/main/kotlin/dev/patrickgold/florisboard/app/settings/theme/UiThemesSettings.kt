@@ -170,6 +170,16 @@ fun UiThemesSettings() {
                 selected = hasImage,
                 checkColor = Color.White,
             ) {
+                if (!hasImage) {
+                    // Faded picture behind the icon and the label (shown at 40%)
+                    Image(
+                        modifier = Modifier.fillMaxSize(),
+                        painter = androidx.compose.ui.res.painterResource(R.drawable.ui_theme_pick_bg),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        alpha = 0.4f,
+                    )
+                }
                 if (hasImage) {
                     val thumb = rememberUiThemeImage(imagePath)
                     if (thumb != null) {
