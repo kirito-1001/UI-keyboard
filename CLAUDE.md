@@ -63,13 +63,13 @@ Language add + switch, toolbar slots and icon size/order settings, per-key custo
 roundness, custom keyboard font, themes with a picture background, recently-copied-text chip, emoji panel,
 edit-text panel, opening screen, About screen with developer credit and in-app changelog, suggestions engine
 (word list + learning + next word + clear learned data), bilingual README, new icon and screenshots.
+Typo correction in the first suggestion slot (slots left to right: closest correction, most used learned word,
+word-list word), "Voice input" as a normal reorderable toolbar action shown in the logo grid, and faint (25% opacity)
+dividers on the settings home. Khaled tested these on 2026-11-07 and they work; they are merged into `main`.
 
 ## Pending / open
-- Branch `typo-suggestions` (not merged, not yet tested by Khaled; build it from Actions and choose that branch):
-  typo correction in the first suggestion slot (slots left to right: closest correction, most used learned word,
-  word-list word), "Voice input" as a normal reorderable toolbar action shown in the logo grid, 50% transparent
-  dividers on the settings home. **Merge it into `main` after he confirms it works, then update this file.**
-- The "100 times more frequent" rule in `UiDictionary.corrections` may need tuning after he tests it.
+- The old branch `typo-suggestions` is merged and can be deleted by Khaled in GitHub (Claude cannot delete it).
+- The "100 times more frequent" rule in `UiDictionary.corrections` may need tuning if corrections feel too eager.
 - Cloud AI features for the keyboard were discussed and not chosen (he chose on-device suggestions).
 
 ## Git notes

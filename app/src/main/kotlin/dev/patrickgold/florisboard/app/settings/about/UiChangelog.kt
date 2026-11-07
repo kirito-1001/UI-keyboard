@@ -53,6 +53,11 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "7fd573d",
+        ar = listOf("الصفحة الرئيسية للإعدادات: الخطوط الفاصلة بين الخيارات صارت أخف مرة أخرى بنسبة 50٪."),
+        en = listOf("Settings home: the dividers between the options are faded by another 50%."),
+    ),
+    UiChangelogEntry(
         version = "c0ef210",
         ar = listOf(
             "تصحيح الكلمات أثناء الكتابة: الكلمة غير المعروفة (مثل «طعان» أو «tha») تظهر لها أقرب كلمة صحيحة في أول خانة، ثم الكلمة الأكثر استخدامًا لديك، ثم كلمة القاموس. وترتيب الاقتراحات من اليسار إلى اليمين.",
