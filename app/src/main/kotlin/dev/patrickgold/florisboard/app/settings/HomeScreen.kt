@@ -262,7 +262,17 @@ private fun HomeSheetItem(sheetBg: Color, index: Int, count: Int, content: @andr
             shape = shape,
             color = sheetBg,
         ) {
-            MaterialTheme(colorScheme = scheme) { content() }
+            // The detail line under each title: 30% smaller and 50% fainter than the default
+            val base = MaterialTheme.typography
+            MaterialTheme(
+                colorScheme = scheme.copy(onSurfaceVariant = scheme.onSurfaceVariant.copy(alpha = 0.5f)),
+                typography = base.copy(
+                    bodyMedium = base.bodyMedium.copy(
+                        fontSize = base.bodyMedium.fontSize * 0.7f,
+                        lineHeight = base.bodyMedium.lineHeight * 0.7f,
+                    ),
+                ),
+            ) { content() }
         }
     }
 }
