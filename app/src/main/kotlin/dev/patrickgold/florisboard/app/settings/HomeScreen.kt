@@ -29,6 +29,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Assignment
 import androidx.compose.material.icons.filled.Extension
@@ -163,67 +165,67 @@ private fun HomeScreenContent() = FlorisScreen {
             Spacer(modifier = Modifier.height(28.dp))
             run {
                 Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp)) {
-                    HomeSheetItem(sheetBg, 0, 11) { Preference(
+                    HomeSheetItem(sheetBg, 0, 11) { HomePreference(
                     icon = Icons.Default.Language,
                     title = stringRes(R.string.settings__localization__title),
                     summary = stringRes(R.string.ui__home__summary__localization),
                     onClick = { navController.navigate(Routes.Settings.Localization) },
                     ) }
-                    HomeSheetItem(sheetBg, 1, 11) { Preference(
+                    HomeSheetItem(sheetBg, 1, 11) { HomePreference(
                     icon = Icons.Outlined.Palette,
                     title = stringRes(R.string.settings__theme__title),
                     summary = stringRes(R.string.ui__home__summary__theme),
                     onClick = { navController.navigate(Routes.Settings.Theme) },
                     ) }
-                    HomeSheetItem(sheetBg, 2, 11) { Preference(
+                    HomeSheetItem(sheetBg, 2, 11) { HomePreference(
                     icon = Icons.Outlined.Keyboard,
                     title = stringRes(R.string.settings__keyboard__title),
                     summary = stringRes(R.string.ui__home__summary__keyboard),
                     onClick = { navController.navigate(Routes.Settings.Keyboard) },
                     ) }
-                    HomeSheetItem(sheetBg, 3, 11) { Preference(
+                    HomeSheetItem(sheetBg, 3, 11) { HomePreference(
                     icon = Icons.Default.SmartButton,
                     title = stringRes(R.string.settings__smartbar__title),
                     summary = stringRes(R.string.ui__home__summary__smartbar),
                     onClick = { navController.navigate(Routes.Settings.Smartbar) },
                     ) }
-                    HomeSheetItem(sheetBg, 4, 11) { Preference(
+                    HomeSheetItem(sheetBg, 4, 11) { HomePreference(
                     icon = Icons.Default.Spellcheck,
                     title = stringRes(R.string.settings__typing__title),
                     summary = stringRes(R.string.ui__home__summary__typing),
                     onClick = { navController.navigate(Routes.Settings.Typing) },
                     ) }
-                    HomeSheetItem(sheetBg, 5, 11) { Preference(
+                    HomeSheetItem(sheetBg, 5, 11) { HomePreference(
                     icon = Icons.Default.Gesture,
                     title = stringRes(R.string.settings__gestures__title),
                     summary = stringRes(R.string.ui__home__summary__gestures),
                     onClick = { navController.navigate(Routes.Settings.Gestures) },
                     ) }
-                    HomeSheetItem(sheetBg, 6, 11) { Preference(
+                    HomeSheetItem(sheetBg, 6, 11) { HomePreference(
                     icon = Icons.AutoMirrored.Outlined.Assignment,
                     title = stringRes(R.string.settings__clipboard__title),
                     summary = stringRes(R.string.ui__home__summary__clipboard),
                     onClick = { navController.navigate(Routes.Settings.Clipboard) },
                     ) }
-                    HomeSheetItem(sheetBg, 7, 11) { Preference(
+                    HomeSheetItem(sheetBg, 7, 11) { HomePreference(
                     icon = Icons.Default.SentimentSatisfiedAlt,
                     title = stringRes(R.string.settings__media__title),
                     summary = stringRes(R.string.ui__home__summary__media),
                     onClick = { navController.navigate(Routes.Settings.Media) },
                     ) }
-                    HomeSheetItem(sheetBg, 8, 11) { Preference(
+                    HomeSheetItem(sheetBg, 8, 11) { HomePreference(
                     icon = Icons.Default.Extension,
                     title = stringRes(R.string.ext__home__title),
                     summary = stringRes(R.string.ui__home__summary__ext),
                     onClick = { navController.navigate(Routes.Ext.Home) },
                     ) }
-                    HomeSheetItem(sheetBg, 9, 11) { Preference(
+                    HomeSheetItem(sheetBg, 9, 11) { HomePreference(
                     icon = Icons.Outlined.Build,
                     title = stringRes(R.string.settings__other__title),
                     summary = stringRes(R.string.ui__home__summary__other),
                     onClick = { navController.navigate(Routes.Settings.Other) },
                     ) }
-                    HomeSheetItem(sheetBg, 10, 11) { Preference(
+                    HomeSheetItem(sheetBg, 10, 11) { HomePreference(
                     icon = Icons.Outlined.Info,
                     title = stringRes(R.string.about__title),
                     summary = stringRes(R.string.ui__home__summary__about),
@@ -265,7 +267,7 @@ private fun HomeSheetItem(sheetBg: Color, index: Int, count: Int, content: @andr
             // The detail line under each title: 30% smaller and 50% fainter than the default
             val base = MaterialTheme.typography
             MaterialTheme(
-                colorScheme = scheme.copy(onSurfaceVariant = scheme.onSurfaceVariant.copy(alpha = 0.5f)),
+                colorScheme = scheme,
                 typography = base.copy(
                     bodyMedium = base.bodyMedium.copy(
                         fontSize = base.bodyMedium.fontSize * 0.7f,
@@ -273,6 +275,46 @@ private fun HomeSheetItem(sheetBg: Color, index: Int, count: Int, content: @andr
                     ),
                 ),
             ) { content() }
+        }
+    }
+}
+
+/** One row of the main menu: icon in the normal colour, the title, and a smaller, fainter detail line. */
+@androidx.compose.runtime.Composable
+private fun HomePreference(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    title: String,
+    summary: String,
+    onClick: () -> Unit,
+) {
+    androidx.compose.foundation.layout.Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        androidx.compose.material3.Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+            )
+            Text(
+                text = summary,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                maxLines = 2,
+                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+            )
         }
     }
 }
