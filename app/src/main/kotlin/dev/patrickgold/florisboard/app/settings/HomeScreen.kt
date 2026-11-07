@@ -142,8 +142,8 @@ private fun HomeScreenContent() = FlorisScreen {
         val darkPage = MaterialTheme.colorScheme.background.luminance() < 0.5f
         val pageBg = if (darkPage) Color(0xFF121212) else Color(0xFFF0F0F0)
         val sheetBg = if (darkPage) Color(0xFF1E1E1E) else Color.White
-        // The dividers between the options are half transparent (50%)
-        val lineColor = (if (darkPage) Color(0xFFDDDDDD) else Color(0xFF222222)).copy(alpha = 0.5f)
+        // The dividers between the options are faint: 25% opacity (faded by 50%, and then by 50% again)
+        val lineColor = (if (darkPage) Color(0xFFDDDDDD) else Color(0xFF222222)).copy(alpha = 0.25f)
         val nameAt = welcome.indexOf("UI Keyboard").takeIf { it >= 0 }
         val first = if (nameAt != null) welcome.substring(0, nameAt).trim() else welcome
         Column(
