@@ -1218,4 +1218,15 @@
     <string name="ui__learned__clear__confirm">Delete all learned words?</string>
     <string name="ui__learned__clear__yes">Delete</string>
     <string name="ui__learned__clear__no">Cancel</string>
+    <string name="ui__home__summary__localization">Added languages and character layouts</string>
+    <string name="ui__home__summary__theme">Themes, colours and background picture</string>
+    <string name="ui__home__summary__keyboard">Height, number row and key look</string>
+    <string name="ui__home__summary__smartbar">Suggestions and strip buttons</string>
+    <string name="ui__home__summary__typing">Suggestions, learning and dictionary</string>
+    <string name="ui__home__summary__gestures">Swipe and glide typing</string>
+    <string name="ui__home__summary__clipboard">History and quick paste</string>
+    <string name="ui__home__summary__media">Emoji and history</string>
+    <string name="ui__home__summary__ext">Manage installed add-ons</string>
+    <string name="ui__home__summary__other">Backup and advanced settings</string>
+    <string name="ui__home__summary__about">Version, changelog and licenses</string>
 </resources>

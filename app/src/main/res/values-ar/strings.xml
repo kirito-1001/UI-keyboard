@@ -986,4 +986,15 @@
     <string name="ui__learned__clear__confirm">حذف كل الكلمات المتعلَّمة؟</string>
     <string name="ui__learned__clear__yes">حذف</string>
     <string name="ui__learned__clear__no">إلغاء</string>
+    <string name="ui__home__summary__localization">اللغات المضافة وتخطيطات الأحرف</string>
+    <string name="ui__home__summary__theme">الثيمات والألوان وصورة الخلفية</string>
+    <string name="ui__home__summary__keyboard">الارتفاع والصف الرقمي وشكل المفاتيح</string>
+    <string name="ui__home__summary__smartbar">الاقتراحات وأزرار الشريط</string>
+    <string name="ui__home__summary__typing">الاقتراحات والتعلم والقاموس</string>
+    <string name="ui__home__summary__gestures">السحب والكتابة بالتمرير</string>
+    <string name="ui__home__summary__clipboard">السجل واللصق السريع</string>
+    <string name="ui__home__summary__media">الإيموجي والتاريخ</string>
+    <string name="ui__home__summary__ext">إدارة الملحقات المثبتة</string>
+    <string name="ui__home__summary__other">النسخ الاحتياطي وإعدادات متقدمة</string>
+    <string name="ui__home__summary__about">الإصدار وسجل التغييرات والتراخيص</string>
 </resources>

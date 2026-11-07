@@ -161,75 +161,72 @@ private fun HomeScreenContent() = FlorisScreen {
                 )
             }
             Spacer(modifier = Modifier.height(28.dp))
-            Surface(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp),
-                shape = RoundedCornerShape(44.dp),
-                color = sheetBg,
-            ) {
-                Column(modifier = Modifier.padding(vertical = 14.dp)) {
-                    HomeSheetItem(sheetBg) { Preference(
+            run {
+                Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp)) {
+                    HomeSheetItem(sheetBg, 0, 11) { Preference(
                     icon = Icons.Default.Language,
                     title = stringRes(R.string.settings__localization__title),
+                    summary = stringRes(R.string.ui__home__summary__localization),
                     onClick = { navController.navigate(Routes.Settings.Localization) },
                     ) }
-                    HorizontalDivider(modifier = Modifier.padding(horizontal = 26.dp), thickness = 1.dp, color = lineColor)
-                    HomeSheetItem(sheetBg) { Preference(
+                    HomeSheetItem(sheetBg, 1, 11) { Preference(
                     icon = Icons.Outlined.Palette,
                     title = stringRes(R.string.settings__theme__title),
+                    summary = stringRes(R.string.ui__home__summary__theme),
                     onClick = { navController.navigate(Routes.Settings.Theme) },
                     ) }
-                    HorizontalDivider(modifier = Modifier.padding(horizontal = 26.dp), thickness = 1.dp, color = lineColor)
-                    HomeSheetItem(sheetBg) { Preference(
+                    HomeSheetItem(sheetBg, 2, 11) { Preference(
                     icon = Icons.Outlined.Keyboard,
                     title = stringRes(R.string.settings__keyboard__title),
+                    summary = stringRes(R.string.ui__home__summary__keyboard),
                     onClick = { navController.navigate(Routes.Settings.Keyboard) },
                     ) }
-                    HorizontalDivider(modifier = Modifier.padding(horizontal = 26.dp), thickness = 1.dp, color = lineColor)
-                    HomeSheetItem(sheetBg) { Preference(
+                    HomeSheetItem(sheetBg, 3, 11) { Preference(
                     icon = Icons.Default.SmartButton,
                     title = stringRes(R.string.settings__smartbar__title),
+                    summary = stringRes(R.string.ui__home__summary__smartbar),
                     onClick = { navController.navigate(Routes.Settings.Smartbar) },
                     ) }
-                    HorizontalDivider(modifier = Modifier.padding(horizontal = 26.dp), thickness = 1.dp, color = lineColor)
-                    HomeSheetItem(sheetBg) { Preference(
+                    HomeSheetItem(sheetBg, 4, 11) { Preference(
                     icon = Icons.Default.Spellcheck,
                     title = stringRes(R.string.settings__typing__title),
+                    summary = stringRes(R.string.ui__home__summary__typing),
                     onClick = { navController.navigate(Routes.Settings.Typing) },
                     ) }
-                    HorizontalDivider(modifier = Modifier.padding(horizontal = 26.dp), thickness = 1.dp, color = lineColor)
-                    HomeSheetItem(sheetBg) { Preference(
+                    HomeSheetItem(sheetBg, 5, 11) { Preference(
                     icon = Icons.Default.Gesture,
                     title = stringRes(R.string.settings__gestures__title),
+                    summary = stringRes(R.string.ui__home__summary__gestures),
                     onClick = { navController.navigate(Routes.Settings.Gestures) },
                     ) }
-                    HorizontalDivider(modifier = Modifier.padding(horizontal = 26.dp), thickness = 1.dp, color = lineColor)
-                    HomeSheetItem(sheetBg) { Preference(
+                    HomeSheetItem(sheetBg, 6, 11) { Preference(
                     icon = Icons.AutoMirrored.Outlined.Assignment,
                     title = stringRes(R.string.settings__clipboard__title),
+                    summary = stringRes(R.string.ui__home__summary__clipboard),
                     onClick = { navController.navigate(Routes.Settings.Clipboard) },
                     ) }
-                    HorizontalDivider(modifier = Modifier.padding(horizontal = 26.dp), thickness = 1.dp, color = lineColor)
-                    HomeSheetItem(sheetBg) { Preference(
+                    HomeSheetItem(sheetBg, 7, 11) { Preference(
                     icon = Icons.Default.SentimentSatisfiedAlt,
                     title = stringRes(R.string.settings__media__title),
+                    summary = stringRes(R.string.ui__home__summary__media),
                     onClick = { navController.navigate(Routes.Settings.Media) },
                     ) }
-                    HorizontalDivider(modifier = Modifier.padding(horizontal = 26.dp), thickness = 1.dp, color = lineColor)
-                    HomeSheetItem(sheetBg) { Preference(
+                    HomeSheetItem(sheetBg, 8, 11) { Preference(
                     icon = Icons.Default.Extension,
                     title = stringRes(R.string.ext__home__title),
+                    summary = stringRes(R.string.ui__home__summary__ext),
                     onClick = { navController.navigate(Routes.Ext.Home) },
                     ) }
-                    HorizontalDivider(modifier = Modifier.padding(horizontal = 26.dp), thickness = 1.dp, color = lineColor)
-                    HomeSheetItem(sheetBg) { Preference(
+                    HomeSheetItem(sheetBg, 9, 11) { Preference(
                     icon = Icons.Outlined.Build,
                     title = stringRes(R.string.settings__other__title),
+                    summary = stringRes(R.string.ui__home__summary__other),
                     onClick = { navController.navigate(Routes.Settings.Other) },
                     ) }
-                    HorizontalDivider(modifier = Modifier.padding(horizontal = 26.dp), thickness = 1.dp, color = lineColor)
-                    HomeSheetItem(sheetBg) { Preference(
+                    HomeSheetItem(sheetBg, 10, 11) { Preference(
                     icon = Icons.Outlined.Info,
                     title = stringRes(R.string.about__title),
+                    summary = stringRes(R.string.ui__home__summary__about),
                     onClick = { navController.navigate(Routes.Settings.About) },
                     ) }
                 }
@@ -241,7 +238,7 @@ private fun HomeScreenContent() = FlorisScreen {
 
 /** One entry of the main menu: 35% larger text, drawn on the sheet colour. */
 @androidx.compose.runtime.Composable
-private fun HomeSheetItem(sheetBg: Color, content: @androidx.compose.runtime.Composable () -> Unit) {
+private fun HomeSheetItem(sheetBg: Color, index: Int, count: Int, content: @androidx.compose.runtime.Composable () -> Unit) {
     val density = androidx.compose.ui.platform.LocalDensity.current
     // The entries draw their own surface, so the sheet colour has to be part of the colour scheme too
     val scheme = MaterialTheme.colorScheme.copy(
@@ -254,6 +251,18 @@ private fun HomeSheetItem(sheetBg: Color, content: @androidx.compose.runtime.Com
             fontScale = density.fontScale * 1.35f,
         ),
     ) {
-        MaterialTheme(colorScheme = scheme) { content() }
+        val big = 46.dp
+        val small = 14.dp
+        val shape = RoundedCornerShape(
+            topStart = if (index == 0) big else small, topEnd = if (index == 0) big else small,
+            bottomStart = if (index == count - 1) big else small, bottomEnd = if (index == count - 1) big else small,
+        )
+        Surface(
+            modifier = Modifier.fillMaxWidth().padding(bottom = if (index == count - 1) 0.dp else 3.dp),
+            shape = shape,
+            color = sheetBg,
+        ) {
+            MaterialTheme(colorScheme = scheme) { content() }
+        }
     }
 }
