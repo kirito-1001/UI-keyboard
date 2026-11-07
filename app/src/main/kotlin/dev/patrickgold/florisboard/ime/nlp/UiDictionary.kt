@@ -61,7 +61,105 @@ class UiDictionary private constructor(
         return best.map { words[it] }
     }
 
+    /** True if [word] is in the list (compared by the normalized key, so diacritics and alef forms do not matter). */
+    fun contains(word: String): Boolean = indexOfKey(normalize(word, language)) >= 0
+
+    /** Index of the most frequent entry with exactly this normalized [key], or -1. */
+    private fun indexOfKey(key: String): Int {
+        if (key.isEmpty()) return -1
+        var lo = 0
+        var hi = keys.size
+        while (lo < hi) {
+            val mid = (lo + hi) ushr 1
+            if (keys[mid] < key) lo = mid + 1 else hi = mid
+        }
+        return if (lo < keys.size && keys[lo] == key) lo else -1
+    }
+
+    /**
+     * Words of the list that are closest to the misspelled [typed], best first (the closest, then the most frequent).
+     *
+     * Closeness is an edit distance: a wrong, missing or extra letter, or two swapped letters, each count 1. A wrong
+     * letter that sits next to the right one on the keyboard counts only 0.6, so it is the most likely typo.
+     * Short words (up to 4 letters) may differ by one edit, longer words by two. Nothing is returned for a word shorter
+     * than 3 letters. A word that is in the list is treated as correct, except when it is very rare: the list (made
+     * from subtitles) also holds slang and typos, so then only a word that is at least 100 times more frequent
+     * is suggested instead (for example "tha" -> "the").
+     */
+    fun corrections(typed: String, limit: Int): List<String> {
+        val key = normalize(typed, language)
+        if (key.length < 3 || key.length > 24) return emptyList()
+        val own = indexOfKey(key)
+        val ownCount = if (own >= 0) counts[own].toLong() else 0L
+        val maxEdits = if (key.length <= 4) 1 else 2
+        val maxCost = maxEdits.toDouble()
+        val buffers = Array(3) { DoubleArray(key.length + maxEdits + 2) }
+        val found = ArrayList<Pair<Int, Double>>()
+        for (i in keys.indices) {
+            val candidate = keys[i]
+            if (kotlin.math.abs(candidate.length - key.length) > maxEdits) continue
+            // Several forms of one key follow each other; only the most frequent one is used
+            if (i > 0 && keys[i - 1] == candidate) continue
+            if (candidate == key) continue
+            if (own >= 0 && counts[i].toLong() < ownCount * 100) continue
+            val cost = editCost(key, candidate, maxCost, buffers)
+            if (cost <= maxCost) found.add(i to cost)
+        }
+        found.sortWith(compareBy<Pair<Int, Double>> { it.second }.thenByDescending { counts[it.first] })
+        return found.asSequence().map { words[it.first] }.take(limit).toList()
+    }
+
+    /** Weighted edit distance (with swapped neighbours) between [a] and [b]; a large value if it is above [limit]. */
+    private fun editCost(a: String, b: String, limit: Double, buffers: Array<DoubleArray>): Double {
+        val n = a.length
+        val m = b.length
+        var prev2 = buffers[0]
+        var prev = buffers[1]
+        var cur = buffers[2]
+        for (j in 0..m) prev[j] = j.toDouble()
+        var prevRowMin = 0.0
+        for (i in 1..n) {
+            cur[0] = i.toDouble()
+            var rowMin = cur[0]
+            for (j in 1..m) {
+                val x = a[i - 1]
+                val y = b[j - 1]
+                val substitute = if (x == y) 0.0 else if (areNeighbours(x, y)) 0.6 else 1.0
+                var best = minOf(prev[j] + 1.0, cur[j - 1] + 1.0, prev[j - 1] + substitute)
+                if (i > 1 && j > 1 && x == b[j - 2] && a[i - 2] == y) best = minOf(best, prev2[j - 2] + 1.0)
+                cur[j] = best
+                if (best < rowMin) rowMin = best
+            }
+            // Stop early when two rows in a row are already too far away
+            if (rowMin > limit && prevRowMin > limit) return Double.MAX_VALUE
+            prevRowMin = rowMin
+            val free = prev2
+            prev2 = prev
+            prev = cur
+            cur = free
+        }
+        return prev[m]
+    }
+
     companion object {
+        /** Position (row, column) of the letters on the Arabic and English keyboard rows. */
+        private val keyPositions: Map<Char, Pair<Int, Int>> = buildMap {
+            val rows = listOf(
+                "ضصثقفغعهخحج", "شسيبلاتنمكط", "ذؤريهوزظد", // Arabic
+                "qwertyuiop", "asdfghjkl", "zxcvbnm", // English
+            )
+            for ((r, row) in rows.withIndex()) {
+                for ((c, ch) in row.withIndex()) putIfAbsent(ch, (r % 3) to c)
+            }
+        }
+
+        /** True if the two letters sit next to each other on the keyboard. */
+        private fun areNeighbours(x: Char, y: Char): Boolean {
+            val p = keyPositions[x] ?: return false
+            val q = keyPositions[y] ?: return false
+            return kotlin.math.abs(p.first - q.first) <= 1 && kotlin.math.abs(p.second - q.second) <= 1
+        }
+
         private val cache = HashMap<String, UiDictionary?>()
         private val pairCache = HashMap<String, Map<String, List<String>>>()
 

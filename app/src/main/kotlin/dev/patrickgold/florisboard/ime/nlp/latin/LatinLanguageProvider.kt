@@ -129,11 +129,25 @@ class LatinLanguageProvider(context: Context) : SpellingProvider, SuggestionProv
                     UiDictionary.nextWords(appContext, language, last, limit)).distinct()
                 interleave(learned, listed).take(limit)
             } else {
-                // A word is being typed: learned words first, then the bundled word list
+                // A word is being typed. Slots from left to right:
+                // 1. the closest correct word, if the typed word is not a known word (a typo such as "tha" -> "the")
+                // 2. the word you use most (learned from your typing)
+                // 3. the word suggested from the bundled word list
                 val learned = UiLearned.complete(appContext, language, typed, limit).map { it.first }
                 val dictionary = UiDictionary.forLanguage(appContext, language)
                 val fromList = dictionary?.complete(typed, limit).orEmpty()
-                interleave(learned, fromList).take(limit)
+                val corrections = if (dictionary != null && typed.all { it.isLetter() } &&
+                    !UiLearned.isKnown(appContext, language, typed)
+                ) {
+                    dictionary.corrections(typed, limit)
+                } else {
+                    emptyList()
+                }
+                val result = LinkedHashSet<String>()
+                corrections.firstOrNull()?.let { result.add(it) }
+                result.addAll(interleave(learned, fromList))
+                result.addAll(corrections)
+                result.toList().take(limit)
             }
         }
         return words.mapIndexed { index, word ->
