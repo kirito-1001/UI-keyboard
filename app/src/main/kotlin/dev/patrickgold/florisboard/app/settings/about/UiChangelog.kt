@@ -53,6 +53,15 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "846c5e5",
+        ar = listOf(
+            "الصفحة الرئيسية للإعدادات: كل خيار في بطاقة بيضاء منفصلة بحواف دائرية، بدون خطوط فاصلة، مع سطر تفاصيل تحت كل عنوان.",
+        ),
+        en = listOf(
+            "Settings home: each option is a separate rounded white card with no divider lines, and a detail line under each title.",
+        ),
+    ),
+    UiChangelogEntry(
         version = "7fd573d",
         ar = listOf("الصفحة الرئيسية للإعدادات: الخطوط الفاصلة بين الخيارات صارت أخف مرة أخرى بنسبة 50٪."),
         en = listOf("Settings home: the dividers between the options are faded by another 50%."),
