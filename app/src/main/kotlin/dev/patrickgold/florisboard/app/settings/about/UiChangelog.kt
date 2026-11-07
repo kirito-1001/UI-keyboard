@@ -53,6 +53,19 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "c0ef210",
+        ar = listOf(
+            "تصحيح الكلمات أثناء الكتابة: الكلمة غير المعروفة (مثل «طعان» أو «tha») تظهر لها أقرب كلمة صحيحة في أول خانة، ثم الكلمة الأكثر استخدامًا لديك، ثم كلمة القاموس. وترتيب الاقتراحات من اليسار إلى اليمين.",
+            "زر «إدخال صوتي» صار من أزرار الشريط العادية: يظهر في قائمة الشعار، ويمكن تغيير ترتيبه أو إخفاؤه من الإعدادات ← الشريط الذكي ← أزرار الشريط.",
+            "الصفحة الرئيسية للإعدادات: الخطوط الفاصلة بين الخيارات صارت أخف بنسبة 50٪.",
+        ),
+        en = listOf(
+            "Typo correction while typing: an unknown word (like «tha») gets the closest correct word in the first slot, then your most used word, then the word list suggestion. Suggestions run from left to right.",
+            "«Voice input» is now a normal toolbar button: it shows in the logo menu and can be moved or hidden in Settings > Smartbar > Toolbar buttons.",
+            "Settings home: the dividers between the options are 50% more transparent.",
+        ),
+    ),
+    UiChangelogEntry(
         version = "05cea6d",
         ar = listOf(
             "تم اجراء مراجعه وتصحيح اخطاء هذه النسخه بواسطة السيد الكبير الرهيب وليد ابوطبنجه ابن عزبه زنكت البار.....واهي كلها بترزق",

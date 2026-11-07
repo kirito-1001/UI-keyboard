@@ -49,7 +49,7 @@ fun ActionsPanel(modifier: Modifier = Modifier) {
     val evaluator by keyboardManager.activeSmartbarEvaluator.collectAsState()
 
     androidx.compose.runtime.LaunchedEffect(actionArrangement) {
-        val updated = actionArrangement.withThemesAction()
+        val updated = actionArrangement.withThemesAction().withVoiceAction()
         if (updated != actionArrangement) prefs.smartbar.actionArrangement.set(updated)
     }
 

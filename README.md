@@ -22,8 +22,9 @@
 ### المميزات
 - لوحة مفاتيح عربية وإنجليزية مع التبديل بينهما من شريط الأدوات أو من زر اللغة.
 - **اقتراحات الكلمات** بالعربية والإنجليزية، مع توقّع الكلمة التالية.
+- **تصحيح الكلمات أثناء الكتابة**: إذا كتبت كلمة بالخطأ (مثل «طعان» أو «tha») تظهر أقرب كلمة صحيحة في أول خانة، ثم الكلمة التي تستخدمها كثيراً، ثم كلمة القاموس.
 - **التعلّم من كتابتك**: يتذكّر الكلمات التي تستخدمها، وتبقى البيانات على هاتفك فقط ولا تُرسل لأي جهة، ويمكن مسحها من الإعدادات. لا يتعلّم في حقول كلمات المرور ولا في الوضع المتخفي.
-- شريط أدوات سريع: الحافظة وسجل النسخ، تراجع وإرجاع، الرموز التعبيرية، تحرير النص، الإدخال الصوتي، الثيمات، الإعدادات.
+- شريط أدوات سريع: الحافظة وسجل النسخ، تراجع وإرجاع، الرموز التعبيرية، تحرير النص، الإدخال الصوتي، الثيمات، الإعدادات، ويمكنك ترتيب الأزرار وإخفاء ما لا تحتاجه.
 - ثيمات جاهزة، ويمكن اختيار صورة من جهازك كخلفية للوحة.
 - اختيار خط خاص للوحة المفاتيح (ملفات ttf / otf).
 - التحكم في استدارة زوايا المفاتيح.
@@ -61,8 +62,9 @@ UI Keyboard مبني على [FlorisBoard](https://github.com/florisboard/florisb
 ### Features
 - Arabic and English layouts, with language switching from the toolbar or the language key.
 - **Word suggestions** in Arabic and English, including next-word prediction.
+- **Typo correction while typing**: if you mistype a word (like "tha"), the closest correct word is shown in the first slot, then the word you use most, then the word-list suggestion.
 - **Learns from your typing**: it remembers the words you use. The data stays on your phone only, is never sent anywhere, and can be cleared from the settings. It does not learn in password fields or in incognito mode.
-- Quick toolbar: clipboard and history, undo / redo, emoji, text editing, voice input, themes, settings.
+- Quick toolbar: clipboard and history, undo / redo, emoji, text editing, voice input, themes, settings. You can reorder the buttons and hide the ones you do not need.
 - Ready-made themes, plus choosing an image from your device as the keyboard background.
 - Choose your own keyboard font (ttf / otf files).
 - Adjustable key corner roundness.

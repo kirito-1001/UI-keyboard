@@ -72,6 +72,10 @@ fun CandidatesRow(modifier: Modifier = Modifier) {
     val displayMode by prefs.suggestion.displayMode.observeAsState()
     val candidates by nlpManager.activeCandidatesFlow.collectAsState()
 
+    // The suggestions always run from left to right (the first one at the left edge), also for Arabic
+    androidx.compose.runtime.CompositionLocalProvider(
+        androidx.compose.ui.platform.LocalLayoutDirection provides androidx.compose.ui.unit.LayoutDirection.Ltr,
+    ) {
     SnyggRow(
         elementName = FlorisImeUi.SmartbarCandidatesRow.elementName,
         modifier = modifier
@@ -131,6 +135,7 @@ fun CandidatesRow(modifier: Modifier = Modifier) {
                 )
             }
         }
+    }
     }
 }
 

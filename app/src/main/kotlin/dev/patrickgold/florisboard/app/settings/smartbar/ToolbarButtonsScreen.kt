@@ -62,7 +62,7 @@ fun ToolbarButtonsScreen() = FlorisScreen {
     val arrangement by store.smartbar.actionArrangement.observeAsState()
 
     androidx.compose.runtime.LaunchedEffect(arrangement) {
-        val updated = arrangement.withThemesAction()
+        val updated = arrangement.withThemesAction().withVoiceAction()
         if (updated != arrangement) store.smartbar.actionArrangement.set(updated)
     }
 

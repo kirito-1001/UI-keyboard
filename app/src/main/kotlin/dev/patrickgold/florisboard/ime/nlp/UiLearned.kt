@@ -133,6 +133,19 @@ object UiLearned {
             .map { it.key to it.value }
     }
 
+    /**
+     * True if [word] was typed at least twice, so it is a word the user really uses and not a typo that was typed
+     * once (compared in normalized form).
+     */
+    @Synchronized
+    fun isKnown(context: Context, language: String, word: String): Boolean {
+        ensureLoaded(context)
+        val d = data[language] ?: return false
+        val key = UiDictionary.normalize(word, language)
+        if (key.isEmpty()) return false
+        return d.words.entries.any { it.value >= 2 && UiDictionary.normalize(it.key, language) == key }
+    }
+
     /** Words that were typed after [previous], optionally only those starting with [prefix], most used first. */
     @Synchronized
     fun next(context: Context, language: String, previous: String, prefix: String, limit: Int): List<Pair<String, Int>> {

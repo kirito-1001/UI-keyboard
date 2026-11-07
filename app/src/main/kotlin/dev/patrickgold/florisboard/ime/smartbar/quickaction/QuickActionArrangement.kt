@@ -64,6 +64,23 @@ data class QuickActionArrangement(
         return copy(dynamicActions = newDynamic)
     }
 
+    /**
+     * Makes "Voice input" a normal toolbar action (shown in the logo grid, and movable / hideable in
+     * Settings > Smartbar > Toolbar buttons). Before, it was the fixed "sticky" action, which is in neither.
+     * An action the user hid stays hidden, because hidden actions count as present.
+     */
+    fun withVoiceAction(): QuickActionArrangement {
+        val voice = QuickAction.InsertKey(TextKeyData.VOICE_INPUT)
+        if (stickyAction == voice) {
+            return copy(
+                stickyAction = null,
+                dynamicActions = listOf<QuickAction>(voice) + dynamicActions.filter { it != voice },
+            )
+        }
+        if (voice in this) return this
+        return copy(dynamicActions = listOf<QuickAction>(voice) + dynamicActions)
+    }
+
     fun distinct(): QuickActionArrangement {
         val distinctSet = mutableSetOf<QuickAction>()
         if (stickyAction != null) {
@@ -80,8 +97,9 @@ data class QuickActionArrangement(
 
     companion object {
         val Default = QuickActionArrangement(
-            stickyAction = QuickAction.InsertKey(TextKeyData.VOICE_INPUT),
+            stickyAction = null,
             dynamicActions = listOf(
+                QuickAction.InsertKey(TextKeyData.VOICE_INPUT),
                 QuickAction.InsertKey(TextKeyData.LANGUAGE_SWITCH),
                 QuickAction.InsertKey(TextKeyData.UNDO),
                 QuickAction.InsertKey(TextKeyData.REDO),
