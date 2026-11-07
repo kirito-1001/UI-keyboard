@@ -1,19 +1,13 @@
-<p><i>FlorisBoard</i> is an open-source keyboard aimed at providing you with an easy way to type while respecting your privacy.</p>
-<p><b>Note:</b> This project is currently in beta stage. If you want to see a feature being implemented or want to report a bug, please visit this project's repository (linked in the end of the description) on GitHub and file an issue. This helps making FlorisBoard even better! Thank you!</p>
-<p><b>Currently implemented and fully working features:</b></p>
+<p><i>UI Keyboard</i> is a free, open-source keyboard for Android with Arabic and English support. It is built on top of FlorisBoard and developed by Khaled Yagami.</p>
+<p><b>Features:</b></p>
 <ul>
-    <li>Huge variety of Latin keyboard layouts</li>
-    <li>Limited support for non-Latin keyboard layouts (Arabic, Persian and Hebrew currently, more are planned)</li>
-    <li>Easy switching between languages/layouts by defining subtypes in the settings</li>
-    <li>Full theme customization + theme presets for day/night themes</li>
-    <li>Automatic day/night theme switching</li>
-    <li>Keyboard layouts for typing in a (phone) number</li>
-    <li>Special characters input</li>
-    <li>Emoji/Emoticon keyboard</li>
-    <li>One-handed/compact mode for easier typing on large devices</li>
-    <li>Customization of key press sound/vibration</li>
-    <li>Customizable actions for gestures: swipe up/down/left/right, space bar left/right, delete key swipe)</li>
-    <li>Integrated special symbols into character layouts</li>
-    <li>Clipboard/Cursor toolbar</li>
-    <li>Clipboard manager/history</li>
+    <li>Arabic and English layouts, with quick language switching from the toolbar</li>
+    <li>Word suggestions and next-word prediction in Arabic and English (turn them on in Settings, Typing)</li>
+    <li>Learns from your typing; the data stays on your phone only and can be cleared at any time</li>
+    <li>Quick toolbar: clipboard and history, undo / redo, emoji, text editing, voice input</li>
+    <li>Ready-made themes and your own image as the keyboard background</li>
+    <li>Custom keyboard font (ttf / otf), adjustable key corner roundness</li>
+    <li>Key customization with reset options</li>
+    <li>Incognito mode</li>
 </ul>
+<p>Word suggestions use the FrequencyWords lists (CC BY-SA 4.0). UI Keyboard is released under the Apache License 2.0.</p>
