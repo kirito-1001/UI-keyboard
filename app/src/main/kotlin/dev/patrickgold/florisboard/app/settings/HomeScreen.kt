@@ -253,7 +253,7 @@ private fun HomeSheetItem(sheetBg: Color, index: Int, count: Int, content: @andr
             fontScale = density.fontScale * 1.35f,
         ),
     ) {
-        val big = 46.dp
+        val big = 23.dp
         val small = 14.dp
         val shape = RoundedCornerShape(
             topStart = if (index == 0) big else small, topEnd = if (index == 0) big else small,
