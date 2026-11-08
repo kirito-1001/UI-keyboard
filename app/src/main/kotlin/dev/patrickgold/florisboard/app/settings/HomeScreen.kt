@@ -254,7 +254,7 @@ private fun HomeSheetItem(sheetBg: Color, index: Int, count: Int, content: @andr
         ),
     ) {
         val big = 23.dp
-        val small = 14.dp
+        val small = 7.dp
         val shape = RoundedCornerShape(
             topStart = if (index == 0) big else small, topEnd = if (index == 0) big else small,
             bottomStart = if (index == count - 1) big else small, bottomEnd = if (index == count - 1) big else small,
