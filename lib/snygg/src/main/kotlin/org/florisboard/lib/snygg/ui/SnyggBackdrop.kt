@@ -34,7 +34,6 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.translate
-import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.unit.IntOffset
@@ -56,8 +55,7 @@ val LocalSnyggBackdrop: ProvidableCompositionLocal<SnyggBackdrop?> = composition
 @Composable
 fun Modifier.snyggBackdrop(elementName: String?, shape: Shape): Modifier {
     val backdrop = LocalSnyggBackdrop.current
-    if (backdrop == null) return snyggFrostBackdrop(elementName, shape)
-    if (elementName == null || elementName !in backdrop.elements) return this
+    if (backdrop == null || elementName == null || elementName !in backdrop.elements) return this
     var position by remember { mutableStateOf(Offset.Zero) }
     return this
         .onGloballyPositioned { position = it.positionInRoot() }
@@ -86,30 +84,6 @@ fun Modifier.snyggBackdrop(elementName: String?, shape: Shape): Modifier {
                         dstSize = IntSize(dstW.roundToInt(), dstH.roundToInt()),
                         filterQuality = FilterQuality.Medium,
                     )
-                }
-            }
-        }
-}
-
-/** Frosted glass without a picture: draws the blurred copy of the keyboard (see [SnyggFrost]) behind the element. */
-@Composable
-private fun Modifier.snyggFrostBackdrop(elementName: String?, shape: Shape): Modifier {
-    val frost = LocalSnyggFrost.current
-    if (frost == null || elementName == null || elementName !in frost.elements) return this
-    var position by remember { mutableStateOf(Offset.Zero) }
-    return this
-        .onGloballyPositioned { position = it.positionInRoot() }
-        .drawBehind {
-            if (frost.recording || size.width <= 0f || size.height <= 0f) return@drawBehind
-            val outline = shape.createOutline(size, layoutDirection, this)
-            val clip = when (outline) {
-                is Outline.Generic -> outline.path
-                is Outline.Rounded -> Path().apply { addRoundRect(outline.roundRect) }
-                is Outline.Rectangle -> Path().apply { addRect(outline.rect) }
-            }
-            clipPath(clip) {
-                translate(left = frost.origin.x - position.x, top = frost.origin.y - position.y) {
-                    drawLayer(frost.blurred)
                 }
             }
         }

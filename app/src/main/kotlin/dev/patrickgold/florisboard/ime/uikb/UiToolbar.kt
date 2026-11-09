@@ -105,9 +105,6 @@ private val MenuHighlightColor = Color(0xFF2ECC71)
 
 /** Size of the toolbar icons. */
 private val MenuShape = RoundedCornerShape(6.dp)
-
-/** Name under which the toolbar popup menus ask for the frosted glass (see SnyggFrost). */
-const val UiFrostMenuElement = "ui-frost-menu"
 private val MenuIconBoxSize = 40.dp
 private val ToolbarIconSize = 28.dp
 
@@ -465,8 +462,6 @@ fun UiLanguageMenu(modifier: Modifier = Modifier) {
     val bar = FlorisImeSizing.smartbarHeight
     val ui = FlorisImeSizing.keyboardUiHeight()
     val keyColor = rememberSnyggThemeQuery(FlorisImeUi.Key.elementName).background(Color.Gray)
-    // With frosted glass the menu items are see-through, so the blurred keyboard shows behind them
-    val menuKeyColor = if (org.florisboard.lib.snygg.ui.LocalSnyggFrost.current != null) keyColor.copy(alpha = 0.55f) else keyColor
     val outlineColor = rememberSnyggThemeQuery(FlorisImeUi.SmartbarActionKey.elementName)
         .foreground(Color.Gray).copy(alpha = 0.5f)
     val visible = minOf(UiPanelState.MENU_VISIBLE, entries.size)
@@ -530,8 +525,7 @@ fun UiLanguageMenu(modifier: Modifier = Modifier) {
                             translationY = shiftAnim * 0.05f * size.height
                         }
                         .snyggBackdrop(FlorisImeUi.Key.elementName, MenuShape)
-                        .snyggBackdrop(UiFrostMenuElement, MenuShape)
-                        .background(menuKeyColor, MenuShape)
+                        .background(keyColor, MenuShape)
                         .border(1.5.dp, outlineColor, MenuShape),
                     contentAlignment = Alignment.Center,
                 ) {
@@ -578,7 +572,7 @@ fun UiLanguageMenu(modifier: Modifier = Modifier) {
                 // by the same amount so that all gaps stay equal. Only the drawing moves (animated), the touch slots
                 // stay where they are.
                 val bgAnim by animateColorAsState(
-                    targetValue = if (highlighted) MenuHighlightColor else menuKeyColor,
+                    targetValue = if (highlighted) MenuHighlightColor else keyColor,
                     animationSpec = tween(durationMillis = 120),
                     label = "menuItemColor",
                 )
@@ -593,7 +587,6 @@ fun UiLanguageMenu(modifier: Modifier = Modifier) {
                             translationY = shiftAnim * 0.05f * size.height
                         }
                         .snyggBackdrop(FlorisImeUi.Key.elementName, MenuShape)
-                        .snyggBackdrop(UiFrostMenuElement, MenuShape)
                         .background(bgAnim, MenuShape)
                         .border(1.5.dp, outlineColor, MenuShape),
                     contentAlignment = Alignment.Center,

@@ -53,15 +53,6 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
-        version = "5031709",
-        ar = listOf(
-            "تمويه حقيقي (زجاج مصنفر) خلف القوائم المنبثقة حتى بدون صورة خلفية: نوافذ الضغط المطوّل على الأزرار وقوائم زر اللغة والزرين ١ و٢. يعمل على أندرويد 12 فما فوق.",
-        ),
-        en = listOf(
-            "Real frosted glass behind the popups even without a background picture: the long-press popups of the keys and the menus of the language button and slots 1 and 2. Needs Android 12 or newer.",
-        ),
-    ),
-    UiChangelogEntry(
         version = "3044045",
         ar = listOf(
             "تأثير الزجاج المصنفر الحقيقي على القوائم المنبثقة من أزرار الشريط العلوي (صندوق اللغة والشعار) عند استخدام صورة كخلفية.",

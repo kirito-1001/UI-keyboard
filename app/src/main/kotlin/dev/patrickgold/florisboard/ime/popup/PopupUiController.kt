@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.runtime.Composable
-import org.florisboard.lib.snygg.ui.snyggFrostExclude
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -468,8 +467,7 @@ class PopupUiController(
             PopupBaseBox(
                 modifier = Modifier
                     .requiredSize(renderInfo.bounds.size.toDpSize())
-                    .absoluteOffset { renderInfo.bounds.topLeft.toIntOffset() }
-                    .snyggFrostExclude(),
+                    .absoluteOffset { renderInfo.bounds.topLeft.toIntOffset() },
                 attributes = attributes,
                 key = renderInfo.key,
                 shouldIndicateExtendedPopups = renderInfo.shouldIndicateExtendedPopups && extRenderInfo == null,
@@ -482,8 +480,7 @@ class PopupUiController(
             PopupExtBox(
                 modifier = Modifier
                     .requiredSize(renderInfo.bounds.size.toDpSize())
-                    .absoluteOffset { renderInfo.bounds.topLeft.toIntOffset() }
-                    .snyggFrostExclude(),
+                    .absoluteOffset { renderInfo.bounds.topLeft.toIntOffset() },
                 attributes = attributes,
                 elements = renderInfo.elements,
                 elemArrangement = if (renderInfo.anchorLeft) {
