@@ -53,7 +53,7 @@ class SnyggBackdrop(val image: ImageBitmap, val elements: Set<String>) {
 val LocalSnyggBackdrop: ProvidableCompositionLocal<SnyggBackdrop?> = compositionLocalOf { null }
 
 @Composable
-internal fun Modifier.snyggBackdrop(elementName: String?, shape: Shape): Modifier {
+fun Modifier.snyggBackdrop(elementName: String?, shape: Shape): Modifier {
     val backdrop = LocalSnyggBackdrop.current
     if (backdrop == null || elementName == null || elementName !in backdrop.elements) return this
     var position by remember { mutableStateOf(Offset.Zero) }

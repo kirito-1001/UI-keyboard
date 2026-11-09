@@ -96,6 +96,7 @@ import dev.patrickgold.florisboard.subtypeManager
 import org.florisboard.lib.snygg.SnyggSelector
 import org.florisboard.lib.snygg.ui.SnyggBox
 import org.florisboard.lib.snygg.ui.SnyggIcon
+import org.florisboard.lib.snygg.ui.snyggBackdrop
 import org.florisboard.lib.snygg.ui.SnyggIconButton
 import org.florisboard.lib.snygg.ui.SnyggRow
 import org.florisboard.lib.snygg.ui.SnyggText
@@ -523,6 +524,7 @@ fun UiLanguageMenu(modifier: Modifier = Modifier) {
                             scaleY = scaleAnim
                             translationY = shiftAnim * 0.05f * size.height
                         }
+                        .snyggBackdrop(FlorisImeUi.Key.elementName, MenuShape)
                         .background(keyColor, MenuShape)
                         .border(1.5.dp, outlineColor, MenuShape),
                     contentAlignment = Alignment.Center,
@@ -584,6 +586,7 @@ fun UiLanguageMenu(modifier: Modifier = Modifier) {
                             scaleY = scaleAnim
                             translationY = shiftAnim * 0.05f * size.height
                         }
+                        .snyggBackdrop(FlorisImeUi.Key.elementName, MenuShape)
                         .background(bgAnim, MenuShape)
                         .border(1.5.dp, outlineColor, MenuShape),
                     contentAlignment = Alignment.Center,
