@@ -314,7 +314,17 @@ class LayoutManager(context: Context) {
                     key.computedSymbolHint = hintKey
                 }
                 KeyType.NUMERIC -> {
-                    key.computedNumberHint = hintKey
+                    // The digits above the top row are always the western ones (1 2 3 ...), also in Arabic
+                    val digit = when (hintKey.code) {
+                        in 0x0660..0x0669 -> hintKey.code - 0x0660
+                        in 0x06F0..0x06F9 -> hintKey.code - 0x06F0
+                        else -> -1
+                    }
+                    key.computedNumberHint = if (digit >= 0) {
+                        TextKeyData(type = KeyType.NUMERIC, code = '0'.code + digit, label = digit.toString())
+                    } else {
+                        hintKey
+                    }
                 }
                 else -> {
                     // do nothing
