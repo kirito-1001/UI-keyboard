@@ -23,6 +23,7 @@ import dev.patrickgold.florisboard.extensionManager
 import dev.patrickgold.florisboard.ime.core.Subtype
 import dev.patrickgold.florisboard.ime.popup.PopupMapping
 import dev.patrickgold.florisboard.ime.popup.PopupMappingComponent
+import dev.patrickgold.florisboard.ime.popup.PopupSet
 import dev.patrickgold.florisboard.ime.text.key.KeyType
 import dev.patrickgold.florisboard.ime.text.keyboard.TextKey
 import dev.patrickgold.florisboard.ime.text.keyboard.TextKeyData
@@ -321,7 +322,15 @@ class LayoutManager(context: Context) {
                         else -> -1
                     }
                     key.computedNumberHint = if (digit >= 0) {
-                        TextKeyData(type = KeyType.NUMERIC, code = '0'.code + digit, label = digit.toString())
+                        // The Arabic digit stays on the same key as a second option in the long-press popup
+                        TextKeyData(
+                            type = KeyType.NUMERIC,
+                            code = '0'.code + digit,
+                            label = digit.toString(),
+                            popup = PopupSet<AbstractKeyData>(
+                                relevant = listOf<AbstractKeyData>(TextKeyData(type = KeyType.NUMERIC, code = hintKey.code, label = hintKey.label)),
+                            ),
+                        )
                     } else {
                         hintKey
                     }
