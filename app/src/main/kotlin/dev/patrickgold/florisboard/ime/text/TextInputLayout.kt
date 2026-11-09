@@ -48,6 +48,11 @@ import dev.patrickgold.florisboard.ime.uikb.UiPanelState
 import dev.patrickgold.florisboard.keyboardManager
 import dev.patrickgold.jetpref.datastore.model.observeAsState
 import org.florisboard.lib.snygg.ui.SnyggIcon
+import org.florisboard.lib.snygg.ui.LocalSnyggBackdrop
+import org.florisboard.lib.snygg.ui.LocalSnyggFrost
+import org.florisboard.lib.snygg.ui.rememberSnyggFrost
+import org.florisboard.lib.snygg.ui.snyggFrostSource
+import dev.patrickgold.florisboard.ime.uikb.UiFrostMenuElement
 
 @Composable
 fun TextInputLayout(
@@ -63,12 +68,19 @@ fun TextInputLayout(
 
     InlineSuggestionsStyleCache()
 
-    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+    // Without a background picture the popups get real frosted glass (blurred keyboard behind them), Android 12+
+    val frost = if (LocalSnyggBackdrop.current == null) {
+        rememberSnyggFrost(setOf(FlorisImeUi.KeyPopupBox.elementName, UiFrostMenuElement))
+    } else {
+        null
+    }
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr, LocalSnyggFrost provides frost) {
         Box {
         Column(
             modifier = modifier
                 .fillMaxWidth()
-                .wrapContentHeight(),
+                .wrapContentHeight()
+                .snyggFrostSource(frost),
         ) {
             Smartbar()
             if (state.isActionsOverflowVisible) {

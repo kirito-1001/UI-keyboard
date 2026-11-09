@@ -89,12 +89,31 @@ fun uiThemeTextColor(background: Color): Color {
 private val ImageThemeKey = Color.Black.copy(alpha = 0.36f)
 private val ImageThemePopup = Color.Black.copy(alpha = 0.50f)
 private val ImageThemeAccent = Color(0xFF4CB6AC)
+private const val FrostPopupAlpha = 0.55f
+
+/** Without a ready-made theme: only makes the popup background see-through for the frosted glass. */
+private object FrostOnlyTransform : SnyggStyleTransform {
+    override fun transform(
+        elementName: String,
+        attributes: SnyggQueryAttributes,
+        selector: SnyggSelector?,
+        style: SnyggSinglePropertySet,
+    ): SnyggSinglePropertySet {
+        return if (elementName == FlorisImeUi.KeyPopupBox.elementName) {
+            style.withColors(background = style.background(Color.Gray).copy(alpha = FrostPopupAlpha))
+        } else {
+            style
+        }
+    }
+}
 
 private class UiThemeTransform(
     private val background: Color,
     private val key: Color,
     private val accent: Color,
     private val isImage: Boolean,
+    /** Frosted glass behind the popups (no picture, Android 12+): their background has to be see-through. */
+    private val frost: Boolean = false,
 ) : SnyggStyleTransform {
     private val textBg = uiThemeTextColor(if (isImage) Color.Black else background)
     private val textKey = if (isImage) Color.White else uiThemeTextColor(key)
@@ -118,7 +137,11 @@ private class UiThemeTransform(
                 style.withColors(foreground = textBg)
             elementName == FlorisImeUi.KeyPopupBox.elementName ->
                 style.withColors(
-                    background = if (isImage) ImageThemePopup else lerp(key, textKey, 0.10f),
+                    background = when {
+                        isImage -> ImageThemePopup
+                        frost -> lerp(key, textKey, 0.10f).copy(alpha = FrostPopupAlpha)
+                        else -> lerp(key, textKey, 0.10f)
+                    },
                     foreground = textKey,
                 )
             elementName == FlorisImeUi.KeyPopupElement.elementName ->
@@ -158,10 +181,11 @@ fun ProvideUiTheme(content: @Composable () -> Unit) {
     val prefs by FlorisPreferenceStore
     val index by prefs.theme.uiThemeIndex.observeAsState()
     val imagePath by prefs.theme.uiThemeImagePath.observeAsState()
+    val frostAvailable = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S
     val transform = remember(index, imagePath) {
         val def = UiThemes.getOrNull(index)
         when {
-            def != null -> UiThemeTransform(def.background, def.key, def.accent, isImage = false)
+            def != null -> UiThemeTransform(def.background, def.key, def.accent, isImage = false, frost = frostAvailable)
             imagePath.isNotBlank() && File(imagePath).exists() ->
                 UiThemeTransform(Color.Black, ImageThemeKey, ImageThemeAccent, isImage = true)
             else -> null
@@ -172,7 +196,7 @@ fun ProvideUiTheme(content: @Composable () -> Unit) {
         blurred?.let { SnyggBackdrop(it, setOf(FlorisImeUi.Key.elementName, FlorisImeUi.KeyPopupBox.elementName)) }
     }
     CompositionLocalProvider(
-        LocalSnyggStyleTransform provides transform,
+        LocalSnyggStyleTransform provides (transform ?: if (frostAvailable) FrostOnlyTransform else null),
         LocalSnyggBackdrop provides backdrop,
         content = content,
     )
