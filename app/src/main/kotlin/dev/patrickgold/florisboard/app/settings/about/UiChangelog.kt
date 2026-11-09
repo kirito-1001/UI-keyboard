@@ -53,6 +53,15 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "3044045",
+        ar = listOf(
+            "تأثير الزجاج المصنفر الحقيقي على القوائم المنبثقة من أزرار الشريط العلوي (صندوق اللغة والشعار) عند استخدام صورة كخلفية.",
+        ),
+        en = listOf(
+            "Real frosted glass on the popup menus of the toolbar buttons (language box and logo) when a picture is used as the background.",
+        ),
+    ),
+    UiChangelogEntry(
         version = "846c5e5",
         ar = listOf(
             "الصفحة الرئيسية للإعدادات: كل خيار في بطاقة بيضاء منفصلة بحواف دائرية، بدون خطوط فاصلة، مع سطر تفاصيل تحت كل عنوان.",
