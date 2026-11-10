@@ -53,6 +53,17 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "6670c7a",
+        ar = listOf(
+            "خيار جديد «حجم تلميحات الرموز» في الإعدادات > لوحة المفاتيح: شريطان من 1 إلى 10 للتحكم في حجم التلميحات الصغيرة أعلى الأزرار وفي تلاشيها (القيمة الافتراضية 5).",
+            "الأرقام فوق الأزرار وفي صف الأرقام إنجليزية، والرقم العربي يظهر بجانبها في قائمة الضغط المطوّل.",
+        ),
+        en = listOf(
+            "New option \"Symbol hint size\" in Settings > Keyboard: two sliders from 1 to 10 for the size and the fade of the small hints on top of the keys (default 5).",
+            "The digits above the keys and in the number row are western, and the Arabic digit shows next to them in the long-press popup.",
+        ),
+    ),
+    UiChangelogEntry(
         version = "3044045",
         ar = listOf(
             "تأثير الزجاج المصنفر الحقيقي على القوائم المنبثقة من أزرار الشريط العلوي (صندوق اللغة والشعار) عند استخدام صورة كخلفية.",
