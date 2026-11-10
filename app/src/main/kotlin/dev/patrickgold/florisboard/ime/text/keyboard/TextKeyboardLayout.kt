@@ -397,15 +397,17 @@ private fun TextKeyButton(
             )
         }
         key.hintedLabel?.let { hintedLabel ->
-            SnyggText(
-                elementName = FlorisImeUi.KeyHint.elementName,
-                attributes = attributes,
-                selector = selector,
-                modifier = Modifier
-                    .wrapContentSize()
-                    .align(if (isTelPadKey) BiasAlignment(0.5f, 0f) else Alignment.TopEnd),
-                text = hintedLabel,
-            )
+            dev.patrickgold.florisboard.ime.uikb.UiHintStyle {
+                SnyggText(
+                    elementName = FlorisImeUi.KeyHint.elementName,
+                    attributes = attributes,
+                    selector = selector,
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .align(if (isTelPadKey) BiasAlignment(0.5f, 0f) else Alignment.TopEnd),
+                    text = hintedLabel,
+                )
+            }
         }
         key.foregroundImageVector?.let { imageVector ->
             SnyggIcon(

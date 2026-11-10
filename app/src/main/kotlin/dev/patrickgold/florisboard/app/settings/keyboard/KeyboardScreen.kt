@@ -17,6 +17,10 @@
 package dev.patrickgold.florisboard.app.settings.keyboard
 
 import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.fillMaxWidth
+import dev.patrickgold.jetpref.datastore.model.observeAsState
+import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -70,6 +74,67 @@ fun KeyboardScreen() = FlorisScreen {
             summarySwitchDisabled = stringRes(R.string.state__disabled),
             entries = enumDisplayEntriesOf(KeyHintMode::class),
         )
+        run {
+            val hintSize by prefs.keyboard.hintSize.observeAsState()
+            val hintFade by prefs.keyboard.hintFade.observeAsState()
+            var showHintDialog by remember { mutableStateOf(false) }
+            Preference(
+                title = stringRes(R.string.ui__hint_size__title),
+                summary = stringRes(R.string.ui__hint_size__size) + " " + hintSize + " · " +
+                    stringRes(R.string.ui__hint_size__fade) + " " + hintFade,
+                onClick = { showHintDialog = true },
+            )
+            if (showHintDialog) {
+                val scope = androidx.compose.runtime.rememberCoroutineScope()
+                androidx.compose.material3.AlertDialog(
+                    onDismissRequest = { showHintDialog = false },
+                    title = { androidx.compose.material3.Text(stringRes(R.string.ui__hint_size__title)) },
+                    text = {
+                        androidx.compose.foundation.layout.Column {
+                            androidx.compose.foundation.layout.Row(
+                                modifier = androidx.compose.ui.Modifier.fillMaxWidth(),
+                                horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween,
+                            ) {
+                                androidx.compose.material3.Text(stringRes(R.string.ui__hint_size__size))
+                                androidx.compose.material3.Text(hintSize.toString())
+                            }
+                            androidx.compose.material3.Slider(
+                                value = hintSize.toFloat(),
+                                onValueChange = { v -> scope.launch { prefs.keyboard.hintSize.set(v.roundToInt()) } },
+                                valueRange = 1f..10f,
+                                steps = 8,
+                            )
+                            androidx.compose.foundation.layout.Row(
+                                modifier = androidx.compose.ui.Modifier.fillMaxWidth(),
+                                horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween,
+                            ) {
+                                androidx.compose.material3.Text(stringRes(R.string.ui__hint_size__fade))
+                                androidx.compose.material3.Text(hintFade.toString())
+                            }
+                            androidx.compose.material3.Slider(
+                                value = hintFade.toFloat(),
+                                onValueChange = { v -> scope.launch { prefs.keyboard.hintFade.set(v.roundToInt()) } },
+                                valueRange = 1f..10f,
+                                steps = 8,
+                            )
+                        }
+                    },
+                    confirmButton = {
+                        androidx.compose.material3.TextButton(onClick = { showHintDialog = false }) {
+                            androidx.compose.material3.Text(stringRes(R.string.ui__hint_size__done))
+                        }
+                    },
+                    dismissButton = {
+                        androidx.compose.material3.TextButton(onClick = {
+                            scope.launch {
+                                prefs.keyboard.hintSize.set(5)
+                                prefs.keyboard.hintFade.set(5)
+                            }
+                        }) { androidx.compose.material3.Text(stringRes(R.string.ui__hint_size__reset)) }
+                    },
+                )
+            }
+        }
         SwitchPreference(
             prefs.keyboard.utilityKeyEnabled,
             title = stringRes(R.string.pref__keyboard__utility_key_enabled__label),

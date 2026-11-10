@@ -1229,4 +1229,9 @@
     <string name="ui__home__summary__ext">Manage installed add-ons</string>
     <string name="ui__home__summary__other">Backup and advanced settings</string>
     <string name="ui__home__summary__about">Version, changelog and licenses</string>
+    <string name="ui__hint_size__title">Symbol hint size</string>
+    <string name="ui__hint_size__size">Size</string>
+    <string name="ui__hint_size__fade">Fade</string>
+    <string name="ui__hint_size__done">Done</string>
+    <string name="ui__hint_size__reset">Default</string>
 </resources>

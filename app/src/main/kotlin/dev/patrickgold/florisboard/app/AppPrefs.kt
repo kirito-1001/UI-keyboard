@@ -498,6 +498,14 @@ abstract class FlorisPreferenceModel : PreferenceModel() {
             key = "keyboard__hinted_symbols_mode",
             default = KeyHintMode.SMART_PRIORITY,
         )
+        val hintSize = int(
+            key = "keyboard__hint_size",
+            default = 5,
+        )
+        val hintFade = int(
+            key = "keyboard__hint_fade",
+            default = 5,
+        )
         val utilityKeyEnabled = boolean(
             key = "keyboard__utility_key_enabled",
             default = true,

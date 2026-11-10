@@ -997,4 +997,9 @@
     <string name="ui__home__summary__ext">إدارة الملحقات المثبتة</string>
     <string name="ui__home__summary__other">النسخ الاحتياطي وإعدادات متقدمة</string>
     <string name="ui__home__summary__about">الإصدار وسجل التغييرات والتراخيص</string>
+    <string name="ui__hint_size__title">حجم تلميحات الرموز</string>
+    <string name="ui__hint_size__size">الحجم</string>
+    <string name="ui__hint_size__fade">التلاشي</string>
+    <string name="ui__hint_size__done">تم</string>
+    <string name="ui__hint_size__reset">افتراضي</string>
 </resources>
