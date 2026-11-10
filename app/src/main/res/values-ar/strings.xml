@@ -854,8 +854,8 @@
     <string name="enum__swipe_action__select_words_precisely" comment="Enum value label">تحديد الكلمات بدقة</string>
     <string name="enum__swipe_action__show_input_method_picker" comment="Enum value label">إظهار مبدل طريقة الإدخال</string>
     <string name="enum__swipe_action__switch_to_prev_keyboard" comment="Enum value label">التبديل إلى لوحة المفاتيح السابقة</string>
-    <string name="enum__swipe_action__switch_to_prev_subtype" comment="Enum value label">التبديل إلى النوع الفرعي السابق</string>
-    <string name="enum__swipe_action__switch_to_next_subtype" comment="Enum value label">التبديل إلى النوع الفرعي التالي</string>
+    <string name="enum__swipe_action__switch_to_prev_subtype" comment="Enum value label">تبديل اللغة (السابقة)</string>
+    <string name="enum__swipe_action__switch_to_next_subtype" comment="Enum value label">تبديل اللغة (التالية)</string>
     <string name="enum__swipe_action__toggle_smartbar_visibility" comment="Enum value label">تفعيل رؤية الشريط الذكي</string>
     <string name="enum__theme_mode__always_day" comment="Enum value label">دائما نهاري</string>
     <string name="enum__theme_mode__always_night" comment="Enum value label">دائما ليلي</string>
