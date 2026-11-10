@@ -231,6 +231,13 @@ class TextKey(override val data: AbstractKeyData) : Key(data) {
             if (numericHint.code != keyCode) {
                 computedPopups.numberHint = evaluatedNumberHint
                 mergePopups(evaluatedNumberHint, evaluator, computedPopups::mergeNumberHint)
+                // The Arabic digit of this key is shown as a normal secondary popup key next to the other ones
+                numericHint.popup?.relevant?.forEach { extra ->
+                    val extraData = extra.compute(evaluator)
+                    if (extraData != null && computedPopups.relevant.none { it.code == extraData.code }) {
+                        computedPopups.relevant.add(extraData)
+                    }
+                }
                 val hintSpecificPopupSet =
                     extendedPopups?.get(KeyVariation.ALL)?.get(numericHint.label) ?: extendedPopupsDefault?.get(
                         KeyVariation.ALL
