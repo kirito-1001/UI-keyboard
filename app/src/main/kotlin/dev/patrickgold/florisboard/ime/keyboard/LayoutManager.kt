@@ -221,7 +221,7 @@ class LayoutManager(context: Context) {
 
         if (extensionLayout != null) {
             for (row in extensionLayout.arrangement) {
-                val rowArray = Array(row.size) { TextKey(row[it]) }
+                val rowArray = Array(row.size) { TextKey(westernDigitOrNull(row[it]) ?: row[it]) }
                 computedArrangement.add(rowArray)
             }
         }
@@ -303,6 +303,26 @@ class LayoutManager(context: Context) {
         )
     }
 
+    /**
+     * Arabic-Indic digits (٠-٩, ۰-۹) become the western digit (0-9) on the key, with the original Arabic digit as
+     * the secondary (long-press) option on the same key. Returns null if [data] is not such a digit.
+     */
+    private fun westernDigitOrNull(data: AbstractKeyData?): TextKeyData? {
+        val text = data as? TextKeyData ?: return null
+        val digit = when (text.code) {
+            in 0x0660..0x0669 -> text.code - 0x0660
+            in 0x06F0..0x06F9 -> text.code - 0x06F0
+            else -> return null
+        }
+        val arabic = TextKeyData(type = KeyType.NUMERIC, code = text.code, label = text.label)
+        return TextKeyData(
+            type = KeyType.NUMERIC,
+            code = '0'.code + digit,
+            label = digit.toString(),
+            popup = PopupSet(relevant = listOf<AbstractKeyData>(arabic)),
+        )
+    }
+
     private fun addRowHints(main: Array<TextKey>, hint: Array<TextKey>, hintType: KeyType) {
         for ((k,key) in main.withIndex()) {
             val hintKey = hint.getOrNull(k)?.data?.compute(DefaultComputingEvaluator)
@@ -315,25 +335,7 @@ class LayoutManager(context: Context) {
                     key.computedSymbolHint = hintKey
                 }
                 KeyType.NUMERIC -> {
-                    // The digits above the top row are always the western ones (1 2 3 ...), also in Arabic
-                    val digit = when (hintKey.code) {
-                        in 0x0660..0x0669 -> hintKey.code - 0x0660
-                        in 0x06F0..0x06F9 -> hintKey.code - 0x06F0
-                        else -> -1
-                    }
-                    key.computedNumberHint = if (digit >= 0) {
-                        // The Arabic digit stays on the same key as a second option in the long-press popup
-                        TextKeyData(
-                            type = KeyType.NUMERIC,
-                            code = '0'.code + digit,
-                            label = digit.toString(),
-                            popup = PopupSet<AbstractKeyData>(
-                                relevant = listOf<AbstractKeyData>(TextKeyData(type = KeyType.NUMERIC, code = hintKey.code, label = hintKey.label)),
-                            ),
-                        )
-                    } else {
-                        hintKey
-                    }
+                    key.computedNumberHint = westernDigitOrNull(hintKey) ?: hintKey
                 }
                 else -> {
                     // do nothing
