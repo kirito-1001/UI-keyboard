@@ -75,8 +75,10 @@ fun KeyboardScreen() = FlorisScreen {
             entries = enumDisplayEntriesOf(KeyHintMode::class),
         )
         run {
-            val hintSize by prefs.keyboard.hintSize.observeAsState()
-            val hintFade by prefs.keyboard.hintFade.observeAsState()
+            val hintSizePref = prefs.keyboard.hintSize
+            val hintFadePref = prefs.keyboard.hintFade
+            val hintSize by hintSizePref.observeAsState()
+            val hintFade by hintFadePref.observeAsState()
             var showHintDialog by remember { mutableStateOf(false) }
             Preference(
                 title = stringRes(R.string.ui__hint_size__title),
@@ -100,7 +102,7 @@ fun KeyboardScreen() = FlorisScreen {
                             }
                             androidx.compose.material3.Slider(
                                 value = hintSize.toFloat(),
-                                onValueChange = { v -> scope.launch { prefs.keyboard.hintSize.set(v.roundToInt()) } },
+                                onValueChange = { v -> scope.launch { hintSizePref.set(v.roundToInt()) } },
                                 valueRange = 1f..10f,
                                 steps = 8,
                             )
@@ -113,7 +115,7 @@ fun KeyboardScreen() = FlorisScreen {
                             }
                             androidx.compose.material3.Slider(
                                 value = hintFade.toFloat(),
-                                onValueChange = { v -> scope.launch { prefs.keyboard.hintFade.set(v.roundToInt()) } },
+                                onValueChange = { v -> scope.launch { hintFadePref.set(v.roundToInt()) } },
                                 valueRange = 1f..10f,
                                 steps = 8,
                             )
@@ -127,8 +129,8 @@ fun KeyboardScreen() = FlorisScreen {
                     dismissButton = {
                         androidx.compose.material3.TextButton(onClick = {
                             scope.launch {
-                                prefs.keyboard.hintSize.set(5)
-                                prefs.keyboard.hintFade.set(5)
+                                hintSizePref.set(5)
+                                hintFadePref.set(5)
                             }
                         }) { androidx.compose.material3.Text(stringRes(R.string.ui__hint_size__reset)) }
                     },
