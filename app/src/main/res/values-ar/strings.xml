@@ -1012,8 +1012,8 @@
     <string name="ui__voice__setting_title">تفعيل الإدخال الصوتي المدمج</string>
     <string name="ui__voice__setting_summary">عند الإيقاف يعمل زر الصوت بالطريقة القديمة (الإدخال الصوتي للنظام)</string>
     <string name="ui__voice__listening">جارٍ الاستماع...</string>
-    <string name="ui__voice__paused">متوقف مؤقتاً — اضغط الميكروفون للمتابعة</string>
-    <string name="ui__voice__need_permission">يلزم إذن الميكروفون — اسمح به ثم اضغط الميكروفون</string>
-    <string name="ui__voice__unavailable">الإدخال الصوتي غير متاح على هذا الجوال</string>
-    <string name="ui__voice__network">لا يوجد اتصال للإدخال الصوتي</string>
+    <string name="ui__voice__paused">متوقف — اضغط للمتابعة</string>
+    <string name="ui__voice__need_permission">اسمح بالميكروفون</string>
+    <string name="ui__voice__unavailable">الصوت غير متاح</string>
+    <string name="ui__voice__network">لا يوجد اتصال</string>
 </resources>
