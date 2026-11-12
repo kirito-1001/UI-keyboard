@@ -53,6 +53,17 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "c14e646",
+        ar = listOf(
+            "خيار «ترتيب أزرار الاختصارات» في إعدادات الشريط الذكي: تختار أي أزرار تظهر (الشعار، اللغة، زر 1، زر 2، الإخفاء) وتتقاسم الأزرار المتبقية المسافة مع فواصل بينها.",
+            "اسم إيماءة التبديل في شريط المسافة صار «تبديل اللغة (التالية/السابقة)».",
+        ),
+        en = listOf(
+            "\"Shortcut buttons order\" in the smartbar settings: choose which buttons show (logo, language, button 1, button 2, hide); the remaining buttons share the space with dividers.",
+            "The space bar swipe action is now named \"Switch language (next/previous)\".",
+        ),
+    ),
+    UiChangelogEntry(
         version = "6670c7a",
         ar = listOf(
             "خيار جديد «حجم تلميحات الرموز» في الإعدادات > لوحة المفاتيح: شريطان من 1 إلى 10 للتحكم في حجم التلميحات الصغيرة أعلى الأزرار وفي تلاشيها (القيمة الافتراضية 5).",
