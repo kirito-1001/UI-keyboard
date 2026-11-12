@@ -406,6 +406,7 @@ class FlorisImeService : LifecycleInputMethodService() {
     override fun onFinishInputView(finishingInput: Boolean) {
         flogInfo { "finishing=$finishingInput" }
         super.onFinishInputView(finishingInput)
+        dev.patrickgold.florisboard.ime.uikb.UiVoice.exit()
         editorInstance.handleFinishInputView()
     }
 

@@ -148,6 +148,11 @@ fun KeyboardScreen() = FlorisScreen {
             entries = enumDisplayEntriesOf(UtilityKeyAction::class),
             visibleIf = { prefs.keyboard.utilityKeyEnabled isEqualTo true },
         )
+        SwitchPreference(
+            prefs.smartbar.uiBuiltInVoice,
+            title = stringRes(R.string.ui__voice__setting_title),
+            summary = stringRes(R.string.ui__voice__setting_summary),
+        )
         ListPreference(
             prefs.keyboard.spaceBarMode,
             title = stringRes(R.string.pref__keyboard__space_bar_mode__label),

@@ -1241,4 +1241,11 @@
     <string name="ui__shortcuts__button1">Button 1</string>
     <string name="ui__shortcuts__button2">Button 2</string>
     <string name="ui__shortcuts__hide">Hide keyboard button</string>
+    <string name="ui__voice__setting_title">Enable built-in voice typing</string>
+    <string name="ui__voice__setting_summary">When off, the voice button uses the old way (the system voice input)</string>
+    <string name="ui__voice__listening">Listening…</string>
+    <string name="ui__voice__paused">Paused — tap the microphone to continue</string>
+    <string name="ui__voice__need_permission">Microphone permission needed — allow it, then tap the microphone</string>
+    <string name="ui__voice__unavailable">Voice typing is not available on this phone</string>
+    <string name="ui__voice__network">No connection for voice typing</string>
 </resources>

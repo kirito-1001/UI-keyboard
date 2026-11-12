@@ -342,6 +342,10 @@ private fun SmartbarMainRow(modifier: Modifier = Modifier) {
         val inlineContent: @Composable BoxScope.() -> Unit = { InlineSuggestionsUi(inlineSuggestions) }
         val chipContent: @Composable BoxScope.() -> Unit = { clipForChip?.let { UiClipboardChip(it) } }
         val candidatesContent: @Composable BoxScope.() -> Unit = { CandidatesRow() }
+        if (dev.patrickgold.florisboard.ime.uikb.UiVoice.isActive) {
+            dev.patrickgold.florisboard.ime.uikb.UiVoiceBar()
+            return@SnyggRow
+        }
         UiToolbar(
             middle = when {
                 shouldShowInlineSuggestionsUi -> inlineContent

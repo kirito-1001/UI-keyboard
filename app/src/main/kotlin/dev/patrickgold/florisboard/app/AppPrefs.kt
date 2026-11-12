@@ -717,6 +717,10 @@ abstract class FlorisPreferenceModel : PreferenceModel() {
             key = "smartbar__ui_show_hide",
             default = true,
         )
+        val uiBuiltInVoice = boolean(
+            key = "smartbar__ui_built_in_voice",
+            default = false,
+        )
         val uiSlotEdit = enum(
             key = "smartbar__ui_slot_edit",
             default = dev.patrickgold.florisboard.ime.uikb.UiFeature.EDIT_TEXT,
