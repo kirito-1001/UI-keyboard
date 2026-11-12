@@ -53,6 +53,15 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "f12f127",
+        ar = listOf(
+            "الإدخال الصوتي المدمج: يظهر شريط استماع بحبة خضراء نابضة، والضغط عليها يوقف الاستماع مؤقتاً ويكمله، والسهم يخرج من الوضع. يُفعَّل من الإعدادات > لوحة المفاتيح > «تفعيل الإدخال الصوتي المدمج»، وعند إيقافه يعود الزر للطريقة القديمة. يطلب إذن الميكروفون مرة واحدة.",
+        ),
+        en = listOf(
+            "Built-in voice typing: a listening bar with a pulsing green pill; tap it to pause or continue, and the arrow leaves the mode. Turn it on in Settings > Keyboard > \"Enable built-in voice typing\"; when off, the button keeps the old way. Asks for the microphone permission once.",
+        ),
+    ),
+    UiChangelogEntry(
         version = "c14e646",
         ar = listOf(
             "خيار «ترتيب أزرار الاختصارات» في إعدادات الشريط الذكي: تختار أي أزرار تظهر (الشعار، اللغة، زر 1، زر 2، الإخفاء) وتتقاسم الأزرار المتبقية المسافة مع فواصل بينها.",
