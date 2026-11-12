@@ -371,20 +371,21 @@ fun UiToolbar(modifier: Modifier = Modifier, middle: (@Composable BoxScope.() ->
                 middle?.invoke(this)
             }
         }
-        val parts = buildList<@Composable RowScope.() -> Unit> {
-            if (showLogo) add(logoPart)
+        val parts = buildList<Pair<Boolean, @Composable RowScope.() -> Unit>> {
+            if (showLogo) add(false to logoPart)
             if (middle != null) {
-                add(middlePart)
+                add(false to middlePart)
             } else {
-                if (showSlot1) add(slot1Part)
-                if (showLang) add(langPart)
-                if (showSlot2) add(slot2Part)
+                if (showSlot1) add(false to slot1Part)
+                if (showLang) add(true to langPart)
+                if (showSlot2) add(false to slot2Part)
             }
-            if (showHide) add(hidePart)
+            if (showHide) add(false to hidePart)
         }
         Row(modifier = Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
-            parts.forEachIndexed { index, part ->
-                if (index > 0) Divider()
+            parts.forEachIndexed { index, (isLanguageBox, part) ->
+                // No divider on either side of the language box (it has its own outline)
+                if (index > 0 && !isLanguageBox && !parts[index - 1].first) Divider()
                 part()
             }
         }
