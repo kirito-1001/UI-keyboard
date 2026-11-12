@@ -20,6 +20,7 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.AudioManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -96,6 +97,48 @@ object UiVoice {
     private var appContext: Context? = null
     private var language: String = "ar-SA"
 
+    /** Number of characters of the not yet final phrase that we have written to the field. */
+    private var partialLength = 0
+    private var mutedStreams: List<Int> = emptyList()
+
+    // The recognizer plays a start/stop sound every time it restarts; the sound streams are muted while listening.
+    private fun muteSounds() {
+        val ctx = appContext ?: return
+        if (mutedStreams.isNotEmpty()) return
+        val am = ctx.getSystemService(Context.AUDIO_SERVICE) as? AudioManager ?: return
+        mutedStreams = listOf(AudioManager.STREAM_NOTIFICATION, AudioManager.STREAM_SYSTEM, AudioManager.STREAM_MUSIC)
+            .filter { stream ->
+                runCatching {
+                    if (am.isStreamMute(stream)) {
+                        false
+                    } else {
+                        am.adjustStreamVolume(stream, AudioManager.ADJUST_MUTE, 0)
+                        true
+                    }
+                }.getOrDefault(false)
+            }
+    }
+
+    private fun unmuteSounds() {
+        val ctx = appContext ?: return
+        val am = ctx.getSystemService(Context.AUDIO_SERVICE) as? AudioManager ?: return
+        mutedStreams.forEach { stream ->
+            runCatching { am.adjustStreamVolume(stream, AudioManager.ADJUST_UNMUTE, 0) }
+        }
+        mutedStreams = emptyList()
+    }
+
+    /** Writes the phrase being spoken: replaces what was written for it before. */
+    private fun writePhrase(text: String, final: Boolean) {
+        val ic = FlorisImeService.currentInputConnection() ?: return
+        ic.beginBatchEdit()
+        if (partialLength > 0) ic.deleteSurroundingText(partialLength, 0)
+        val out = if (final) "$text " else text
+        ic.commitText(out, 1)
+        ic.endBatchEdit()
+        partialLength = if (final) 0 else out.length
+    }
+
     val isActive: Boolean get() = mode != Mode.OFF
 
     /** Starts listening, in the language of the active keyboard language. */
@@ -116,6 +159,7 @@ object UiVoice {
         when (mode) {
             Mode.LISTENING -> {
                 mode = Mode.PAUSED
+                unmuteSounds()
                 // Finishes the current phrase (the result is still written to the field)
                 recognizer?.stopListening()
             }
@@ -134,18 +178,20 @@ object UiVoice {
         mode = Mode.OFF
         messageRes = null
         handler.removeCallbacksAndMessages(null)
+        unmuteSounds()
+        partialLength = 0
         recognizer?.let {
             it.cancel()
             it.destroy()
         }
         recognizer = null
-        FlorisImeService.currentInputConnection()?.finishComposingText()
     }
 
     private fun startListening() {
         val ctx = appContext ?: return
         if (ctx.checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             mode = Mode.PAUSED
+            unmuteSounds()
             messageRes = R.string.ui__voice__need_permission
             runCatching {
                 ctx.startActivity(
@@ -156,9 +202,12 @@ object UiVoice {
         }
         if (!SpeechRecognizer.isRecognitionAvailable(ctx)) {
             mode = Mode.PAUSED
+            unmuteSounds()
             messageRes = R.string.ui__voice__unavailable
             return
         }
+        muteSounds()
+        partialLength = 0
         val r = recognizer ?: SpeechRecognizer.createSpeechRecognizer(ctx).also {
             it.setRecognitionListener(listener)
             recognizer = it
@@ -167,6 +216,8 @@ object UiVoice {
             .putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
             .putExtra(RecognizerIntent.EXTRA_LANGUAGE, language)
             .putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
+            .putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 6000L)
+            .putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 4000L)
             .putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, ctx.packageName)
         r.startListening(intent)
     }
@@ -192,22 +243,22 @@ object UiVoice {
 
         override fun onPartialResults(partialResults: Bundle?) {
             val text = firstResult(partialResults) ?: return
-            FlorisImeService.currentInputConnection()?.setComposingText(text, 1)
+            writePhrase(text, final = false)
         }
 
         override fun onResults(results: Bundle?) {
-            val ic = FlorisImeService.currentInputConnection()
             val text = firstResult(results)
             if (text != null) {
-                ic?.commitText("$text ", 1)
+                writePhrase(text, final = true)
             } else {
-                ic?.finishComposingText()
+                partialLength = 0
             }
             restartSoon()
         }
 
         override fun onError(error: Int) {
-            FlorisImeService.currentInputConnection()?.finishComposingText()
+            // What was written for the unfinished phrase stays in the field as it is
+            partialLength = 0
             if (mode != Mode.LISTENING) return
             when (error) {
                 SpeechRecognizer.ERROR_NO_MATCH,
@@ -220,16 +271,19 @@ object UiVoice {
                 }
                 SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> {
                     mode = Mode.PAUSED
+                    unmuteSounds()
                     messageRes = R.string.ui__voice__need_permission
                 }
                 SpeechRecognizer.ERROR_NETWORK,
                 SpeechRecognizer.ERROR_NETWORK_TIMEOUT,
                 SpeechRecognizer.ERROR_SERVER -> {
                     mode = Mode.PAUSED
+                    unmuteSounds()
                     messageRes = R.string.ui__voice__network
                 }
                 else -> {
                     mode = Mode.PAUSED
+                    unmuteSounds()
                     messageRes = R.string.ui__voice__unavailable
                 }
             }
@@ -275,7 +329,7 @@ fun UiVoiceBar(modifier: Modifier = Modifier) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            Box(modifier = Modifier.width(120.dp).fillMaxHeight(), contentAlignment = Alignment.Center) {
+            Box(modifier = Modifier.width(84.dp).fillMaxHeight(), contentAlignment = Alignment.Center) {
                 if (listening) {
                     for (t in listOf(t1, t2)) {
                         Box(
