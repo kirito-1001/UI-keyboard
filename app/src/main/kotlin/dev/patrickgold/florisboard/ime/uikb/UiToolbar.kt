@@ -313,54 +313,79 @@ fun UiToolbar(modifier: Modifier = Modifier, middle: (@Composable BoxScope.() ->
         }
     }
 
-    // Layout: [ logo ] | [ edit  language box (140dp)  emoji ] | [ hide ]
-    // Logo and hide always stay. The area between the two dividers is the "middle" and can be replaced by [middle]
-    // (the recently copied text or the word suggestions).
+    // Layout: [ logo ] | [ button 1 ] | [ language box (140dp) ] | [ button 2 ] | [ hide ]
+    // Each of the five parts can be switched off in Settings > Smartbar; the shown parts share the space equally
+    // with a divider between them. While [middle] (the recently copied text or the word suggestions) is given, it
+    // replaces button 1, the language box and button 2.
+    val showLogo by prefs.smartbar.uiShowLogo.observeAsState()
+    val showSlot1 by prefs.smartbar.uiShowSlot1.observeAsState()
+    val showLang by prefs.smartbar.uiShowLang.observeAsState()
+    val showSlot2 by prefs.smartbar.uiShowSlot2.observeAsState()
+    val showHide by prefs.smartbar.uiShowHide.observeAsState()
     BoxWithConstraints(modifier = modifier.fillMaxWidth().height(barHeight)) {
-        val sideCell = (maxWidth - 140.dp) / 4
-        Row(modifier = Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
-            Box(modifier = Modifier.width(sideCell).fillMaxHeight(), contentAlignment = Alignment.Center) {
+        val logoPart: @Composable RowScope.() -> Unit = {
+            Box(modifier = Modifier.weight(1f).fillMaxHeight(), contentAlignment = Alignment.Center) {
                 BarButton(onClick = { UiPanelState.toggle(UiPanel.ACTIONS) }) {
                     SnyggIcon(modifier = Modifier.size(iconSize(ToolbarIconSize)), painter = painterResource(R.drawable.ui_toolbar_logo))
                 }
             }
-            Divider()
+        }
+        val slot1Part: @Composable RowScope.() -> Unit = {
             Box(modifier = Modifier.weight(1f).fillMaxHeight(), contentAlignment = Alignment.Center) {
-                if (middle != null) {
-                    middle()
-                } else {
-                    Row(modifier = Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
-                        Box(modifier = Modifier.weight(1f).fillMaxHeight(), contentAlignment = Alignment.Center) {
-                            SlotButton(slotEdit, prefs.smartbar.uiSlotEdit)
-                        }
-                        // Language box: tap switches to the next language, long press opens the popup menu.
-                        SnyggBox(
-                            elementName = FlorisImeUi.SmartbarActionKey.elementName,
-                            selector = if (UiPanelState.languageMenuOpen) SnyggSelector.PRESSED else SnyggSelector.NONE,
-                            modifier = Modifier.width(140.dp).height(barHeight).padding(vertical = 6.dp).then(langOutline),
-                            clickAndSemanticsModifier = Modifier.uiMenuGesture(
-                                key = subtypes,
-                                onTap = {
-                                    // Stay on the current panel (numeric, symbols...) when the language changes
-                                    subtypeManager.switchToNextSubtype()
-                                },
-                                entries = { buildEntries() },
-                            ),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            SnyggText(text = languageName(activeSubtype.primaryLocale.base))
-                        }
-                        Box(modifier = Modifier.weight(1f).fillMaxHeight(), contentAlignment = Alignment.Center) {
-                            SlotButton(slotEmoji, prefs.smartbar.uiSlotEmoji)
-                        }
-                    }
-                }
+                SlotButton(slotEdit, prefs.smartbar.uiSlotEdit)
             }
-            Divider()
-            Box(modifier = Modifier.width(sideCell).fillMaxHeight(), contentAlignment = Alignment.Center) {
+        }
+        val slot2Part: @Composable RowScope.() -> Unit = {
+            Box(modifier = Modifier.weight(1f).fillMaxHeight(), contentAlignment = Alignment.Center) {
+                SlotButton(slotEmoji, prefs.smartbar.uiSlotEmoji)
+            }
+        }
+        // Language box: tap switches to the next language, long press opens the popup menu.
+        val langPart: @Composable RowScope.() -> Unit = {
+            SnyggBox(
+                elementName = FlorisImeUi.SmartbarActionKey.elementName,
+                selector = if (UiPanelState.languageMenuOpen) SnyggSelector.PRESSED else SnyggSelector.NONE,
+                modifier = Modifier.width(140.dp).height(barHeight).padding(vertical = 6.dp).then(langOutline),
+                clickAndSemanticsModifier = Modifier.uiMenuGesture(
+                    key = subtypes,
+                    onTap = {
+                        // Stay on the current panel (numeric, symbols...) when the language changes
+                        subtypeManager.switchToNextSubtype()
+                    },
+                    entries = { buildEntries() },
+                ),
+                contentAlignment = Alignment.Center,
+            ) {
+                SnyggText(text = languageName(activeSubtype.primaryLocale.base))
+            }
+        }
+        val hidePart: @Composable RowScope.() -> Unit = {
+            Box(modifier = Modifier.weight(1f).fillMaxHeight(), contentAlignment = Alignment.Center) {
                 BarButton(onClick = { dispatcher.sendDownUp(TextKeyData.IME_HIDE_UI) }) {
                     SnyggIcon(modifier = Modifier.size(iconSize(ToolbarIconSize)), painter = painterResource(R.drawable.ui_icon_hide))
                 }
+            }
+        }
+        val middlePart: @Composable RowScope.() -> Unit = {
+            Box(modifier = Modifier.weight(4.5f).fillMaxHeight(), contentAlignment = Alignment.Center) {
+                middle?.invoke(this)
+            }
+        }
+        val parts = buildList<@Composable RowScope.() -> Unit> {
+            if (showLogo) add(logoPart)
+            if (middle != null) {
+                add(middlePart)
+            } else {
+                if (showSlot1) add(slot1Part)
+                if (showLang) add(langPart)
+                if (showSlot2) add(slot2Part)
+            }
+            if (showHide) add(hidePart)
+        }
+        Row(modifier = Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
+            parts.forEachIndexed { index, part ->
+                if (index > 0) Divider()
+                part()
             }
         }
     }

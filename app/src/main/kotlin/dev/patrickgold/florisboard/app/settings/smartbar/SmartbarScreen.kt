@@ -17,6 +17,23 @@
 package dev.patrickgold.florisboard.app.settings.smartbar
 
 import androidx.compose.runtime.Composable
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import dev.patrickgold.jetpref.datastore.model.observeAsState
+import kotlinx.coroutines.launch
 import androidx.compose.runtime.SideEffect
 import dev.patrickgold.florisboard.R
 import dev.patrickgold.florisboard.app.LocalNavController
@@ -46,12 +63,56 @@ fun SmartbarScreen() = FlorisScreen {
             title = stringRes(R.string.pref__smartbar__enabled__label),
             summary = stringRes(R.string.pref__smartbar__enabled__summary),
         )
-        ListPreference(
-            listPref = prefs.smartbar.layout,
-            title = stringRes(R.string.pref__smartbar__layout__label),
-            entries = enumDisplayEntriesOf(SmartbarLayout::class),
-            enabledIf = { prefs.smartbar.enabled isEqualTo true },
-        )
+        run {
+            val logoPref = prefs.smartbar.uiShowLogo
+            val langPref = prefs.smartbar.uiShowLang
+            val slot1Pref = prefs.smartbar.uiShowSlot1
+            val slot2Pref = prefs.smartbar.uiShowSlot2
+            val hidePref = prefs.smartbar.uiShowHide
+            val showLogo by logoPref.observeAsState()
+            val showLang by langPref.observeAsState()
+            val showSlot1 by slot1Pref.observeAsState()
+            val showSlot2 by slot2Pref.observeAsState()
+            val showHide by hidePref.observeAsState()
+            var showShortcutsDialog by remember { mutableStateOf(false) }
+            val scope = rememberCoroutineScope()
+            Preference(
+                title = stringRes(R.string.ui__shortcuts__title),
+                summary = stringRes(R.string.ui__shortcuts__summary),
+                onClick = { showShortcutsDialog = true },
+                enabledIf = { prefs.smartbar.enabled isEqualTo true },
+            )
+            if (showShortcutsDialog) {
+                @Composable
+                fun Item(label: String, checked: Boolean, onChange: (Boolean) -> Unit) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().clickable { onChange(!checked) },
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Checkbox(checked = checked, onCheckedChange = onChange)
+                        Text(label)
+                    }
+                }
+                AlertDialog(
+                    onDismissRequest = { showShortcutsDialog = false },
+                    title = { Text(stringRes(R.string.ui__shortcuts__title)) },
+                    text = {
+                        Column {
+                            Item(stringRes(R.string.ui__shortcuts__logo), showLogo) { v -> scope.launch { logoPref.set(v) } }
+                            Item(stringRes(R.string.ui__shortcuts__language), showLang) { v -> scope.launch { langPref.set(v) } }
+                            Item(stringRes(R.string.ui__shortcuts__button1), showSlot1) { v -> scope.launch { slot1Pref.set(v) } }
+                            Item(stringRes(R.string.ui__shortcuts__button2), showSlot2) { v -> scope.launch { slot2Pref.set(v) } }
+                            Item(stringRes(R.string.ui__shortcuts__hide), showHide) { v -> scope.launch { hidePref.set(v) } }
+                        }
+                    },
+                    confirmButton = {
+                        TextButton(onClick = { showShortcutsDialog = false }) {
+                            Text(stringRes(R.string.ui__hint_size__done))
+                        }
+                    },
+                )
+            }
+        }
 
         DialogSliderPreference(
             prefs.smartbar.heightFactor,

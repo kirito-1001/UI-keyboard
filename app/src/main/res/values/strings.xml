@@ -1234,4 +1234,11 @@
     <string name="ui__hint_size__fade">Fade</string>
     <string name="ui__hint_size__done">Done</string>
     <string name="ui__hint_size__reset">Default</string>
+    <string name="ui__shortcuts__title">Shortcut buttons order</string>
+    <string name="ui__shortcuts__summary">Choose which buttons appear in the smartbar</string>
+    <string name="ui__shortcuts__logo">Logo button</string>
+    <string name="ui__shortcuts__language">Language shortcuts button</string>
+    <string name="ui__shortcuts__button1">Button 1</string>
+    <string name="ui__shortcuts__button2">Button 2</string>
+    <string name="ui__shortcuts__hide">Hide keyboard button</string>
 </resources>

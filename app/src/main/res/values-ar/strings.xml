@@ -1002,4 +1002,11 @@
     <string name="ui__hint_size__fade">التلاشي</string>
     <string name="ui__hint_size__done">تم</string>
     <string name="ui__hint_size__reset">افتراضي</string>
+    <string name="ui__shortcuts__title">ترتيب أزرار الاختصارات</string>
+    <string name="ui__shortcuts__summary">اختر الأزرار التي تظهر في الشريط الذكي</string>
+    <string name="ui__shortcuts__logo">زر الشعار</string>
+    <string name="ui__shortcuts__language">زر اختصارات اللغة</string>
+    <string name="ui__shortcuts__button1">زر 1</string>
+    <string name="ui__shortcuts__button2">زر 2</string>
+    <string name="ui__shortcuts__hide">زر إخفاء اللوحة</string>
 </resources>
