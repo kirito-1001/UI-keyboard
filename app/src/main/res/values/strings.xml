@@ -1248,4 +1248,6 @@
     <string name="ui__voice__need_permission">Allow the microphone</string>
     <string name="ui__voice__unavailable">Voice not available</string>
     <string name="ui__voice__network">No connection</string>
+    <string name="ui__popup_corners__title">Popup corners</string>
+    <string name="ui__popup_corners__summary">Roundness of the popup that appears when you press and hold a key</string>
 </resources>

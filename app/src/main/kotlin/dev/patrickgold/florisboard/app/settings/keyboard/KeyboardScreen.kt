@@ -242,6 +242,13 @@ fun KeyboardScreen() = FlorisScreen {
                 summary = stringRes(R.string.ui__key_corners__summary),
                 onClick = { showKeyCorners = true },
             )
+            var showPopupCorners by remember { mutableStateOf(false) }
+            if (showPopupCorners) KeyCornersDialog(onDismiss = { showPopupCorners = false }, popup = true)
+            Preference(
+                title = stringRes(R.string.ui__popup_corners__title),
+                summary = stringRes(R.string.ui__popup_corners__summary),
+                onClick = { showPopupCorners = true },
+            )
         }
 
         Preference(

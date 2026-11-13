@@ -55,16 +55,18 @@ fun SnyggColumn(
     modifier: Modifier = Modifier,
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
+    shapeOverride: androidx.compose.ui.graphics.Shape? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     ProvideSnyggStyle(elementName, attributes, selector) { style ->
+        val shape = shapeOverride ?: style.shape()
         Column(
             modifier = modifier
                 .snyggMargin(style)
-                .snyggShadow(style)
-                .snyggBorder(style)
-                .snyggBackdrop(elementName, style.shape())
-                .snyggBackground(style)
+                .snyggShadow(style, shape = shape)
+                .snyggBorder(style, shape = shape)
+                .snyggBackdrop(elementName, shape)
+                .snyggBackground(style, shape = shape)
                 .snyggPadding(style),
             verticalArrangement = verticalArrangement,
             horizontalAlignment = horizontalAlignment,

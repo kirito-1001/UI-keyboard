@@ -568,6 +568,10 @@ abstract class FlorisPreferenceModel : PreferenceModel() {
             default = 2.0f,
         )
         /** Corner roundness of the keys in percent (0 = square, 100 = capsule). -1 = as defined by the theme. */
+        val popupCornerPercent = int(
+            key = "keyboard__popup_corner_percent",
+            default = -1,
+        )
         val keyCornerPercent = int(
             key = "keyboard__key_corner_percent",
             default = -1,

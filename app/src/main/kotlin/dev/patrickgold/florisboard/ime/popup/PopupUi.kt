@@ -67,6 +67,7 @@ fun PopupBaseBox(
         elementName = FlorisImeUi.KeyPopupBox.elementName,
         attributes = attributes,
         modifier = modifier,
+        shapeOverride = dev.patrickgold.florisboard.ime.uikb.rememberPopupShapeOverride(),
     ) {
         key.label?.let { label ->
             SnyggBox(
@@ -107,7 +108,12 @@ fun PopupExtBox(
     val dividerColor = rememberSnyggThemeQuery(FlorisImeUi.KeyPopupElement.elementName, attributes)
         .foreground(Color.Gray).copy(alpha = 0.55f)
     val rowsTopToBottom = elements.asReversed()
-    SnyggColumn(FlorisImeUi.KeyPopupBox.elementName, attributes, modifier = modifier) {
+    SnyggColumn(
+        FlorisImeUi.KeyPopupBox.elementName,
+        attributes,
+        modifier = modifier,
+        shapeOverride = dev.patrickgold.florisboard.ime.uikb.rememberPopupShapeOverride(),
+    ) {
         val columns = (rowsTopToBottom.maxOfOrNull { it.size } ?: 1)
         val rowCount = rowsTopToBottom.size.coerceAtLeast(1)
         androidx.compose.foundation.layout.Column(
@@ -144,7 +150,8 @@ fun PopupExtBox(
                         elementName = FlorisImeUi.KeyPopupElement.elementName,
                         attributes = localAttrs,
                         selector = selector,
-                        modifier = Modifier.size(elemWidth, elemHeight)
+                        modifier = Modifier.size(elemWidth, elemHeight),
+                        shapeOverride = dev.patrickgold.florisboard.ime.uikb.rememberPopupShapeOverride(),
                     ) {
                         element.label?.let { label ->
                             SnyggText(

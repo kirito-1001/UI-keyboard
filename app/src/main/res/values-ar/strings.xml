@@ -1016,4 +1016,6 @@
     <string name="ui__voice__need_permission">اسمح بالميكروفون</string>
     <string name="ui__voice__unavailable">الصوت غير متاح</string>
     <string name="ui__voice__network">لا يوجد اتصال</string>
+    <string name="ui__popup_corners__title">حواف النوافذ المنبثقة</string>
+    <string name="ui__popup_corners__summary">التحكم في انحناء حواف النافذة التي تظهر عند الضغط المطوّل</string>
 </resources>

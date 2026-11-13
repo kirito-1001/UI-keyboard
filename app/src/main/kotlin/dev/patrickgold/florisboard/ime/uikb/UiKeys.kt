@@ -72,6 +72,16 @@ fun rememberKeyShapeOverride(): androidx.compose.ui.graphics.Shape? {
     )
 }
 
+/** The shape override for the popups chosen in Settings > Keyboard > Popup corners, or null to use the theme shape. */
+@Composable
+fun rememberPopupShapeOverride(): androidx.compose.ui.graphics.Shape? {
+    val prefs by FlorisPreferenceStore
+    val percent by prefs.keyboard.popupCornerPercent.observeAsState()
+    return if (percent < 0) null else androidx.compose.foundation.shape.RoundedCornerShape(
+        percent = (percent / 2).coerceIn(0, 50),
+    )
+}
+
 /**
  * A key which looks like a normal keyboard key (same theme element) and sends a [KeyData] through the
  * [InputEventDispatcher], so repeat-on-hold, feedback and the normal key handling work as for the letter keys.

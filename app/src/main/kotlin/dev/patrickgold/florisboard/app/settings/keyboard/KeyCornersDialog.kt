@@ -43,17 +43,20 @@ import org.florisboard.lib.compose.stringRes
  * and a reset button which gives the control back to the theme.
  */
 @Composable
-fun KeyCornersDialog(onDismiss: () -> Unit) {
+fun KeyCornersDialog(onDismiss: () -> Unit, popup: Boolean = false) {
     val prefs by FlorisPreferenceStore
     val scope = rememberCoroutineScope()
-    val saved by prefs.keyboard.keyCornerPercent.observeAsState()
+    val pref = if (popup) prefs.keyboard.popupCornerPercent else prefs.keyboard.keyCornerPercent
+    val saved by pref.observeAsState()
     var sliderValue by remember { mutableFloatStateOf(if (saved < 0) 30f else saved.toFloat()) }
     // -1 (theme) stays until the slider is touched
     var useTheme by remember { androidx.compose.runtime.mutableStateOf(saved < 0) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(stringRes(R.string.ui__key_corners__title)) },
+        title = {
+            Text(stringRes(if (popup) R.string.ui__popup_corners__title else R.string.ui__key_corners__title))
+        },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
@@ -68,7 +71,7 @@ fun KeyCornersDialog(onDismiss: () -> Unit) {
                     onValueChange = {
                         sliderValue = it
                         useTheme = false
-                        scope.launch { prefs.keyboard.keyCornerPercent.set(it.toInt()) }
+                        scope.launch { pref.set(it.toInt()) }
                     },
                     valueRange = 0f..100f,
                     steps = 19,
@@ -86,7 +89,7 @@ fun KeyCornersDialog(onDismiss: () -> Unit) {
             TextButton(
                 onClick = {
                     useTheme = true
-                    scope.launch { prefs.keyboard.keyCornerPercent.set(-1) }
+                    scope.launch { pref.set(-1) }
                 },
             ) { Text(stringRes(R.string.ui__key_corners__reset)) }
         },
