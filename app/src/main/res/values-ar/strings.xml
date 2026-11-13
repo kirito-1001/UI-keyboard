@@ -1011,7 +1011,7 @@
     <string name="ui__shortcuts__hide">زر إخفاء اللوحة</string>
     <string name="ui__voice__setting_title">تفعيل الإدخال الصوتي المدمج</string>
     <string name="ui__voice__setting_summary">عند الإيقاف يستخدم الإدخال الصوتي للنظام</string>
-    <string name="ui__voice__listening">جارٍ الاستماع...</string>
+    <string name="ui__voice__listening">الاستماع</string>
     <string name="ui__voice__paused">متوقف — اضغط للمتابعة</string>
     <string name="ui__voice__need_permission">اسمح بالميكروفون</string>
     <string name="ui__voice__unavailable">الصوت غير متاح</string>
