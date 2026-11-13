@@ -53,6 +53,15 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "a2ffc90",
+        ar = listOf(
+            "خيار «حواف النوافذ المنبثقة» في الإعدادات > لوحة المفاتيح: يتحكم في انحناء النافذة التي تظهر عند الضغط على الحرف أو الضغط المطوّل، من 0% إلى 100%، ويمكن إعادته لما يحدده الثيم.",
+        ),
+        en = listOf(
+            "\"Popup corners\" in Settings > Keyboard: controls the roundness of the popup that shows when you press or long-press a key, from 0% to 100%, with a reset to the theme.",
+        ),
+    ),
+    UiChangelogEntry(
         version = "f12f127",
         ar = listOf(
             "الإدخال الصوتي المدمج: يظهر شريط استماع بحبة خضراء نابضة، والضغط عليها يوقف الاستماع مؤقتاً ويكمله، والسهم يخرج من الوضع. يُفعَّل من الإعدادات > لوحة المفاتيح > «تفعيل الإدخال الصوتي المدمج»، وعند إيقافه يعود الزر للطريقة القديمة. يطلب إذن الميكروفون مرة واحدة.",
