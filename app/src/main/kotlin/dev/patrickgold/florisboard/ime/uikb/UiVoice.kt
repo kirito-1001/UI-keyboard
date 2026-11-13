@@ -232,6 +232,11 @@ object UiVoice {
             .putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 6000L)
             .putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 4000L)
             .putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, ctx.packageName)
+        // Android 13+: tells the recognizer that the other language (Arabic <-> English) may also be spoken
+        if (android.os.Build.VERSION.SDK_INT >= 33) {
+            val other = if (language.startsWith("ar")) "en-US" else "ar-SA"
+            intent.putExtra(RecognizerIntent.EXTRA_ADDITIONAL_LANGUAGES, arrayOf(other))
+        }
         r.startListening(intent)
     }
 
