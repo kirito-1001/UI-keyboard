@@ -132,6 +132,9 @@ object UiVoice {
     private fun writePhrase(text: String, final: Boolean) {
         val ic = FlorisImeService.currentInputConnection() ?: return
         ic.beginBatchEdit()
+        // The keyboard may have marked the last word before the cursor as "composing"; committing text would then
+        // replace that word as well. Releasing it first makes sure only our own phrase is replaced.
+        ic.finishComposingText()
         if (partialLength > 0) ic.deleteSurroundingText(partialLength, 0)
         val out = if (final) "$text " else text
         ic.commitText(out, 1)
