@@ -151,7 +151,7 @@ object UiVoice {
         }
         mode = Mode.LISTENING
         messageRes = null
-        startListening()
+        startListening(userInitiated = true)
     }
 
     /** Tap on the microphone: pause, or continue. */
@@ -166,7 +166,7 @@ object UiVoice {
             Mode.PAUSED -> {
                 mode = Mode.LISTENING
                 messageRes = null
-                startListening()
+                startListening(userInitiated = true)
             }
             Mode.OFF -> Unit
         }
@@ -187,7 +187,11 @@ object UiVoice {
         recognizer = null
     }
 
-    private fun startListening() {
+    /**
+     * [userInitiated]: started by the user (the button, or continue after a pause): its start sound is played, and
+     * the sounds are muted shortly after. The automatic restarts after each phrase are always silent.
+     */
+    private fun startListening(userInitiated: Boolean = false) {
         val ctx = appContext ?: return
         if (ctx.checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             mode = Mode.PAUSED
@@ -206,7 +210,13 @@ object UiVoice {
             messageRes = R.string.ui__voice__unavailable
             return
         }
-        muteSounds()
+        if (userInitiated) {
+            handler.postDelayed({
+                if (mode == Mode.LISTENING) muteSounds()
+            }, 800)
+        } else {
+            muteSounds()
+        }
         partialLength = 0
         val r = recognizer ?: SpeechRecognizer.createSpeechRecognizer(ctx).also {
             it.setRecognitionListener(listener)

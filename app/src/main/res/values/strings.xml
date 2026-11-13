@@ -1242,7 +1242,7 @@
     <string name="ui__shortcuts__button2">Button 2</string>
     <string name="ui__shortcuts__hide">Hide keyboard button</string>
     <string name="ui__voice__setting_title">Enable built-in voice typing</string>
-    <string name="ui__voice__setting_summary">When off, the voice button uses the old way (the system voice input)</string>
+    <string name="ui__voice__setting_summary">When off, the system voice input is used</string>
     <string name="ui__voice__listening">Listening…</string>
     <string name="ui__voice__paused">Paused — tap to continue</string>
     <string name="ui__voice__need_permission">Allow the microphone</string>

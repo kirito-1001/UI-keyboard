@@ -719,7 +719,7 @@ abstract class FlorisPreferenceModel : PreferenceModel() {
         )
         val uiBuiltInVoice = boolean(
             key = "smartbar__ui_built_in_voice",
-            default = false,
+            default = true,
         )
         val uiSlotEdit = enum(
             key = "smartbar__ui_slot_edit",
