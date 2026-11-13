@@ -319,7 +319,8 @@ class LayoutManager(context: Context) {
             type = KeyType.NUMERIC,
             code = '0'.code + digit,
             label = digit.toString(),
-            popup = PopupSet(relevant = listOf<AbstractKeyData>(arabic)),
+            // The Arabic digit first, then the other symbols of the original key (fractions, super/subscripts)
+            popup = PopupSet(relevant = listOf<AbstractKeyData>(arabic) + (text.popup?.relevant ?: emptyList())),
         )
     }
 
