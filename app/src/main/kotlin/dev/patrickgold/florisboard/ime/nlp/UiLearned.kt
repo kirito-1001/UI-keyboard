@@ -36,6 +36,7 @@ object UiLearned {
         val words = HashMap<String, Entry>()
         val pairs = HashMap<String, Entry>() // "previous\u0000word"
         val triples = HashMap<String, Entry>() // "previous2\u0000previous\u0000word"
+        val blocked = HashSet<String>() // normalized words the user removed from the suggestions
     }
 
     private fun nowMinutes() = System.currentTimeMillis() / 60_000L
@@ -76,6 +77,8 @@ object UiLearned {
                     val parts = line.split('\t')
                     // "lang<TAB>word<TAB>count" or "lang<TAB>previous<TAB>word<TAB>count"
                     when (parts.size) {
+                        // "lang<TAB>word": a word the user removed from the suggestions
+                        2 -> data.getOrPut(parts[0]) { Data() }.blocked.add(parts[1])
                         3 -> parseEntry(parts[2])?.let { data.getOrPut(parts[0]) { Data() }.words[parts[1]] = it }
                         4 -> parseEntry(parts[3])?.let {
                             data.getOrPut(parts[0]) { Data() }.pairs[parts[1] + "\u0000" + parts[2]] = it
@@ -98,6 +101,7 @@ object UiLearned {
             val tmp = File(f.parentFile, "$FILE_NAME.tmp")
             tmp.bufferedWriter(Charsets.UTF_8).use { w ->
                 for ((lang, d) in data) {
+                    for (word in d.blocked) w.write("$lang\t$word\n")
                     for ((word, e) in d.words) w.write("$lang\t$word\t${e.count}@${e.time}\n")
                     for ((pair, e) in d.pairs) w.write("$lang\t${pair.replace('\u0000', '\t')}\t${e.count}@${e.time}\n")
                     for ((triple, e) in d.triples) {
@@ -223,6 +227,32 @@ object UiLearned {
             .sortedByDescending { it.third }
             .take(limit)
             .map { it.first to it.second }
+    }
+
+    /**
+     * The user removed [word] from the suggestions (a wrong word): it is forgotten (also as the next word of any pair)
+     * and never suggested again, even if it comes from the bundled word list.
+     */
+    @Synchronized
+    fun block(context: Context, language: String, word: String) {
+        ensureLoaded(context)
+        val key = UiDictionary.normalize(word, language)
+        if (key.isEmpty()) return
+        val d = data.getOrPut(language) { Data() }
+        d.blocked.add(key)
+        d.words.keys.removeAll { UiDictionary.normalize(it, language) == key }
+        d.pairs.keys.removeAll { UiDictionary.normalize(it.substringAfterLast('\u0000'), language) == key }
+        d.triples.keys.removeAll { UiDictionary.normalize(it.substringAfterLast('\u0000'), language) == key }
+        dirty = true
+        saveIfDue(force = true)
+    }
+
+    /** True if the user removed [word] from the suggestions. */
+    @Synchronized
+    fun isBlocked(context: Context, language: String, word: String): Boolean {
+        ensureLoaded(context)
+        val d = data[language] ?: return false
+        return d.blocked.isNotEmpty() && UiDictionary.normalize(word, language) in d.blocked
     }
 
     /** Forgets everything that was learned. */

@@ -38,6 +38,7 @@ import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import dev.patrickgold.florisboard.app.FlorisPreferenceStore
 import dev.patrickgold.florisboard.lib.observeAsTransformingState
@@ -71,6 +72,7 @@ fun CandidatesRow(modifier: Modifier = Modifier) {
 
     val displayMode by prefs.suggestion.displayMode.observeAsState()
     val candidates by nlpManager.activeCandidatesFlow.collectAsState()
+    val view = LocalView.current
 
     // The suggestions always run from left to right (the first one at the left edge), also for Arabic
     androidx.compose.runtime.CompositionLocalProvider(
@@ -126,12 +128,19 @@ fun CandidatesRow(modifier: Modifier = Modifier) {
                         // Can't use candidate directly
                         val candidateItem = candidates[n]
                         if (candidateItem.isEligibleForUserRemoval) {
-                            nlpManager.removeSuggestion(subtypeManager.activeSubtype, candidateItem)
+                            nlpManager.removeSuggestion(subtypeManager.activeSubtype, candidateItem).also { removed ->
+                                if (removed) view.performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS)
+                            }
                         } else {
                             false
                         }
                     },
-                    longPressDelay = prefs.keyboard.longPressDelay.get().toLong(),
+                    // A word suggestion has to be held for 3 seconds to be removed (a wrong word)
+                    longPressDelay = if (candidate.isEligibleForUserRemoval) {
+                        3000L
+                    } else {
+                        prefs.keyboard.longPressDelay.get().toLong()
+                    },
                 )
             }
         }

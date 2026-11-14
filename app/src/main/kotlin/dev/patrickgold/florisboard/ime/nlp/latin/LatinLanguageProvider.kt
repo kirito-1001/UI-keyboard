@@ -167,12 +167,13 @@ class LatinLanguageProvider(context: Context) : SpellingProvider, SuggestionProv
                 result.toList().take(limit)
             }
         }
-        return words.mapIndexed { index, word ->
+        val allowed = words.filterNot { UiLearned.isBlocked(appContext, language, it) }
+        return allowed.mapIndexed { index, word ->
             WordSuggestionCandidate(
                 text = if (typed.isBlank()) word else matchCase(typed, word),
                 confidence = 1.0 - index * 0.1,
                 isEligibleForAutoCommit = false,
-                isEligibleForUserRemoval = false,
+                isEligibleForUserRemoval = true,
                 sourceProvider = this,
             )
         }
@@ -241,9 +242,11 @@ class LatinLanguageProvider(context: Context) : SpellingProvider, SuggestionProv
         flogDebug { candidate.toString() }
     }
 
+    /** A suggestion was held for 3 seconds: the word is wrong; forget it and never suggest it again. */
     override suspend fun removeSuggestion(subtype: Subtype, candidate: SuggestionCandidate): Boolean {
-        flogDebug { candidate.toString() }
-        return false
+        if (candidate !is WordSuggestionCandidate) return false
+        UiLearned.block(appContext, subtype.primaryLocale.language, candidate.text.toString())
+        return true
     }
 
     override suspend fun getListOfWords(subtype: Subtype): List<String> {
