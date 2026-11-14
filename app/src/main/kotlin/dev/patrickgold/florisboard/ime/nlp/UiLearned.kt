@@ -29,10 +29,32 @@ object UiLearned {
     private const val MAX_PAIRS_PER_LANGUAGE = 40000
     private const val SAVE_EVERY_MS = 10_000L
 
+    /** How often something was used and when it was used last (minutes since 1970), so recent use ranks higher. */
+    private class Entry(var count: Int, var time: Long)
+
     private class Data {
-        val words = HashMap<String, Int>()
-        val pairs = HashMap<String, Int>() // "previous\u0000word" -> count
-        val triples = HashMap<String, Int>() // "previous2\u0000previous\u0000word" -> count
+        val words = HashMap<String, Entry>()
+        val pairs = HashMap<String, Entry>() // "previous\u0000word"
+        val triples = HashMap<String, Entry>() // "previous2\u0000previous\u0000word"
+    }
+
+    private fun nowMinutes() = System.currentTimeMillis() / 60_000L
+
+    /**
+     * Ranking value: the count, up to three times higher for something used just now, falling back to the plain count
+     * over a few weeks. Something typed once today ranks above something typed twice months ago.
+     */
+    private fun score(e: Entry): Double {
+        val ageDays = ((nowMinutes() - e.time).coerceAtLeast(0)) / 1440.0
+        return e.count * (1.0 + 2.0 / (1.0 + ageDays / 7.0))
+    }
+
+    /** Reads "count" or "count@minutes" (older files have no time). */
+    private fun parseEntry(text: String): Entry? {
+        val at = text.indexOf('@')
+        val count = (if (at < 0) text else text.substring(0, at)).toIntOrNull() ?: return null
+        val time = if (at < 0) 0L else text.substring(at + 1).toLongOrNull() ?: 0L
+        return Entry(count, time)
     }
 
     private val data = HashMap<String, Data>()
@@ -54,11 +76,11 @@ object UiLearned {
                     val parts = line.split('\t')
                     // "lang<TAB>word<TAB>count" or "lang<TAB>previous<TAB>word<TAB>count"
                     when (parts.size) {
-                        3 -> parts[2].toIntOrNull()?.let { data.getOrPut(parts[0]) { Data() }.words[parts[1]] = it }
-                        4 -> parts[3].toIntOrNull()?.let {
+                        3 -> parseEntry(parts[2])?.let { data.getOrPut(parts[0]) { Data() }.words[parts[1]] = it }
+                        4 -> parseEntry(parts[3])?.let {
                             data.getOrPut(parts[0]) { Data() }.pairs[parts[1] + "\u0000" + parts[2]] = it
                         }
-                        5 -> parts[4].toIntOrNull()?.let {
+                        5 -> parseEntry(parts[4])?.let {
                             data.getOrPut(parts[0]) { Data() }.triples[parts[1] + "\u0000" + parts[2] + "\u0000" + parts[3]] = it
                         }
                     }
@@ -76,9 +98,11 @@ object UiLearned {
             val tmp = File(f.parentFile, "$FILE_NAME.tmp")
             tmp.bufferedWriter(Charsets.UTF_8).use { w ->
                 for ((lang, d) in data) {
-                    for ((word, count) in d.words) w.write("$lang\t$word\t$count\n")
-                    for ((pair, count) in d.pairs) w.write("$lang\t${pair.replace('\u0000', '\t')}\t$count\n")
-                    for ((triple, count) in d.triples) w.write("$lang\t${triple.replace('\u0000', '\t')}\t$count\n")
+                    for ((word, e) in d.words) w.write("$lang\t$word\t${e.count}@${e.time}\n")
+                    for ((pair, e) in d.pairs) w.write("$lang\t${pair.replace('\u0000', '\t')}\t${e.count}@${e.time}\n")
+                    for ((triple, e) in d.triples) {
+                        w.write("$lang\t${triple.replace('\u0000', '\t')}\t${e.count}@${e.time}\n")
+                    }
                 }
             }
             tmp.renameTo(f)
@@ -98,15 +122,14 @@ object UiLearned {
     fun learn(context: Context, language: String, previous2: String?, previous: String?, word: String) {
         ensureLoaded(context)
         val d = data.getOrPut(language) { Data() }
-        d.words[word] = (d.words[word] ?: 0) + 1
-        if (previous != null) {
-            val key = previous + "\u0000" + word
-            d.pairs[key] = (d.pairs[key] ?: 0) + 1
+        val now = nowMinutes()
+        fun HashMap<String, Entry>.bump(key: String, by: Int = 1) {
+            val e = get(key)
+            if (e == null) put(key, Entry(by, now)) else { e.count += by; e.time = now }
         }
-        if (previous != null && previous2 != null) {
-            val key = previous2 + "\u0000" + previous + "\u0000" + word
-            d.triples[key] = (d.triples[key] ?: 0) + 1
-        }
+        d.words.bump(word)
+        if (previous != null) d.pairs.bump(previous + "\u0000" + word)
+        if (previous != null && previous2 != null) d.triples.bump(previous2 + "\u0000" + previous + "\u0000" + word)
         if (d.triples.size > MAX_PAIRS_PER_LANGUAGE) prune(d.triples, MAX_PAIRS_PER_LANGUAGE * 9 / 10)
         if (d.words.size > MAX_WORDS_PER_LANGUAGE) prune(d.words, MAX_WORDS_PER_LANGUAGE * 9 / 10)
         if (d.pairs.size > MAX_PAIRS_PER_LANGUAGE) prune(d.pairs, MAX_PAIRS_PER_LANGUAGE * 9 / 10)
@@ -114,9 +137,24 @@ object UiLearned {
         saveIfDue()
     }
 
-    private fun prune(map: HashMap<String, Int>, keep: Int) {
-        val threshold = map.values.sorted()[map.size - keep]
-        map.entries.removeAll { it.value < threshold }
+    /**
+     * The user picked [word] from the suggestions: counts as using it twice, because choosing a suggestion shows
+     * that it is wanted. (The normal learning adds the other use when the word is finished.)
+     */
+    @Synchronized
+    fun reward(context: Context, language: String, word: String) {
+        ensureLoaded(context)
+        if (word.isBlank()) return
+        val d = data.getOrPut(language) { Data() }
+        val e = d.words[word]
+        if (e == null) d.words[word] = Entry(1, nowMinutes()) else { e.count += 1; e.time = nowMinutes() }
+        dirty = true
+        saveIfDue()
+    }
+
+    private fun prune(map: HashMap<String, Entry>, keep: Int) {
+        val threshold = map.values.map { it.count }.sorted()[map.size - keep]
+        map.entries.removeAll { it.value.count < threshold }
     }
 
     /** Learned words starting with [prefix] (compared in normalized form), most used first. */
@@ -128,9 +166,9 @@ object UiLearned {
         if (key.isEmpty()) return emptyList()
         return d.words.entries
             .filter { UiDictionary.normalize(it.key, language).startsWith(key) && it.key != prefix }
-            .sortedByDescending { it.value }
+            .sortedByDescending { score(it.value) }
             .take(limit)
-            .map { it.key to it.value }
+            .map { it.key to it.value.count }
     }
 
     /**
@@ -143,7 +181,7 @@ object UiLearned {
         val d = data[language] ?: return false
         val key = UiDictionary.normalize(word, language)
         if (key.isEmpty()) return false
-        return d.words.entries.any { it.value >= 2 && UiDictionary.normalize(it.key, language) == key }
+        return d.words.entries.any { it.value.count >= 2 && UiDictionary.normalize(it.key, language) == key }
     }
 
     /** Words that were typed after [previous], optionally only those starting with [prefix], most used first. */
@@ -155,24 +193,36 @@ object UiLearned {
         val key = UiDictionary.normalize(prefix, language)
         return d.pairs.entries
             .filter { it.key.startsWith(head) }
-            .map { it.key.substring(head.length) to it.value }
+            .map { Triple(it.key.substring(head.length), it.value.count, score(it.value)) }
             .filter { key.isEmpty() || UiDictionary.normalize(it.first, language).startsWith(key) }
             .filter { it.first != prefix }
-            .sortedByDescending { it.second }
+            .sortedByDescending { it.third }
             .take(limit)
+            .map { it.first to it.second }
     }
 
     /** Words that were typed after the two words [previous2] [previous], most used first. */
     @Synchronized
-    fun nextAfterTwo(context: Context, language: String, previous2: String, previous: String, limit: Int): List<Pair<String, Int>> {
+    fun nextAfterTwo(
+        context: Context,
+        language: String,
+        previous2: String,
+        previous: String,
+        limit: Int,
+        prefix: String = "",
+    ): List<Pair<String, Int>> {
         ensureLoaded(context)
         val d = data[language] ?: return emptyList()
         val head = previous2 + "\u0000" + previous + "\u0000"
+        val key = UiDictionary.normalize(prefix, language)
         return d.triples.entries
             .filter { it.key.startsWith(head) }
-            .map { it.key.substring(head.length) to it.value }
-            .sortedByDescending { it.second }
+            .map { Triple(it.key.substring(head.length), it.value.count, score(it.value)) }
+            .filter { key.isEmpty() || UiDictionary.normalize(it.first, language).startsWith(key) }
+            .filter { it.first != prefix }
+            .sortedByDescending { it.third }
             .take(limit)
+            .map { it.first to it.second }
     }
 
     /** Forgets everything that was learned. */

@@ -167,22 +167,35 @@ class UiDictionary private constructor(
          * Words that usually follow [previous], from the bundled pair list `assets/ime/dict/<language>_pairs.txt`
          * (`previous<TAB>next<TAB>count`, most frequent first). Empty if there is no such list.
          */
-        fun nextWords(context: Context, language: String, previous: String, limit: Int): List<String> {
+        fun nextWords(context: Context, language: String, previous: String, limit: Int, prefix: String = ""): List<String> {
             val map = synchronized(pairCache) {
                 pairCache.getOrPut(language) { runCatching { loadPairs(context, language) }.getOrDefault(emptyMap()) }
             }
-            return map[normalize(previous, language)].orEmpty().take(limit)
+            return map[normalize(previous, language)].orEmpty().startingWith(prefix, language).take(limit)
+        }
+
+        /** Only the words that start with [prefix] (compared in normalized form); all words if [prefix] is empty. */
+        private fun List<String>.startingWith(prefix: String, language: String): List<String> {
+            val key = normalize(prefix, language)
+            return if (key.isEmpty()) this else filter { normalize(it, language).startsWith(key) && it != prefix }
         }
 
         private val tripleCache = HashMap<String, Map<String, List<String>>>()
 
         /** Words that usually follow the two words [previous2] [previous], from `<language>_triples.txt`. */
-        fun nextWordsAfterTwo(context: Context, language: String, previous2: String, previous: String, limit: Int): List<String> {
+        fun nextWordsAfterTwo(
+            context: Context,
+            language: String,
+            previous2: String,
+            previous: String,
+            limit: Int,
+            prefix: String = "",
+        ): List<String> {
             val map = synchronized(tripleCache) {
                 tripleCache.getOrPut(language) { runCatching { loadTriples(context, language) }.getOrDefault(emptyMap()) }
             }
             val key = normalize(previous2, language) + "\t" + normalize(previous, language)
-            return map[key].orEmpty().take(limit)
+            return map[key].orEmpty().startingWith(prefix, language).take(limit)
         }
 
         private fun loadTriples(context: Context, language: String): Map<String, List<String>> {

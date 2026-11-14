@@ -67,6 +67,13 @@ Typo correction in the first suggestion slot (slots left to right: closest corre
 word-list word), "Voice input" as a normal reorderable toolbar action shown in the logo grid, and faint (25% opacity)
 dividers on the settings home. Khaled tested these on 2026-11-07 and they work; they are merged into `main`.
 
+Prediction improvements (2026-11-14): next-word lists are built from Wikipedia plus OpenSubtitles dialogue text
+(`tools/build_pairs.py`, dialogue counted x3); completion while typing uses the previous words (learned and bundled
+pairs/triples that start with the typed letters come first); learning keeps a last-used time and ranks recent use
+higher (`UiLearned`, file entries are `count@minutes`, old files still load); a word picked from the suggestions
+counts twice. Built-in voice typing (`ime/uikb/UiVoice.kt`) and the settings added since the last notes (shortcut
+buttons dialog, hint size, popup corners, western digits with the Arabic digit as a secondary popup key) exist too.
+
 ## Pending / open
 - The old branch `typo-suggestions` is merged and can be deleted by Khaled in GitHub (Claude cannot delete it).
 - The "100 times more frequent" rule in `UiDictionary.corrections` may need tuning if corrections feel too eager.

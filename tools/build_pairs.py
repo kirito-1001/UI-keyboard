@@ -1,28 +1,39 @@
 #!/usr/bin/env python3
 """Builds the light "next word" lists (word pairs) for Arabic and English.
 
-Counts which word follows which in the first part of the Wikipedia dump of each language (formal language, so
-dialects are mostly left out), keeps only words that are in the word list of tools/build_dict.py, drops rare pairs
-and keeps the best few next words per word. Writes app/src/main/assets/ime/dict/{ar,en}_pairs.txt as
+Counts which word follows which in two sources per language: the first part of the Wikipedia dump (formal
+language) and the first part of the OpenSubtitles dialogue text (everyday, spoken style, dialects included; counted
+with a higher weight). Keeps only words that are in the word list of tools/build_dict.py, drops rare pairs and
+keeps the best few next words per word. Writes app/src/main/assets/ime/dict/{ar,en}_pairs.txt as
 `previous<TAB>next<TAB>count` (the previous word in normalized form). Runs after build_dict.py in GitHub Actions.
 """
 import bz2
 import re
 import sys
+import zlib
 import urllib.request
 from collections import Counter, defaultdict
 from pathlib import Path
 
 DICT = Path(__file__).resolve().parent.parent / "app/src/main/assets/ime/dict"
-DUMPS = {
-    "ar": ("https://dumps.wikimedia.org/arwiki/latest/arwiki-latest-pages-articles.xml.bz2", 60_000_000),
-    "en": ("https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2", 40_000_000),
+# (kind, url, bytes to read from the start of the compressed file, weight of every count)
+SOURCES = {
+    "ar": [
+        ("bz2", "https://dumps.wikimedia.org/arwiki/latest/arwiki-latest-pages-articles.xml.bz2", 60_000_000, 1),
+        ("gz", "https://object.pouta.csc.fi/OPUS-OpenSubtitles/v2018/mono/ar.txt.gz", 60_000_000, 3),
+        ("gz", "https://object.pouta.csc.fi/OPUS-OpenSubtitles/v2016/mono/ar.txt.gz", 60_000_000, 3),
+    ],
+    "en": [
+        ("bz2", "https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2", 40_000_000, 1),
+        ("gz", "https://object.pouta.csc.fi/OPUS-OpenSubtitles/v2018/mono/en.txt.gz", 40_000_000, 3),
+        ("gz", "https://object.pouta.csc.fi/OPUS-OpenSubtitles/v2016/mono/en.txt.gz", 40_000_000, 3),
+    ],
 }
-MAX_PAIRS = {"ar": 50000, "en": 30000}
-MAX_TRIPLES = {"ar": 20000, "en": 15000}
-MIN_TRIPLE_COUNT = {"ar": 3, "en": 4}
+MAX_PAIRS = {"ar": 70000, "en": 40000}
+MAX_TRIPLES = {"ar": 30000, "en": 20000}
+MIN_TRIPLE_COUNT = {"ar": 4, "en": 5}
 MAX_TRIPLE_ENTRIES = 5_000_000  # prune singletons when the counter gets this big
-MIN_COUNT = {"ar": 4, "en": 6}
+MIN_COUNT = {"ar": 5, "en": 7}
 PER_WORD = 5
 
 TASHKEEL = re.compile("[ً-ٰٟـ]")
@@ -78,6 +89,28 @@ def stream_text(url, limit):
             yield from lines
 
 
+def stream_gz_text(url, limit):
+    """Yields text lines from the first [limit] compressed bytes of a .txt.gz file (one sentence per line)."""
+    req = urllib.request.Request(url, headers={"User-Agent": "ui-keyboard-build/1.0"})
+    dec = zlib.decompressobj(16 + zlib.MAX_WBITS)
+    got = 0
+    tail = ""
+    with urllib.request.urlopen(req, timeout=120) as r:
+        while got < limit:
+            chunk = r.read(1 << 20)
+            if not chunk:
+                break
+            got += len(chunk)
+            text = tail + dec.decompress(chunk).decode("utf-8", "ignore")
+            lines = text.split("\n")
+            tail = lines.pop()
+            yield from lines
+
+
+def clean_dialogue_line(line):
+    return re.sub(r"<[^>]+>|https?://\S+|^[-\s]+", " ", line)
+
+
 def clean_line(line):
     if line.lstrip().startswith(("{|", "|", "!", "<", "[[Category", "[[تصنيف", "==", "*", "#", "{{")):
         return ""
@@ -86,15 +119,15 @@ def clean_line(line):
     return line.replace("'''", "").replace("''", "")
 
 
-def build(lang):
-    url, limit = DUMPS[lang]
-    known = load_words(lang)
-    pairs = Counter()
-    triples = Counter()
-    for raw in stream_text(url, limit):
-        line = clean_line(raw)
+def count_source(kind, url, limit, weight, lang, known, pairs, triples):
+    lines = stream_text(url, limit) if kind == "bz2" else stream_gz_text(url, limit)
+    clean = clean_line if kind == "bz2" else clean_dialogue_line
+    used = 0
+    for raw in lines:
+        line = clean(raw)
         if not line:
             continue
+        used += 1
         for sentence in SPLIT.split(line):
             toks = WORD[lang].findall(sentence)
             prev = None
@@ -105,13 +138,31 @@ def build(lang):
                     prev = prev2 = None  # unknown word breaks the chain
                     continue
                 if prev is not None:
-                    pairs[(prev, known[key])] += 1
+                    pairs[(prev, known[key])] += weight
                     if prev2 is not None:
-                        triples[(prev2, prev, known[key])] += 1
+                        triples[(prev2, prev, known[key])] += weight
                 prev2, prev = prev, key
         if len(triples) > MAX_TRIPLE_ENTRIES:
-            for k in [k for k, c in triples.items() if c < 2]:
+            for k in [k for k, c in triples.items() if c < 2 * weight]:
                 del triples[k]
+    return used
+
+
+def build(lang):
+    known = load_words(lang)
+    pairs = Counter()
+    triples = Counter()
+    got_dialogue = False
+    for kind, url, limit, weight in SOURCES[lang]:
+        if kind == "gz" and got_dialogue:
+            continue  # the older OpenSubtitles version is only a fallback
+        try:
+            n = count_source(kind, url, limit, weight, lang, known, pairs, triples)
+            print(f"  {kind} {url.rsplit('/', 3)[-3] if kind == 'gz' else 'wikipedia'}: {n} lines")
+            if kind == "gz" and n > 10000:
+                got_dialogue = True
+        except Exception as e:
+            print(f"  source failed ({url}): {e}")
     by_prev = defaultdict(list)
     for (p, n), c in pairs.items():
         if c >= MIN_COUNT[lang]:
@@ -135,7 +186,7 @@ def build(lang):
 
 def main():
     ok = 0
-    for lang in DUMPS:
+    for lang in SOURCES:
         try:
             print(f"Building pairs for {lang} ...")
             kept, kept3 = build(lang)

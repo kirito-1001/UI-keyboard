@@ -112,6 +112,7 @@ class LatinLanguageProvider(context: Context) : SpellingProvider, SuggestionProv
         isPrivateSession: Boolean,
     ): List<SuggestionCandidate> {
         val language = subtype.primaryLocale.language
+        lastPrivate = isPrivateSession
         val limit = maxCandidateCount.coerceAtMost(5)
         val typed = content.composingText.ifBlank { content.currentWordText }
         val words = withContext(Dispatchers.Default) {
@@ -133,9 +134,25 @@ class LatinLanguageProvider(context: Context) : SpellingProvider, SuggestionProv
                 // 1. the closest correct word, if the typed word is not a known word (a typo such as "tha" -> "the")
                 // 2. the word you use most (learned from your typing)
                 // 3. the word suggested from the bundled word list
-                val learned = UiLearned.complete(appContext, language, typed, limit).map { it.first }
+                // The words before the one being typed make the guess better: what usually follows them comes first
+                val head = content.textBeforeSelection.dropLastWhile {
+                    it.isLetter() || it == '\'' || it.category == CharCategory.NON_SPACING_MARK
+                }
+                val (_, ctx1, ctxLast) = lastWords(head)
+                val contextLearned = ArrayList<String>()
+                val contextListed = ArrayList<String>()
+                if (ctxLast != null) {
+                    if (ctx1 != null) {
+                        UiLearned.nextAfterTwo(appContext, language, ctx1, ctxLast, limit, typed).mapTo(contextLearned) { it.first }
+                        contextListed.addAll(UiDictionary.nextWordsAfterTwo(appContext, language, ctx1, ctxLast, limit, typed))
+                    }
+                    UiLearned.next(appContext, language, ctxLast, typed, limit).mapTo(contextLearned) { it.first }
+                    contextListed.addAll(UiDictionary.nextWords(appContext, language, ctxLast, limit, typed))
+                }
+                val learned = (contextLearned + UiLearned.complete(appContext, language, typed, limit).map { it.first })
+                    .distinct()
                 val dictionary = UiDictionary.forLanguage(appContext, language)
-                val fromList = dictionary?.complete(typed, limit).orEmpty()
+                val fromList = (contextListed + dictionary?.complete(typed, limit).orEmpty()).distinct()
                 val corrections = if (dictionary != null && typed.all { it.isLetter() } &&
                     !UiLearned.isKnown(appContext, language, typed)
                 ) {
@@ -182,6 +199,8 @@ class LatinLanguageProvider(context: Context) : SpellingProvider, SuggestionProv
     }
 
     /** The last three finished words of the current sentence (oldest first), lowercased; missing ones are null. */
+    private var lastPrivate = false
+
     private data class Recent(val previous2: String?, val previous: String?, val last: String?)
 
     /**
@@ -211,7 +230,10 @@ class LatinLanguageProvider(context: Context) : SpellingProvider, SuggestionProv
     }
 
     override suspend fun notifySuggestionAccepted(subtype: Subtype, candidate: SuggestionCandidate) {
-        // We can use flogDebug, flogInfo, flogWarning and flogError for debug logging, which is a wrapper for Logcat
+        // A word picked from the suggestions counts more than a typed one (never in a private session)
+        if (candidate is WordSuggestionCandidate && !lastPrivate) {
+            UiLearned.reward(appContext, subtype.primaryLocale.language, candidate.text.toString().lowercase())
+        }
         flogDebug { candidate.toString() }
     }
 
