@@ -53,6 +53,19 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "e8d8e3e",
+        ar = listOf(
+            "تحسين التنبؤ بالكلمات: قوائم الكلمة التالية تُبنى الآن أيضاً من نصوص حوار (ترجمات الأفلام) فتقترب من الكلام اليومي.",
+            "الإكمال أثناء الكتابة يراعي الكلمة السابقة: ما يأتي عادة بعدها يظهر أولاً.",
+            "التعلّم: الكلمات التي كتبتها مؤخراً تتقدم على القديمة، والكلمة التي تختارها من الاقتراحات تُحسب مرتين.",
+        ),
+        en = listOf(
+            "Better word prediction: the next-word lists are now also built from dialogue text (movie subtitles), closer to everyday speech.",
+            "Completion while typing uses the previous word: what usually follows it comes first.",
+            "Learning: recently typed words rank above old ones, and a word picked from the suggestions counts twice.",
+        ),
+    ),
+    UiChangelogEntry(
         version = "a2ffc90",
         ar = listOf(
             "خيار «حواف النوافذ المنبثقة» في الإعدادات > لوحة المفاتيح: يتحكم في انحناء النافذة التي تظهر عند الضغط على الحرف أو الضغط المطوّل، من 0% إلى 100%، ويمكن إعادته لما يحدده الثيم.",
