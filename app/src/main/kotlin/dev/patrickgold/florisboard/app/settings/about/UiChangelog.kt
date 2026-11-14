@@ -53,6 +53,15 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "ce4458f",
+        ar = listOf(
+            "حذف الكلمة الخاطئة من الاقتراحات: اضغط على الكلمة في شريط الاقتراحات 3 ثوانٍ متواصلة فتهتز وتُحذف، ولا تُقترح مرة أخرى. زر «مسح ما تعلّمه الكيبورد» يعيدها.",
+        ),
+        en = listOf(
+            "Remove a wrong word from the suggestions: hold it in the suggestion bar for 3 seconds; it vibrates, is removed and is never suggested again. The \"clear learned data\" button brings it back.",
+        ),
+    ),
+    UiChangelogEntry(
         version = "e8d8e3e",
         ar = listOf(
             "تحسين التنبؤ بالكلمات: قوائم الكلمة التالية تُبنى الآن أيضاً من نصوص حوار (ترجمات الأفلام) فتقترب من الكلام اليومي.",
