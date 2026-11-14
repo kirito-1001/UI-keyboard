@@ -101,6 +101,41 @@ object UiVoice {
     private var partialLength = 0
     private var mutedStreams: List<Int> = emptyList()
 
+    /** True from startListening until the recognizer reports a result or an error. */
+    private var busy = false
+    private var lastEvent = 0L
+    private var failures = 0
+
+    // Safety net: while the user wants listening, it must never stay silently stopped.
+    private val watchdog = object : Runnable {
+        override fun run() {
+            if (mode != Mode.LISTENING) return
+            val idle = android.os.SystemClock.uptimeMillis() - lastEvent
+            if (!busy) {
+                startListening()
+            } else if (idle > 20000) {
+                resetRecognizer()
+                startListening()
+            }
+            handler.postDelayed(this, 1500)
+        }
+    }
+
+    private fun resetRecognizer() {
+        busy = false
+        recognizer?.let {
+            runCatching { it.cancel() }
+            runCatching { it.destroy() }
+        }
+        recognizer = null
+    }
+
+    private fun startWatchdog() {
+        handler.removeCallbacks(watchdog)
+        lastEvent = android.os.SystemClock.uptimeMillis()
+        handler.postDelayed(watchdog, 1500)
+    }
+
     // The recognizer plays a start/stop sound every time it restarts; the sound streams are muted while listening.
     private fun muteSounds() {
         val ctx = appContext ?: return
@@ -154,7 +189,9 @@ object UiVoice {
         }
         mode = Mode.LISTENING
         messageRes = null
+        failures = 0
         startListening(userInitiated = true)
+        startWatchdog()
     }
 
     /** Tap on the microphone: pause, or continue. */
@@ -169,7 +206,9 @@ object UiVoice {
             Mode.PAUSED -> {
                 mode = Mode.LISTENING
                 messageRes = null
+                failures = 0
                 startListening(userInitiated = true)
+                startWatchdog()
             }
             Mode.OFF -> Unit
         }
@@ -181,6 +220,7 @@ object UiVoice {
         mode = Mode.OFF
         messageRes = null
         handler.removeCallbacksAndMessages(null)
+        busy = false
         unmuteSounds()
         partialLength = 0
         recognizer?.let {
@@ -196,6 +236,7 @@ object UiVoice {
      */
     private fun startListening(userInitiated: Boolean = false) {
         val ctx = appContext ?: return
+        if (mode != Mode.LISTENING) return
         if (ctx.checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             mode = Mode.PAUSED
             unmuteSounds()
@@ -211,6 +252,7 @@ object UiVoice {
             mode = Mode.PAUSED
             unmuteSounds()
             messageRes = R.string.ui__voice__unavailable
+            handler.removeCallbacks(watchdog)
             return
         }
         if (userInitiated) {
@@ -237,13 +279,16 @@ object UiVoice {
             val other = if (language.startsWith("ar")) "en-US" else "ar-SA"
             intent.putExtra("android.speech.extra.ADDITIONAL_LANGUAGES", arrayOf(other))
         }
+        busy = true
+        lastEvent = android.os.SystemClock.uptimeMillis()
         r.startListening(intent)
     }
 
     /** Listens again after a phrase ended (the recognizer stops by itself after a silence). */
-    private fun restartSoon(delayMs: Long = 200) {
+    private fun restartSoon(delayMs: Long = 30) {
+        busy = false
         handler.postDelayed({
-            if (mode == Mode.LISTENING) startListening()
+            if (mode == Mode.LISTENING && !busy) startListening()
         }, delayMs)
     }
 
@@ -252,9 +297,9 @@ object UiVoice {
     }
 
     private val listener = object : RecognitionListener {
-        override fun onReadyForSpeech(params: Bundle?) {}
-        override fun onBeginningOfSpeech() {}
-        override fun onRmsChanged(rmsdB: Float) {}
+        override fun onReadyForSpeech(params: Bundle?) { lastEvent = android.os.SystemClock.uptimeMillis() }
+        override fun onBeginningOfSpeech() { lastEvent = android.os.SystemClock.uptimeMillis() }
+        override fun onRmsChanged(rmsdB: Float) { lastEvent = android.os.SystemClock.uptimeMillis() }
         override fun onBufferReceived(buffer: ByteArray?) {}
         override fun onEndOfSpeech() {}
         override fun onEvent(eventType: Int, params: Bundle?) {}
@@ -265,6 +310,8 @@ object UiVoice {
         }
 
         override fun onResults(results: Bundle?) {
+            lastEvent = android.os.SystemClock.uptimeMillis()
+            failures = 0
             val text = firstResult(results)
             if (text != null) {
                 writePhrase(text, final = true)
@@ -277,32 +324,22 @@ object UiVoice {
         override fun onError(error: Int) {
             // What was written for the unfinished phrase stays in the field as it is
             partialLength = 0
+            busy = false
+            lastEvent = android.os.SystemClock.uptimeMillis()
             if (mode != Mode.LISTENING) return
             when (error) {
                 SpeechRecognizer.ERROR_NO_MATCH,
                 SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> restartSoon()
-                SpeechRecognizer.ERROR_RECOGNIZER_BUSY,
-                SpeechRecognizer.ERROR_CLIENT -> {
-                    recognizer?.destroy()
-                    recognizer = null
-                    restartSoon(500)
-                }
                 SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> {
                     mode = Mode.PAUSED
                     unmuteSounds()
                     messageRes = R.string.ui__voice__need_permission
                 }
-                SpeechRecognizer.ERROR_NETWORK,
-                SpeechRecognizer.ERROR_NETWORK_TIMEOUT,
-                SpeechRecognizer.ERROR_SERVER -> {
-                    mode = Mode.PAUSED
-                    unmuteSounds()
-                    messageRes = R.string.ui__voice__network
-                }
                 else -> {
-                    mode = Mode.PAUSED
-                    unmuteSounds()
-                    messageRes = R.string.ui__voice__unavailable
+                    // Busy, client, network, server...: never stop by itself; start again with a short wait
+                    failures++
+                    resetRecognizer()
+                    restartSoon(minOf(300L * failures, 3000L))
                 }
             }
         }
