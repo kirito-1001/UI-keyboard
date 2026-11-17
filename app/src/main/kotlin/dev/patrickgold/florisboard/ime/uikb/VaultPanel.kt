@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -80,13 +81,17 @@ fun VaultPanel(modifier: Modifier = Modifier) {
     ) {
         Column(modifier = Modifier.fillMaxSize().padding(8.dp)) {
             Row(
-                modifier = Modifier.fillMaxWidth().height(40.dp),
+                modifier = Modifier.fillMaxWidth().height(44.dp),
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 TabButton(uiString(R.string.ui__vault__tab_cards), tab == 0, Modifier.weight(1f), label) { tab = 0 }
                 TabButton(uiString(R.string.ui__vault__tab_logins), tab == 1, Modifier.weight(1f), label) { tab = 1 }
-                TabButton(uiString(R.string.ui__edit__back), false, Modifier.weight(0.6f), label) {
+                // Settings (opens the cards section) and back, as round buttons
+                RoundButton(androidx.compose.material.icons.Icons.Default.Settings) {
+                    dev.patrickgold.florisboard.FlorisImeService.launchSettings("ui://florisboard/settings/vault")
+                }
+                RoundButton(androidx.compose.material.icons.Icons.AutoMirrored.Filled.ArrowForward) {
                     UiPanelState.panel = UiPanel.NONE
                 }
             }
@@ -132,5 +137,19 @@ private fun TabButton(
         contentAlignment = Alignment.Center,
     ) {
         label(text, selected)
+    }
+}
+
+@Composable
+private fun RoundButton(icon: androidx.compose.ui.graphics.vector.ImageVector, onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .size(40.dp)
+            .clip(androidx.compose.foundation.shape.CircleShape)
+            .background(Color(0xFF4A4D50))
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center,
+    ) {
+        androidx.compose.material3.Icon(icon, contentDescription = null, tint = Color.White)
     }
 }

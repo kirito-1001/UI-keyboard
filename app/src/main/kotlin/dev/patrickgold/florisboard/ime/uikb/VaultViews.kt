@@ -24,12 +24,27 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.graphics.FilterQuality
+import kotlin.math.max
+import kotlin.math.roundToInt
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -95,6 +110,30 @@ private fun rememberVaultImage(id: String, has: Boolean): ImageBitmap? {
     return bmp
 }
 
+/** A blurred copy of the entry's picture (like the keys on a keyboard with a picture background). */
+@Composable
+private fun rememberVaultBlurred(id: String, has: Boolean): ImageBitmap? {
+    val context = LocalContext.current
+    val version = UiVault.imageVersion
+    val bmp by produceState<ImageBitmap?>(null, id, has, version) {
+        value = if (!has) null else withContext(Dispatchers.IO) {
+            runCatching {
+                val full = UiVault.loadImage(context, id) ?: return@runCatching null
+                val scale = 240f / max(full.width, full.height)
+                val w = max(1, (full.width * scale).roundToInt())
+                val h = max(1, (full.height * scale).roundToInt())
+                val small = android.graphics.Bitmap.createScaledBitmap(full, w, h, true)
+                val pixels = IntArray(w * h)
+                small.getPixels(pixels, 0, w, 0, 0, w, h)
+                repeat(3) { gaussianPass(pixels, w, h, 8) }
+                small.setPixels(pixels, 0, w, 0, 0, w, h)
+                small.asImageBitmap()
+            }.getOrNull()
+        }
+    }
+    return bmp
+}
+
 /**
  * Card drawn for one entry: the picture (if any) faded to 50% behind the title and the values.
  *
@@ -111,10 +150,18 @@ fun VaultEntryCard(
     headerEnd: @Composable () -> Unit = {},
 ) {
     val image = rememberVaultImage(entry.id, entry.hasImage)
+    val blurred = rememberVaultBlurred(entry.id, entry.hasImage)
     val shape = RoundedCornerShape(16.dp)
+    var cardPos by remember { mutableStateOf(Offset.Zero) }
+    var cardSize by remember { mutableStateOf(Size.Zero) }
     Box(
         modifier = modifier
             .fillMaxWidth()
+            .heightIn(min = 128.dp)
+            .onGloballyPositioned {
+                cardPos = it.positionInRoot()
+                cardSize = Size(it.size.width.toFloat(), it.size.height.toFloat())
+            }
             .clip(shape)
             .background(Color.Gray.copy(alpha = 0.25f)),
     ) {
@@ -141,11 +188,39 @@ fun VaultEntryCard(
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
                 entry.fields.forEach { field ->
+                    var cellPos by remember { mutableStateOf(Offset.Zero) }
                     Box(
                         modifier = Modifier
                             .weight(1f)
                             .clip(RoundedCornerShape(10.dp))
-                            .background(Color.Gray.copy(alpha = 0.35f))
+                            .onGloballyPositioned { cellPos = it.positionInRoot() }
+                            .let { m ->
+                                if (blurred == null) {
+                                    m.background(Color.Gray.copy(alpha = 0.35f))
+                                } else {
+                                    // Frosted look: the blurred picture, aligned with the sharp one, darkened a little
+                                    m.drawBehind {
+                                        if (cardSize.width <= 0f || cardSize.height <= 0f) return@drawBehind
+                                        val scale = max(cardSize.width / blurred.width, cardSize.height / blurred.height)
+                                        val dstW = blurred.width * scale
+                                        val dstH = blurred.height * scale
+                                        translate(
+                                            left = cardPos.x - cellPos.x + (cardSize.width - dstW) / 2f,
+                                            top = cardPos.y - cellPos.y + (cardSize.height - dstH) / 2f,
+                                        ) {
+                                            drawImage(
+                                                image = blurred,
+                                                srcOffset = IntOffset.Zero,
+                                                srcSize = IntSize(blurred.width, blurred.height),
+                                                dstOffset = IntOffset.Zero,
+                                                dstSize = IntSize(dstW.roundToInt(), dstH.roundToInt()),
+                                                filterQuality = FilterQuality.Medium,
+                                            )
+                                        }
+                                        drawRect(Color.Black.copy(alpha = 0.36f))
+                                    }
+                                }
+                            }
                             .let { if (onField != null) it.clickable { onField(field.value) } else it }
                             .padding(vertical = 6.dp, horizontal = 4.dp),
                         contentAlignment = Alignment.Center,

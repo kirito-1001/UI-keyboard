@@ -274,7 +274,7 @@ private const val BlurWorkSide = 360
 private const val BlurRadius = 10
 
 /** One horizontal + one vertical box blur pass over [px] (ARGB, edges clamped). */
-private fun gaussianPass(px: IntArray, w: Int, h: Int, r: Int) {
+internal fun gaussianPass(px: IntArray, w: Int, h: Int, r: Int) {
     val tmp = IntArray(px.size)
     boxBlur(px, tmp, w, h, r, horizontal = true)
     boxBlur(tmp, px, w, h, r, horizontal = false)
