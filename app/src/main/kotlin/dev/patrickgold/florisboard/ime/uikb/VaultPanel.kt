@@ -30,6 +30,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -88,10 +91,10 @@ fun VaultPanel(modifier: Modifier = Modifier) {
                 TabButton(uiString(R.string.ui__vault__tab_cards), tab == 0, Modifier.weight(1f), label) { tab = 0 }
                 TabButton(uiString(R.string.ui__vault__tab_logins), tab == 1, Modifier.weight(1f), label) { tab = 1 }
                 // Settings (opens the cards section) and back, as round buttons
-                RoundButton(androidx.compose.material.icons.Icons.Default.Settings) {
+                RoundButton(Icons.Default.Settings) {
                     dev.patrickgold.florisboard.FlorisImeService.launchSettings("ui://florisboard/settings/vault")
                 }
-                RoundButton(androidx.compose.material.icons.Icons.AutoMirrored.Filled.ArrowForward) {
+                RoundButton(Icons.AutoMirrored.Filled.ArrowForward) {
                     UiPanelState.panel = UiPanel.NONE
                 }
             }
