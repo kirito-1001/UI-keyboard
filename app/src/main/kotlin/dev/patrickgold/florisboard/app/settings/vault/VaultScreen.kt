@@ -92,24 +92,13 @@ private fun VaultScreenBody() {
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_START) askAuth()
-            if (event == Lifecycle.Event.ON_STOP) UiVault.lockSettings()
+            if (event == Lifecycle.Event.ON_STOP && !UiVault.pickerOpen) UiVault.lockSettings()
         }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
             UiVault.lockSettings()
         }
-    }
-
-    if (!UiVault.settingsUnlocked) {
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            Text(text = stringRes(R.string.ui__vault__locked), style = MaterialTheme.typography.bodyLarge)
-            Button(onClick = { askAuth() }) { Text(stringRes(R.string.ui__vault__unlock)) }
-        }
-        return
     }
 
     var tab by remember { mutableIntStateOf(0) }
@@ -120,6 +109,7 @@ private fun VaultScreenBody() {
     var pickIsCard by remember { mutableStateOf(true) }
 
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        UiVault.pickerOpen = false
         val id = pickFor
         pickFor = null
         if (uri != null && id != null) {
@@ -137,8 +127,21 @@ private fun VaultScreenBody() {
     fun pickImage(id: String, isCard: Boolean) {
         pickFor = id
         pickIsCard = isCard
+        UiVault.pickerOpen = true
         picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
+
+    if (!UiVault.settingsUnlocked) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Text(text = stringRes(R.string.ui__vault__locked), style = MaterialTheme.typography.bodyLarge)
+            Button(onClick = { askAuth() }) { Text(stringRes(R.string.ui__vault__unlock)) }
+        }
+        return
+    }
+
 
     val label: @Composable (String, Boolean) -> Unit = { text, bold ->
         Text(

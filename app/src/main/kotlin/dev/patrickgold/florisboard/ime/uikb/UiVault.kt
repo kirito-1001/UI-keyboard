@@ -93,6 +93,9 @@ object UiVault {
 
     /** The keyboard asked for the panel and the keyboard window is away for the fingerprint screen. */
     var pendingPanel = false
+
+    /** True while the picture gallery is open from the settings (the settings screen must not lock meanwhile). */
+    var pickerOpen = false
     private var imeUnlockedAt = 0L
 
     // ---- Opening and closing ----
