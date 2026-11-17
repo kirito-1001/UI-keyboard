@@ -18,6 +18,7 @@ package dev.patrickgold.florisboard.ime.uikb
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,6 +30,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -53,6 +55,8 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import dev.patrickgold.florisboard.R
 import kotlinx.coroutines.Dispatchers
@@ -62,7 +66,31 @@ import kotlinx.coroutines.withContext
 class VaultFieldView(val caption: String, val shown: String, val value: String)
 
 /** A card or a login in a form both the keyboard panel and the settings screen can draw. */
-class VaultEntryView(val id: String, val title: String, val hasImage: Boolean, val fields: List<VaultFieldView>)
+class VaultEntryView(
+    val id: String,
+    val title: String,
+    val hasImage: Boolean,
+    val fields: List<VaultFieldView>,
+    /** "VISA", "Mastercard" or "AMEX" for cards whose number is recognised, otherwise null. */
+    val brand: String? = null,
+)
+
+/** Recognises the card network from the first digits of the number. */
+fun vaultCardBrand(number: String): String? {
+    val d = number.filter { it.isDigit() }
+    if (d.isEmpty()) return null
+    if (d[0] == '4') return "VISA"
+    if (d.length >= 2) {
+        val two = d.substring(0, 2).toInt()
+        if (two == 34 || two == 37) return "AMEX"
+        if (two in 51..55) return "Mastercard"
+    }
+    if (d.length >= 4) {
+        val four = d.substring(0, 4).toInt()
+        if (four in 2221..2720) return "Mastercard"
+    }
+    return null
+}
 
 @Composable
 fun vaultCardViews(cards: List<VaultCard>): List<VaultEntryView> {
@@ -79,6 +107,7 @@ fun vaultCardViews(cards: List<VaultCard>): List<VaultEntryView> {
                 VaultFieldView(capNumber, UiVault.maskedNumber(c.number), c.number),
                 VaultFieldView(capExpiry, c.expiry, c.expiry),
             ).filter { it.value.isNotBlank() },
+            brand = vaultCardBrand(c.number),
         )
     }
 }
@@ -135,11 +164,42 @@ private fun rememberVaultBlurred(id: String, has: Boolean): ImageBitmap? {
 }
 
 /**
- * Card drawn for one entry: the picture (if any) faded to 50% behind the title and the values.
+ * Background of a data cell or of the title pill: plain grey, or (when the entry has a picture) the blurred picture
+ * aligned with the sharp one and darkened a little, like the keys on a keyboard with a picture background.
+ */
+@Composable
+private fun Modifier.vaultCellBackground(blurred: ImageBitmap?, cardPos: Offset, cardSize: Size): Modifier {
+    var cellPos by remember { mutableStateOf(Offset.Zero) }
+    val positioned = this.onGloballyPositioned { cellPos = it.positionInRoot() }
+    if (blurred == null) return positioned.background(Color.Gray.copy(alpha = 0.35f))
+    return positioned.drawBehind {
+        if (cardSize.width <= 0f || cardSize.height <= 0f) return@drawBehind
+        val scale = max(cardSize.width / blurred.width, cardSize.height / blurred.height)
+        val dstW = blurred.width * scale
+        val dstH = blurred.height * scale
+        translate(
+            left = cardPos.x - cellPos.x + (cardSize.width - dstW) / 2f,
+            top = cardPos.y - cellPos.y + (cardSize.height - dstH) / 2f,
+        ) {
+            drawImage(
+                image = blurred,
+                srcOffset = IntOffset.Zero,
+                srcSize = IntSize(blurred.width, blurred.height),
+                dstOffset = IntOffset.Zero,
+                dstSize = IntSize(dstW.roundToInt(), dstH.roundToInt()),
+                filterQuality = FilterQuality.Medium,
+            )
+        }
+        drawRect(Color.Black.copy(alpha = 0.36f))
+    }
+}
+
+/**
+ * Card drawn for one entry: the picture (if any) faded to 50% behind the title pill and the values.
  *
  * @param label draws a text (the keyboard uses the theme colours, the settings use Material text).
  * @param onField called with the real value when a value is tapped (null: values are not tappable).
- * @param headerEnd extra content at the end of the title row (the settings put their buttons there).
+ * @param headerEnd extra content at the left of the title row (the settings put their buttons there).
  */
 @Composable
 fun VaultEntryCard(
@@ -175,52 +235,47 @@ fun VaultEntryCard(
             )
         }
         Column(modifier = Modifier.fillMaxWidth().padding(10.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Box(modifier = Modifier.weight(1f)) { label(entry.title, true) }
-                headerEnd()
+            // Title row: always laid out left to right, so the pill is in the right third on any language
+            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Box(modifier = Modifier.weight(2f), contentAlignment = Alignment.CenterStart) { headerEnd() }
+                    Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                        val arabicName = entry.title.any { it in '\u0600'..'\u06FF' }
+                        Row(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(50))
+                                .vaultCellBackground(blurred, cardPos, cardSize)
+                                .padding(horizontal = 14.dp, vertical = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            val badge: @Composable () -> Unit = {
+                                if (entry.brand != null) {
+                                    Box(
+                                        modifier = Modifier
+                                            .border(1.dp, Color.White.copy(alpha = 0.6f), RoundedCornerShape(6.dp))
+                                            .padding(horizontal = 6.dp, vertical = 1.dp),
+                                    ) { label(entry.brand, false) }
+                                }
+                            }
+                            // Arabic name: badge at the left of the text; other names: badge at the right
+                            if (arabicName) badge()
+                            Box(modifier = Modifier.weight(1f, fill = false)) { label(entry.title, true) }
+                            if (!arabicName) badge()
+                        }
+                    }
+                }
             }
             Row(
                 modifier = Modifier.fillMaxWidth().padding(top = 6.dp),
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
                 entry.fields.forEach { field ->
-                    var cellPos by remember { mutableStateOf(Offset.Zero) }
                     Box(
                         modifier = Modifier
                             .weight(1f)
                             .clip(RoundedCornerShape(10.dp))
-                            .onGloballyPositioned { cellPos = it.positionInRoot() }
-                            .let { m ->
-                                if (blurred == null) {
-                                    m.background(Color.Gray.copy(alpha = 0.35f))
-                                } else {
-                                    // Frosted look: the blurred picture, aligned with the sharp one, darkened a little
-                                    m.drawBehind {
-                                        if (cardSize.width <= 0f || cardSize.height <= 0f) return@drawBehind
-                                        val scale = max(cardSize.width / blurred.width, cardSize.height / blurred.height)
-                                        val dstW = blurred.width * scale
-                                        val dstH = blurred.height * scale
-                                        translate(
-                                            left = cardPos.x - cellPos.x + (cardSize.width - dstW) / 2f,
-                                            top = cardPos.y - cellPos.y + (cardSize.height - dstH) / 2f,
-                                        ) {
-                                            drawImage(
-                                                image = blurred,
-                                                srcOffset = IntOffset.Zero,
-                                                srcSize = IntSize(blurred.width, blurred.height),
-                                                dstOffset = IntOffset.Zero,
-                                                dstSize = IntSize(dstW.roundToInt(), dstH.roundToInt()),
-                                                filterQuality = FilterQuality.Medium,
-                                            )
-                                        }
-                                        drawRect(Color.Black.copy(alpha = 0.36f))
-                                    }
-                                }
-                            }
+                            .vaultCellBackground(blurred, cardPos, cardSize)
                             .let { if (onField != null) it.clickable { onField(field.value) } else it }
                             .padding(vertical = 6.dp, horizontal = 4.dp),
                         contentAlignment = Alignment.Center,

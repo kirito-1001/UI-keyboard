@@ -79,6 +79,8 @@ logo-grid action `KeyCode.VAULT` opening `UiPanel.VAULT` (`ime/uikb/VaultPanel.k
 Android Keystore key that is NOT tied to the fingerprint (so it survives lock changes); the app asks the fingerprint / screen lock
 first via `UiVaultAuthActivity` (androidx.biometric). No CVV is stored. Pictures are per entry, faded 50%, stored unencrypted.
 Added/edited/deleted only in Settings; the keyboard panel only inserts values (commitText, no clipboard). Untested (not compiled).
+Entry cards (`ime/uikb/VaultViews.kt`): taller (min 128dp), title pill in the top-right third with card-network badge (VISA / Mastercard / AMEX from the number prefix;
+badge left of Arabic names, right of others), data cells and pill use the blurred picture + dark tint when the entry has a picture. The panel has round settings and back buttons.
 Built-in voice typing no longer stops by itself (watchdog, immediate restarts); only a missing permission pauses it.
 
 ## Pending / open
