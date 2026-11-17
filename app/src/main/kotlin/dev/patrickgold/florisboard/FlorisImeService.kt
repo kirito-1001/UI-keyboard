@@ -155,6 +155,11 @@ class FlorisImeService : LifecycleInputMethodService() {
             return FlorisImeServiceReference.get()?.inputFeedbackController
         }
 
+        /** Shows the keyboard again (used after the fingerprint screen of the cards panel). */
+        fun showKeyboard() {
+            FlorisImeServiceReference.get()?.requestShowSelf(0)
+        }
+
         /**
          * Hides the IME and launches [FlorisAppActivity].
          */
@@ -368,9 +373,7 @@ class FlorisImeService : LifecycleInputMethodService() {
             dev.patrickgold.florisboard.ime.uikb.UiPanelState.panel = dev.patrickgold.florisboard.ime.uikb.UiPanel.NONE
         }
         // Back from the fingerprint screen: open the cards panel the user asked for
-        if (dev.patrickgold.florisboard.ime.uikb.UiVault.imeUnlocked && dev.patrickgold.florisboard.ime.uikb.UiVault.pendingPanel) {
-            dev.patrickgold.florisboard.ime.uikb.UiPanelState.panel = dev.patrickgold.florisboard.ime.uikb.UiPanel.VAULT
-        }
+        dev.patrickgold.florisboard.ime.uikb.UiVault.openPendingPanelIfFresh()
         activeState.batchEdit {
             if (activeState.imeUiMode != ImeUiMode.CLIPBOARD || prefs.clipboard.historyHideOnNextTextField.get()) {
                 activeState.imeUiMode = ImeUiMode.TEXT

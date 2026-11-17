@@ -97,6 +97,20 @@ object UiVault {
     /** True while the picture gallery is open from the settings (the settings screen must not lock meanwhile). */
     var pickerOpen = false
     private var imeUnlockedAt = 0L
+    private val uiHandler = android.os.Handler(android.os.Looper.getMainLooper())
+
+    /**
+     * Called when the keyboard starts for a field. Opens the panel only if the fingerprint check was just done;
+     * an old, forgotten unlock is closed instead (the panel must never open without a fresh check).
+     */
+    fun openPendingPanelIfFresh() {
+        if (!imeUnlocked || !pendingPanel) return
+        if (SystemClock.uptimeMillis() - imeUnlockedAt <= 15000) {
+            UiPanelState.panel = UiPanel.VAULT
+        } else {
+            lockIme()
+        }
+    }
 
     // ---- Opening and closing ----
 
@@ -123,7 +137,19 @@ object UiVault {
         if (target == "ime") {
             imeUnlocked = true
             imeUnlockedAt = SystemClock.uptimeMillis()
-            if (pendingPanel) UiPanelState.panel = UiPanel.VAULT
+            if (pendingPanel) {
+                UiPanelState.panel = UiPanel.VAULT
+                // The keyboard was hidden by the fingerprint screen: bring it back without waiting for a tap
+                for (delay in longArrayOf(250, 900)) {
+                    uiHandler.postDelayed({
+                        if (imeUnlocked && pendingPanel) {
+                            runCatching {
+                                dev.patrickgold.florisboard.FlorisImeService.showKeyboard()
+                            }
+                        }
+                    }, delay)
+                }
+            }
         } else {
             settingsUnlocked = true
         }
