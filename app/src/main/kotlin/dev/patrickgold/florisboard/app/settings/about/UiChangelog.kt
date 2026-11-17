@@ -53,6 +53,23 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "2427089",
+        ar = listOf(
+            "تم إضافة ميزة حفظ بطاقات ومفاتيح المرور لتسهيل الشراء أونلاين أو تسجيل الدخول بسرعة.",
+            "يمكنك إضافة بيانات بطاقاتك الائتمانية.",
+            "يمكنك إضافة اسم المستخدم وكلمة المرور الخاصة بموقع ما.",
+            "يمكنك إضافة صورة خاصة لكل بطاقة ليسهل تمييزها.",
+            "ملاحظة المطور: طبعاً يا عزيزي البيانات كلها بتتحفظ وتتشفر محلياً على جهازك والتطبيق ملوش أي وصول لشبكة الإنترنت، ولكن للأمان إياك إنك تحفظ رمز CVV هنا، احفظها في دماغك بس، دماغك مش بتتهكر (إلا من مراتك طبعاً).",
+        ),
+        en = listOf(
+            "Added saving of cards and passkeys to make buying online or signing in quick.",
+            "You can add your credit card details.",
+            "You can add the username and password of a website.",
+            "You can add a picture to each card so it is easy to tell apart.",
+            "Developer's note: of course, all the data is saved and encrypted locally on your device and the app has no access to the internet. But for safety, never save the CVV code here; keep it in your head only. Your head cannot be hacked (except by your wife, of course).",
+        ),
+    ),
+    UiChangelogEntry(
         version = "ce4458f",
         ar = listOf(
             "حذف الكلمة الخاطئة من الاقتراحات: اضغط على الكلمة في شريط الاقتراحات 3 ثوانٍ متواصلة فتهتز وتُحذف، ولا تُقترح مرة أخرى. زر «مسح ما تعلّمه الكيبورد» يعيدها.",

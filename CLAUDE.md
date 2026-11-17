@@ -74,6 +74,13 @@ higher (`UiLearned`, file entries are `count@minutes`, old files still load); a 
 counts twice. Built-in voice typing (`ime/uikb/UiVoice.kt`) and the settings added since the last notes (shortcut
 buttons dialog, hint size, popup corners, western digits with the Arabic digit as a secondary popup key) exist too.
 
+Cards and passkeys (2026-11-17, commit 2427089): Settings section "البطاقات ومفاتيح المرور" (`app/settings/vault/VaultScreen.kt`),
+logo-grid action `KeyCode.VAULT` opening `UiPanel.VAULT` (`ime/uikb/VaultPanel.kt`). Data in `ime/uikb/UiVault.kt`: AES-GCM with an
+Android Keystore key that is NOT tied to the fingerprint (so it survives lock changes); the app asks the fingerprint / screen lock
+first via `UiVaultAuthActivity` (androidx.biometric). No CVV is stored. Pictures are per entry, faded 50%, stored unencrypted.
+Added/edited/deleted only in Settings; the keyboard panel only inserts values (commitText, no clipboard). Untested (not compiled).
+Built-in voice typing no longer stops by itself (watchdog, immediate restarts); only a missing permission pauses it.
+
 ## Pending / open
 - The old branch `typo-suggestions` is merged and can be deleted by Khaled in GitHub (Claude cannot delete it).
 - The "100 times more frequent" rule in `UiDictionary.corrections` may need tuning if corrections feel too eager.
