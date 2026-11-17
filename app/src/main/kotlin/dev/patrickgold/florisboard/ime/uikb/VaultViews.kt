@@ -55,6 +55,8 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -190,7 +192,7 @@ private fun Modifier.vaultCellBackground(blurred: ImageBitmap?, cardPos: Offset,
                 filterQuality = FilterQuality.Medium,
             )
         }
-        drawRect(Color.Black.copy(alpha = 0.36f))
+        drawRect(Color.Black.copy(alpha = 0.58f))
     }
 }
 
@@ -217,7 +219,6 @@ fun VaultEntryCard(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(min = 128.dp)
             .onGloballyPositioned {
                 cardPos = it.positionInRoot()
                 cardSize = Size(it.size.width.toFloat(), it.size.height.toFloat())
@@ -234,13 +235,20 @@ fun VaultEntryCard(
                 modifier = Modifier.matchParentSize(),
             )
         }
-        Column(modifier = Modifier.fillMaxWidth().padding(10.dp)) {
+        Column(
+            modifier = Modifier.fillMaxWidth().heightIn(min = 140.dp).padding(10.dp),
+            verticalArrangement = Arrangement.SpaceBetween,
+        ) {
             // Title row: always laid out left to right, so the pill is in the right third on any language
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                 Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                     Box(modifier = Modifier.weight(2f), contentAlignment = Alignment.CenterStart) { headerEnd() }
                     Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
                         val arabicName = entry.title.any { it in '\u0600'..'\u06FF' }
+                        // The title pill is 30% bigger than the other texts
+                        val density = LocalDensity.current
+                        val bigger = remember(density) { Density(density.density, density.fontScale * 1.3f) }
+                        CompositionLocalProvider(LocalDensity provides bigger) {
                         Row(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(50))
@@ -262,6 +270,7 @@ fun VaultEntryCard(
                             if (arabicName) badge()
                             Box(modifier = Modifier.weight(1f, fill = false)) { label(entry.title, true) }
                             if (!arabicName) badge()
+                        }
                         }
                     }
                 }
