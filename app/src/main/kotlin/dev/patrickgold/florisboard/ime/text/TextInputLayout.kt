@@ -92,6 +92,7 @@ fun TextInputLayout(
                             UiPanel.EDIT_TEXT -> EditTextPanel()
                             UiPanel.NUMERIC -> NumericPanel()
                             UiPanel.ACTIONS -> ActionsPanel()
+                            UiPanel.VAULT -> dev.patrickgold.florisboard.ime.uikb.VaultPanel()
                             UiPanel.NONE -> TextKeyboardLayout(evaluator = evaluator)
                         }
                     }

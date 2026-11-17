@@ -163,6 +163,10 @@ object Routes {
         object Typing
 
         @Serializable
+        @Deeplink("settings/vault")
+        object Vault
+
+        @Serializable
         @Deeplink("settings/dictionary")
         object Dictionary
 
@@ -314,6 +318,7 @@ object Routes {
             composableWithDeepLink(Settings.ToolbarButtons::class) { ToolbarButtonsScreen() }
 
             composableWithDeepLink(Settings.Typing::class) { TypingScreen() }
+            composableWithDeepLink(Settings.Vault::class) { dev.patrickgold.florisboard.app.settings.vault.VaultScreen() }
 
             composableWithDeepLink(Settings.Dictionary::class) { DictionaryScreen() }
             composableWithDeepLink(Settings.UserDictionary::class) { navBackStack ->

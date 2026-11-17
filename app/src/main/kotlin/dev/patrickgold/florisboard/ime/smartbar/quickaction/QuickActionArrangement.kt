@@ -81,6 +81,13 @@ data class QuickActionArrangement(
         return copy(dynamicActions = listOf<QuickAction>(voice) + dynamicActions)
     }
 
+    /** Adds the "Cards and passkeys" action (at the end) for arrangements saved before it existed. */
+    fun withVaultAction(): QuickActionArrangement {
+        val vault = QuickAction.InsertKey(TextKeyData.VAULT)
+        if (vault in this) return this
+        return copy(dynamicActions = dynamicActions + vault)
+    }
+
     fun distinct(): QuickActionArrangement {
         val distinctSet = mutableSetOf<QuickAction>()
         if (stickyAction != null) {
@@ -105,6 +112,7 @@ data class QuickActionArrangement(
                 QuickAction.InsertKey(TextKeyData.REDO),
                 QuickAction.InsertKey(TextKeyData.SETTINGS),
                 QuickAction.InsertKey(TextKeyData.THEMES),
+                QuickAction.InsertKey(TextKeyData.VAULT),
                 QuickAction.InsertKey(TextKeyData.TOGGLE_INCOGNITO_MODE),
                 QuickAction.InsertKey(TextKeyData.IME_UI_MODE_CLIPBOARD),
                 QuickAction.InsertKey(TextKeyData.IME_UI_MODE_MEDIA),

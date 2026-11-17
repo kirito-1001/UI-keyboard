@@ -367,6 +367,10 @@ class FlorisImeService : LifecycleInputMethodService() {
         if (!restarting) {
             dev.patrickgold.florisboard.ime.uikb.UiPanelState.panel = dev.patrickgold.florisboard.ime.uikb.UiPanel.NONE
         }
+        // Back from the fingerprint screen: open the cards panel the user asked for
+        if (dev.patrickgold.florisboard.ime.uikb.UiVault.imeUnlocked && dev.patrickgold.florisboard.ime.uikb.UiVault.pendingPanel) {
+            dev.patrickgold.florisboard.ime.uikb.UiPanelState.panel = dev.patrickgold.florisboard.ime.uikb.UiPanel.VAULT
+        }
         activeState.batchEdit {
             if (activeState.imeUiMode != ImeUiMode.CLIPBOARD || prefs.clipboard.historyHideOnNextTextField.get()) {
                 activeState.imeUiMode = ImeUiMode.TEXT
@@ -446,6 +450,7 @@ class FlorisImeService : LifecycleInputMethodService() {
             activeState.keyboardMode = dev.patrickgold.florisboard.ime.keyboard.KeyboardMode.CHARACTERS
         }
         dev.patrickgold.florisboard.ime.uikb.UiPanelState.panel = dev.patrickgold.florisboard.ime.uikb.UiPanel.NONE
+        dev.patrickgold.florisboard.ime.uikb.UiVault.onKeyboardHidden()
         dev.patrickgold.florisboard.ime.uikb.UiPanelState.languageMenuOpen = false
     }
 

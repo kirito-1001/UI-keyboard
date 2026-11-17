@@ -769,6 +769,7 @@ class KeyboardManager(context: Context) : InputKeyEventReceiver {
             KeyCode.SETTINGS -> FlorisImeService.launchSettings()
             KeyCode.SUGGESTIONS_TOGGLE -> scope.launch { prefs.suggestion.enabled.let { it.set(!it.get()) } }
             KeyCode.THEMES -> FlorisImeService.launchSettings("ui://florisboard/settings/theme")
+            KeyCode.VAULT -> dev.patrickgold.florisboard.ime.uikb.UiVault.requestFromKeyboard(appContext)
             KeyCode.SHIFT -> handleShiftUp(data)
             KeyCode.SPACE -> handleSpace(data)
             KeyCode.SYSTEM_INPUT_METHOD_PICKER -> InputMethodUtils.showImePicker(appContext)

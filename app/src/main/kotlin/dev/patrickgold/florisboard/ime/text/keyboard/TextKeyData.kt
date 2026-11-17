@@ -144,6 +144,7 @@ data class TextKeyData(
                 IME_HIDE_UI,
                 SETTINGS,
                 THEMES,
+                VAULT,
                 VOICE_INPUT,
                 TOGGLE_SMARTBAR_VISIBILITY,
                 TOGGLE_ACTIONS_OVERFLOW,
@@ -488,6 +489,13 @@ data class TextKeyData(
             type = KeyType.CHARACTER,
             code = KeyCode.THEMES,
             label = "themes",
+        )
+
+        /** Predefined key data for [KeyCode.VAULT] */
+        val VAULT = TextKeyData(
+            type = KeyType.CHARACTER,
+            code = KeyCode.VAULT,
+            label = "vault",
         )
 
         /** Predefined key data for [KeyCode.SUGGESTIONS_TOGGLE] */

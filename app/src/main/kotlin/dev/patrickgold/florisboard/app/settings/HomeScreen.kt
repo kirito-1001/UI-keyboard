@@ -38,6 +38,7 @@ import androidx.compose.material.icons.filled.Gesture
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.SentimentSatisfiedAlt
 import androidx.compose.material.icons.filled.SmartButton
+import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material.icons.filled.Spellcheck
 import androidx.compose.material.icons.outlined.Build
 import androidx.compose.material.icons.outlined.Info
@@ -165,67 +166,73 @@ private fun HomeScreenContent() = FlorisScreen {
             Spacer(modifier = Modifier.height(28.dp))
             run {
                 Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp)) {
-                    HomeSheetItem(sheetBg, 0, 11) { HomePreference(
+                    HomeSheetItem(sheetBg, 0, 12) { HomePreference(
                     icon = Icons.Default.Language,
                     title = stringRes(R.string.settings__localization__title),
                     summary = stringRes(R.string.ui__home__summary__localization),
                     onClick = { navController.navigate(Routes.Settings.Localization) },
                     ) }
-                    HomeSheetItem(sheetBg, 1, 11) { HomePreference(
+                    HomeSheetItem(sheetBg, 1, 12) { HomePreference(
                     icon = Icons.Outlined.Palette,
                     title = stringRes(R.string.settings__theme__title),
                     summary = stringRes(R.string.ui__home__summary__theme),
                     onClick = { navController.navigate(Routes.Settings.Theme) },
                     ) }
-                    HomeSheetItem(sheetBg, 2, 11) { HomePreference(
+                    HomeSheetItem(sheetBg, 2, 12) { HomePreference(
                     icon = Icons.Outlined.Keyboard,
                     title = stringRes(R.string.settings__keyboard__title),
                     summary = stringRes(R.string.ui__home__summary__keyboard),
                     onClick = { navController.navigate(Routes.Settings.Keyboard) },
                     ) }
-                    HomeSheetItem(sheetBg, 3, 11) { HomePreference(
+                    HomeSheetItem(sheetBg, 3, 12) { HomePreference(
                     icon = Icons.Default.SmartButton,
                     title = stringRes(R.string.settings__smartbar__title),
                     summary = stringRes(R.string.ui__home__summary__smartbar),
                     onClick = { navController.navigate(Routes.Settings.Smartbar) },
                     ) }
-                    HomeSheetItem(sheetBg, 4, 11) { HomePreference(
+                    HomeSheetItem(sheetBg, 4, 12) { HomePreference(
                     icon = Icons.Default.Spellcheck,
                     title = stringRes(R.string.settings__typing__title),
                     summary = stringRes(R.string.ui__home__summary__typing),
                     onClick = { navController.navigate(Routes.Settings.Typing) },
                     ) }
-                    HomeSheetItem(sheetBg, 5, 11) { HomePreference(
+                    HomeSheetItem(sheetBg, 5, 12) { HomePreference(
+                    icon = Icons.Default.CreditCard,
+                    title = stringRes(R.string.ui__vault__title),
+                    summary = stringRes(R.string.ui__home__summary__vault),
+                    onClick = { navController.navigate(Routes.Settings.Vault) },
+                    ) }
+                    HomeSheetItem(sheetBg, 6, 12) { HomePreference(
                     icon = Icons.Default.Gesture,
                     title = stringRes(R.string.settings__gestures__title),
                     summary = stringRes(R.string.ui__home__summary__gestures),
                     onClick = { navController.navigate(Routes.Settings.Gestures) },
                     ) }
-                    HomeSheetItem(sheetBg, 6, 11) { HomePreference(
+                    HomeSheetItem(sheetBg, 7, 12) { HomePreference(
                     icon = Icons.AutoMirrored.Outlined.Assignment,
                     title = stringRes(R.string.settings__clipboard__title),
                     summary = stringRes(R.string.ui__home__summary__clipboard),
                     onClick = { navController.navigate(Routes.Settings.Clipboard) },
                     ) }
-                    HomeSheetItem(sheetBg, 7, 11) { HomePreference(
+                    HomeSheetItem(sheetBg, 8, 12) { HomePreference(
                     icon = Icons.Default.SentimentSatisfiedAlt,
                     title = stringRes(R.string.settings__media__title),
                     summary = stringRes(R.string.ui__home__summary__media),
                     onClick = { navController.navigate(Routes.Settings.Media) },
                     ) }
-                    HomeSheetItem(sheetBg, 8, 11) { HomePreference(
+                    HomeSheetItem(sheetBg, 9, 12) { HomePreference(
                     icon = Icons.Default.Extension,
                     title = stringRes(R.string.ext__home__title),
                     summary = stringRes(R.string.ui__home__summary__ext),
                     onClick = { navController.navigate(Routes.Ext.Home) },
                     ) }
-                    HomeSheetItem(sheetBg, 9, 11) { HomePreference(
+                    HomeSheetItem(sheetBg, 10, 12) { HomePreference(
                     icon = Icons.Outlined.Build,
                     title = stringRes(R.string.settings__other__title),
                     summary = stringRes(R.string.ui__home__summary__other),
                     onClick = { navController.navigate(Routes.Settings.Other) },
                     ) }
-                    HomeSheetItem(sheetBg, 10, 11) { HomePreference(
+                    HomeSheetItem(sheetBg, 11, 12) { HomePreference(
                     icon = Icons.Outlined.Info,
                     title = stringRes(R.string.about__title),
                     summary = stringRes(R.string.ui__home__summary__about),

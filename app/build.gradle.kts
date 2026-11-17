@@ -186,6 +186,8 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.autofill)
+    implementation(libs.androidx.biometric)
+    implementation(libs.androidx.fragment)
     implementation(libs.androidx.collection.ktx)
     implementation(libs.androidx.compose.material.icons)
     implementation(libs.androidx.compose.material3)

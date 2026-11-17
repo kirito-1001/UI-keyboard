@@ -31,6 +31,7 @@ enum class UiPanel {
     EDIT_TEXT,
     NUMERIC,
     ACTIONS,
+    VAULT,
 }
 
 /**
