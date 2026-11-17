@@ -32,7 +32,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -82,16 +81,16 @@ fun VaultPanel(modifier: Modifier = Modifier) {
             .fillMaxWidth()
             .height(FlorisImeSizing.keyboardUiHeight()),
     ) {
-        Column(modifier = Modifier.fillMaxSize().padding(8.dp)) {
+        Column(modifier = Modifier.fillMaxSize().padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 8.dp)) {
             Row(
-                modifier = Modifier.fillMaxWidth().height(44.dp),
+                modifier = Modifier.fillMaxWidth().height(31.dp),
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 TabButton(uiString(R.string.ui__vault__tab_cards), tab == 0, Modifier.weight(1f), label) { tab = 0 }
                 TabButton(uiString(R.string.ui__vault__tab_logins), tab == 1, Modifier.weight(1f), label) { tab = 1 }
                 // Settings (opens the cards section) and back, as round buttons
-                RoundButton(Icons.Default.Settings) {
+                RoundButton(UiIcons.Gear) {
                     dev.patrickgold.florisboard.FlorisImeService.launchSettings("ui://florisboard/settings/vault")
                 }
                 RoundButton(Icons.AutoMirrored.Filled.ArrowForward) {
@@ -133,7 +132,7 @@ private fun TabButton(
 ) {
     Box(
         modifier = modifier
-            .height(36.dp)
+            .height(25.dp)
             .clip(RoundedCornerShape(18.dp))
             .background(if (selected) Color(0xFF43D17A).copy(alpha = 0.6f) else Color.Gray.copy(alpha = 0.3f))
             .clickable(onClick = onClick),
@@ -147,12 +146,12 @@ private fun TabButton(
 private fun RoundButton(icon: androidx.compose.ui.graphics.vector.ImageVector, onClick: () -> Unit) {
     Box(
         modifier = Modifier
-            .size(40.dp)
+            .size(28.dp)
             .clip(androidx.compose.foundation.shape.CircleShape)
             .background(Color(0xFF4A4D50))
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
-        androidx.compose.material3.Icon(icon, contentDescription = null, tint = Color.White)
+        androidx.compose.material3.Icon(icon, contentDescription = null, tint = Color.White, modifier = Modifier.size(18.dp))
     }
 }
