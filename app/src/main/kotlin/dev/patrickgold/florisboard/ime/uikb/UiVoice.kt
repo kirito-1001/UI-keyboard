@@ -99,6 +99,7 @@ object UiVoice {
 
     /** Number of characters of the not yet final phrase that we have written to the field. */
     private var partialLength = 0
+    private var lastPartialText = ""
     private var mutedStreams: List<Int> = emptyList()
 
     /** True from startListening until the recognizer reports a result or an error. */
@@ -170,10 +171,18 @@ object UiVoice {
         // The keyboard may have marked the last word before the cursor as "composing"; committing text would then
         // replace that word as well. Releasing it first makes sure only our own phrase is replaced.
         ic.finishComposingText()
-        if (partialLength > 0) ic.deleteSurroundingText(partialLength, 0)
+        // Deletes the earlier partial text only if it is still exactly before the cursor (the user may have moved
+        // the cursor or typed meanwhile: then nothing of the user's own text is deleted)
+        if (partialLength > 0) {
+            val before = ic.getTextBeforeCursor(partialLength, 0)?.toString()
+            if (before == null || before == lastPartialText) {
+                ic.deleteSurroundingText(partialLength, 0)
+            }
+        }
         val out = if (final) "$text " else text
         ic.commitText(out, 1)
         ic.endBatchEdit()
+        lastPartialText = if (final) "" else out
         partialLength = if (final) 0 else out.length
     }
 

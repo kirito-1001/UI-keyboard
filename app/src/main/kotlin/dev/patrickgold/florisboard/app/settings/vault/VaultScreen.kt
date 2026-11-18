@@ -267,6 +267,7 @@ private fun VaultScreenBody() {
         val exists = UiVault.data.cards.any { it.id == card.id }
         AlertDialog(
             onDismissRequest = { editCard = null },
+            properties = androidx.compose.ui.window.DialogProperties(securePolicy = androidx.compose.ui.window.SecureFlagPolicy.SecureOn),
             title = { Text(stringRes(R.string.ui__vault__tab_cards)) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -311,6 +312,7 @@ private fun VaultScreenBody() {
         val exists = UiVault.data.logins.any { it.id == login.id }
         AlertDialog(
             onDismissRequest = { editLogin = null },
+            properties = androidx.compose.ui.window.DialogProperties(securePolicy = androidx.compose.ui.window.SecureFlagPolicy.SecureOn),
             title = { Text(stringRes(R.string.ui__vault__tab_logins)) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {

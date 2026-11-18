@@ -96,6 +96,9 @@ object UiVault {
 
     /** True while the picture gallery is open from the settings (the settings screen must not lock meanwhile). */
     var pickerOpen = false
+
+    /** Time (uptime) of the last value typed into a field from the cards panel: it must not be learned as a word. */
+    var lastInsertAt = 0L
     private var imeUnlockedAt = 0L
     private val uiHandler = android.os.Handler(android.os.Looper.getMainLooper())
 
@@ -160,6 +163,10 @@ object UiVault {
         if (target == "ime") {
             imeUnlocked = true
             imeUnlockedAt = SystemClock.uptimeMillis()
+            // If the panel is not shown within a short time, lock again (the data must not stay open in memory)
+            uiHandler.postDelayed({
+                if (imeUnlocked && UiPanelState.panel != UiPanel.VAULT) lockIme()
+            }, 20000)
             if (pendingPanel) {
                 UiPanelState.panel = UiPanel.VAULT
                 // The keyboard was hidden by the fingerprint screen: bring it back without waiting for a tap
@@ -244,9 +251,17 @@ object UiVault {
         val cipher = Cipher.getInstance("AES/GCM/NoPadding")
         cipher.init(Cipher.ENCRYPT_MODE, key())
         val encrypted = cipher.doFinal(json.encodeToString(VaultData.serializer(), newData).toByteArray(Charsets.UTF_8))
+        val target = file(context)
+        // If the old file could not be read, keep a copy of it before it is replaced (it may be readable later)
+        if (unreadable && target.exists()) {
+            runCatching { target.copyTo(File(context.filesDir, "$FILE_NAME.bak"), overwrite = true) }
+        }
         val tmp = File(context.filesDir, "$FILE_NAME.tmp")
         tmp.writeBytes(cipher.iv + encrypted)
-        tmp.renameTo(file(context))
+        if (!tmp.renameTo(target)) {
+            tmp.delete()
+            throw java.io.IOException("Could not save the vault file")
+        }
         data = newData
         unreadable = false
     }
@@ -292,6 +307,7 @@ object UiVault {
             val resolver = context.contentResolver
             val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
             resolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, bounds) }
+            if (bounds.outWidth <= 0 || bounds.outHeight <= 0) return false
             var sample = 1
             while (bounds.outWidth / (sample * 2) >= 900 || bounds.outHeight / (sample * 2) >= 900) sample *= 2
             val opts = BitmapFactory.Options().apply { inSampleSize = sample }

@@ -76,6 +76,7 @@
         <!-- Transparent screen that shows the fingerprint / screen lock check for the saved cards and logins -->
         <activity
             android:name="dev.patrickgold.florisboard.ime.uikb.UiVaultAuthActivity"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|smallestScreenSize"
             android:excludeFromRecents="true"
             android:exported="false"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"/>

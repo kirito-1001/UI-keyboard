@@ -112,7 +112,12 @@ fun VaultPanel(modifier: Modifier = Modifier) {
                             VaultEntryCard(
                                 entry = entry,
                                 label = label,
-                                onField = { value -> editorInstance.commitText(value) },
+                                onField = { value ->
+                                    UiVault.lastInsertAt = android.os.SystemClock.uptimeMillis()
+                                    // No automatic space before the value (it would break a password or a number)
+                                    editorInstance.phantomSpace.setInactive()
+                                    editorInstance.commitText(value)
+                                },
                             )
                         }
                     }

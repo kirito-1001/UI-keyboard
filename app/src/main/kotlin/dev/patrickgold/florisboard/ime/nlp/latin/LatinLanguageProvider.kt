@@ -195,6 +195,8 @@ class LatinLanguageProvider(context: Context) : SpellingProvider, SuggestionProv
     private fun learnOnce(language: String, previous2: String?, previous: String?, word: String, position: Int) {
         val key = "$language|$previous2|$previous|$word|$position"
         if (key == lastLearnedKey) return
+        // Text typed in from the cards panel (names, user names) is not learned
+        if (android.os.SystemClock.uptimeMillis() - dev.patrickgold.florisboard.ime.uikb.UiVault.lastInsertAt < 4000) return
         lastLearnedKey = key
         UiLearned.learn(appContext, language, previous2, previous, word)
     }
