@@ -721,6 +721,10 @@ abstract class FlorisPreferenceModel : PreferenceModel() {
             key = "smartbar__ui_show_hide",
             default = true,
         )
+        val uiVaultLockSeconds = int(
+            key = "smartbar__ui_vault_lock_seconds",
+            default = 20,
+        )
         val uiBuiltInVoice = boolean(
             key = "smartbar__ui_built_in_voice",
             default = true,

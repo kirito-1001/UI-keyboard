@@ -1053,4 +1053,7 @@
     <string name="ui__vault__delete">حذف</string>
     <string name="ui__vault__show">إظهار</string>
     <string name="ui__vault__hide">إخفاء</string>
+    <string name="ui__vault__lock_duration">مدة إلغاء القفل</string>
+    <string name="ui__vault__seconds_short">ث</string>
+    <string name="ui__vault__lock_duration_help">بعد التحقق بالبصمة أو القفل لا يُطلب تحقق جديد خلال هذه المدة (من 5 إلى 60 ثانية).</string>
 </resources>

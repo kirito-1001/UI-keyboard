@@ -48,6 +48,7 @@ class UiVaultAuthActivity : FragmentActivity() {
         }
         val callback = object : BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                UiVault.markChecked()
                 UiVault.unlock(applicationContext, target)
                 setResult(Activity.RESULT_OK)
                 finish()

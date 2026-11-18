@@ -1285,4 +1285,7 @@
     <string name="ui__vault__delete">Delete</string>
     <string name="ui__vault__show">Show</string>
     <string name="ui__vault__hide">Hide</string>
+    <string name="ui__vault__lock_duration">Unlock duration</string>
+    <string name="ui__vault__seconds_short">s</string>
+    <string name="ui__vault__lock_duration_help">After a fingerprint or lock check, no new check is asked for this many seconds (5 to 60).</string>
 </resources>

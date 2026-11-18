@@ -70,7 +70,6 @@
         <activity
             android:name="dev.patrickgold.florisboard.ime.uikb.UiVoicePermissionActivity"
             android:excludeFromRecents="true"
-            android:taskAffinity=""
             android:exported="false"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
 
@@ -78,7 +77,6 @@
         <activity
             android:name="dev.patrickgold.florisboard.ime.uikb.UiVaultAuthActivity"
             android:excludeFromRecents="true"
-            android:taskAffinity=""
             android:exported="false"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
 

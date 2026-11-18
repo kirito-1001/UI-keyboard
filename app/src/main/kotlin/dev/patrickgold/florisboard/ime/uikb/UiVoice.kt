@@ -243,7 +243,8 @@ object UiVoice {
             messageRes = R.string.ui__voice__need_permission
             runCatching {
                 ctx.startActivity(
-                    Intent(ctx, UiVoicePermissionActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    Intent(ctx, UiVoicePermissionActivity::class.java)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
                 )
             }
             return

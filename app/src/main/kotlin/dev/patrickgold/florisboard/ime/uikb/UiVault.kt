@@ -121,13 +121,36 @@ object UiVault {
             return
         }
         pendingPanel = true
-        launchAuth(context, "ime")
+        if (checkedRecently()) {
+            unlock(context, "ime")
+        } else {
+            launchAuth(context, "ime")
+        }
+    }
+
+    /** The time of the last real fingerprint / lock check. */
+    private var lastAuthAt = 0L
+
+    /** True if the last real check was less than the chosen "unlock duration" (default 20 s) ago. */
+    fun checkedRecently(): Boolean {
+        if (lastAuthAt == 0L) return false
+        val seconds = runCatching {
+            val prefs by dev.patrickgold.florisboard.app.FlorisPreferenceStore
+            prefs.smartbar.uiVaultLockSeconds.get()
+        }.getOrDefault(20)
+        return SystemClock.uptimeMillis() - lastAuthAt <= seconds * 1000L
+    }
+
+    /** Called by the auth screen after a real check. */
+    fun markChecked() {
+        lastAuthAt = SystemClock.uptimeMillis()
     }
 
     fun launchAuth(context: Context, target: String) {
         val intent = Intent(context, UiVaultAuthActivity::class.java)
             .putExtra(UiVaultAuthActivity.EXTRA_TARGET, target)
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            // Always a task of its own (never the app's task), so the app is not brought to the front
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
         runCatching { context.startActivity(intent) }
     }
 

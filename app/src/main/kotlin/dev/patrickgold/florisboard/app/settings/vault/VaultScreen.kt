@@ -42,6 +42,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import dev.patrickgold.jetpref.datastore.model.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
@@ -52,6 +53,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import dev.patrickgold.florisboard.R
+import kotlinx.coroutines.launch
 import dev.patrickgold.florisboard.ime.uikb.UiVault
 import dev.patrickgold.florisboard.ime.uikb.UiVaultAuthActivity
 import dev.patrickgold.florisboard.ime.uikb.VaultCard
@@ -82,16 +84,29 @@ private fun VaultScreenBody() {
     }
     fun askAuth() {
         if (authRunning || UiVault.settingsUnlocked) return
+        if (UiVault.checkedRecently()) {
+            UiVault.unlock(context, "settings")
+            return
+        }
         authRunning = true
-        authLauncher.launch(
-            Intent(context, UiVaultAuthActivity::class.java).putExtra(UiVaultAuthActivity.EXTRA_TARGET, "settings")
-        )
+        runCatching {
+            authLauncher.launch(
+                Intent(context, UiVaultAuthActivity::class.java).putExtra(UiVaultAuthActivity.EXTRA_TARGET, "settings")
+            )
+        }.onFailure { authRunning = false }
     }
+    val scope = androidx.compose.runtime.rememberCoroutineScope()
 
     // Asks for the fingerprint / lock when the screen comes to the front, and locks again when the app is left
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_START) askAuth()
+            if (event == Lifecycle.Event.ON_START) {
+                // Not at once: the screen is still opening (from the keyboard or the app list)
+                scope.launch {
+                    kotlinx.coroutines.delay(450)
+                    if (lifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) askAuth()
+                }
+            }
             if (event == Lifecycle.Event.ON_STOP && !UiVault.pickerOpen) UiVault.lockSettings()
         }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -102,6 +117,10 @@ private fun VaultScreenBody() {
     }
 
     var tab by remember { mutableIntStateOf(0) }
+    var showDuration by remember { mutableStateOf(false) }
+    val lockPrefs by dev.patrickgold.florisboard.app.FlorisPreferenceStore
+    val secondsPref = lockPrefs.smartbar.uiVaultLockSeconds
+    val seconds by secondsPref.observeAsState()
     var editCard by remember { mutableStateOf<VaultCard?>(null) }
     var editLogin by remember { mutableStateOf<VaultLogin?>(null) }
     var menuFor by remember { mutableStateOf<String?>(null) }
@@ -154,13 +173,22 @@ private fun VaultScreenBody() {
     }
 
     Column(modifier = Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+        ) {
             if (tab == 0) {
                 Button(onClick = { tab = 0 }) { Text(stringRes(R.string.ui__vault__tab_cards)) }
                 OutlinedButton(onClick = { tab = 1 }) { Text(stringRes(R.string.ui__vault__tab_logins)) }
             } else {
                 OutlinedButton(onClick = { tab = 0 }) { Text(stringRes(R.string.ui__vault__tab_cards)) }
                 Button(onClick = { tab = 1 }) { Text(stringRes(R.string.ui__vault__tab_logins)) }
+            }
+            // At the end of the row: the left side on a right-to-left screen
+            androidx.compose.foundation.layout.Spacer(modifier = Modifier.weight(1f))
+            TextButton(onClick = { showDuration = true }) {
+                Text(stringRes(R.string.ui__vault__lock_duration) + ": " + seconds + " " + stringRes(R.string.ui__vault__seconds_short))
             }
         }
         if (UiVault.unreadable) {
@@ -319,6 +347,38 @@ private fun VaultScreenBody() {
                     }
                     TextButton(onClick = { editLogin = null }) { Text(stringRes(R.string.ui__vault__cancel)) }
                 }
+            },
+        )
+    }
+
+    if (showDuration) {
+        var value by remember { mutableIntStateOf(seconds.coerceIn(5, 60)) }
+        AlertDialog(
+            onDismissRequest = { showDuration = false },
+            title = { Text(stringRes(R.string.ui__vault__lock_duration)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(stringRes(R.string.ui__vault__lock_duration_help), style = MaterialTheme.typography.bodyMedium)
+                    Text(
+                        value.toString() + " " + stringRes(R.string.ui__vault__seconds_short),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    androidx.compose.material3.Slider(
+                        value = value.toFloat(),
+                        onValueChange = { value = it.toInt().coerceIn(5, 60) },
+                        valueRange = 5f..60f,
+                        steps = 54,
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    scope.launch { secondsPref.set(value) }
+                    showDuration = false
+                }) { Text(stringRes(R.string.ui__vault__save)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDuration = false }) { Text(stringRes(R.string.ui__vault__cancel)) }
             },
         )
     }
