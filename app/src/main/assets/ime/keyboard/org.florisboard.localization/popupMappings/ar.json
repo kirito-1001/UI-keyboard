@@ -70,7 +70,7 @@
       ]
     },
     "~right": {
-      "main": { "code": 1567, "label": "؟" },
+      "main": { "code": -304, "label": "vault" },
       "relevant": [
         { "code": 1611, "label": "ً" },
         { "code": 1622, "label": "ٖ" },

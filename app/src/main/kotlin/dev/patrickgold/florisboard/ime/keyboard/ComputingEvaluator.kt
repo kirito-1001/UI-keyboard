@@ -132,6 +132,8 @@ private fun computeLanguageDisplayName(locale: FlorisLocale, displayLanguageName
 
 fun ComputingEvaluator.computeLabel(data: KeyData): String? {
     val evaluator = this
+    // The cards shortcut is drawn with its icon only (its label is just a name for the layout files)
+    if (data.code == KeyCode.VAULT) return null
     return if (data.type == KeyType.CHARACTER && data.code != KeyCode.SPACE && data.code != KeyCode.CJK_SPACE
         && data.code != KeyCode.HALF_SPACE && data.code != KeyCode.KESHIDA || data.type == KeyType.NUMERIC
     ) {
