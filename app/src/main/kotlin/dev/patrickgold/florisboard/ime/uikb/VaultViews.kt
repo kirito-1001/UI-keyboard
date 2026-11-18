@@ -31,6 +31,7 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -218,6 +219,8 @@ fun VaultEntryCard(
     val shape = RoundedCornerShape(16.dp)
     var cardPos by remember { mutableStateOf(Offset.Zero) }
     var cardSize by remember { mutableStateOf(Size.Zero) }
+    // Texts on the dark frosted cells are white (the settings texts follow LocalContentColor)
+    val textColor = if (blurred != null) Color.White else androidx.compose.material3.MaterialTheme.colorScheme.onSurface
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -250,7 +253,7 @@ fun VaultEntryCard(
                         // The title pill is 30% bigger than the other texts
                         val density = LocalDensity.current
                         val bigger = remember(density) { Density(density.density, density.fontScale * 1.3f) }
-                        CompositionLocalProvider(LocalDensity provides bigger) {
+                        CompositionLocalProvider(LocalDensity provides bigger, LocalContentColor provides textColor) {
                         Row(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(50))
@@ -300,9 +303,11 @@ fun VaultEntryCard(
                             .padding(vertical = 6.dp, horizontal = 4.dp),
                         contentAlignment = Alignment.Center,
                     ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            label(field.caption, false)
-                            label(field.shown, false)
+                        CompositionLocalProvider(LocalContentColor provides textColor) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                label(field.caption, false)
+                                label(field.shown, false)
+                            }
                         }
                     }
                 }

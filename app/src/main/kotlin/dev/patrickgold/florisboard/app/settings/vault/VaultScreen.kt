@@ -147,7 +147,7 @@ private fun VaultScreenBody() {
         Text(
             text = text,
             style = if (bold) MaterialTheme.typography.titleSmall else MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurface,
+            color = androidx.compose.material3.LocalContentColor.current,
             maxLines = 1,
             overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
         )
