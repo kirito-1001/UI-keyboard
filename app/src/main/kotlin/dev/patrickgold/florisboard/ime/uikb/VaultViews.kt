@@ -26,6 +26,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -239,11 +241,11 @@ fun VaultEntryCard(
             modifier = Modifier.fillMaxWidth().heightIn(min = 140.dp).padding(10.dp),
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
-            // Title row: always laid out left to right, so the pill is in the right third on any language
+            // Title row: always laid out left to right; the pill starts at the right edge and grows to the left
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                 Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    Box(modifier = Modifier.weight(2f), contentAlignment = Alignment.CenterStart) { headerEnd() }
-                    Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                    headerEnd()
+                    Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.CenterEnd) {
                         val arabicName = entry.title.any { it in '\u0600'..'\u06FF' }
                         // The title pill is 30% bigger than the other texts
                         val density = LocalDensity.current
@@ -253,22 +255,31 @@ fun VaultEntryCard(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(50))
                                 .vaultCellBackground(blurred, cardPos, cardSize)
-                                .padding(horizontal = 14.dp, vertical = 4.dp),
+                                .padding(horizontal = 14.dp, vertical = 8.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
                             val badge: @Composable () -> Unit = {
                                 if (entry.brand != null) {
-                                    Box(
-                                        modifier = Modifier
-                                            .border(1.dp, Color.White.copy(alpha = 0.6f), RoundedCornerShape(6.dp))
-                                            .padding(horizontal = 6.dp, vertical = 1.dp),
-                                    ) { label(entry.brand, false) }
+                                    // The badge alone is 40% smaller than the title
+                                    val small = remember(bigger) { Density(bigger.density, bigger.fontScale * 0.6f) }
+                                    CompositionLocalProvider(LocalDensity provides small) {
+                                        Box(
+                                            modifier = Modifier
+                                                .border(1.dp, Color.White.copy(alpha = 0.6f), RoundedCornerShape(4.dp))
+                                                .padding(horizontal = 4.dp, vertical = 0.dp),
+                                        ) { label(entry.brand, false) }
+                                    }
                                 }
                             }
                             // Arabic name: badge at the left of the text; other names: badge at the right
                             if (arabicName) badge()
-                            Box(modifier = Modifier.weight(1f, fill = false)) { label(entry.title, true) }
+                            // One line only: a very long name is cut at the pill edge instead of wrapping
+                            Box(modifier = Modifier.weight(1f, fill = false).clipToBounds()) {
+                                Box(modifier = Modifier.wrapContentWidth(align = Alignment.Start, unbounded = true)) {
+                                    label(entry.title, true)
+                                }
+                            }
                             if (!arabicName) badge()
                         }
                         }
