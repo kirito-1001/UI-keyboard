@@ -64,6 +64,10 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import dev.patrickgold.florisboard.R
+import dev.patrickgold.florisboard.ime.theme.FlorisImeUi
+import org.florisboard.lib.snygg.ui.LocalSnyggStyleTransform
+import org.florisboard.lib.snygg.ui.SnyggStyleTransform
+import org.florisboard.lib.snygg.ui.withColors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -168,6 +172,27 @@ private fun rememberVaultBlurred(id: String, has: Boolean): ImageBitmap? {
     return bmp
 }
 
+/** On the keyboard the texts take their colour from the theme: when drawn on the dark frosted cells they are made white. */
+@Composable
+private fun WhiteTextOnFrosted(white: Boolean, content: @Composable () -> Unit) {
+    if (!white) {
+        content()
+        return
+    }
+    val parent = LocalSnyggStyleTransform.current
+    val transform = remember(parent) {
+        SnyggStyleTransform { elementName, attributes, selector, style ->
+            val base = parent?.transform(elementName, attributes, selector, style) ?: style
+            if (elementName == FlorisImeUi.SmartbarCandidateWordText.elementName) {
+                base.withColors(foreground = Color.White)
+            } else {
+                base
+            }
+        }
+    }
+    CompositionLocalProvider(LocalSnyggStyleTransform provides transform, content = content)
+}
+
 /**
  * Background of a data cell or of the title pill: plain grey, or (when the entry has a picture) the blurred picture
  * aligned with the sharp one and darkened a little, like the keys on a keyboard with a picture background.
@@ -221,6 +246,9 @@ fun VaultEntryCard(
     var cardSize by remember { mutableStateOf(Size.Zero) }
     // Texts on the dark frosted cells are white (the settings texts follow LocalContentColor)
     val textColor = if (blurred != null) Color.White else androidx.compose.material3.MaterialTheme.colorScheme.onSurface
+    val frostedLabel: @Composable (String, Boolean) -> Unit = { t, b ->
+        WhiteTextOnFrosted(blurred != null) { label(t, b) }
+    }
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -271,7 +299,7 @@ fun VaultEntryCard(
                                             modifier = Modifier
                                                 .border(1.dp, Color.White.copy(alpha = 0.6f), RoundedCornerShape(4.dp))
                                                 .padding(horizontal = 4.dp, vertical = 0.dp),
-                                        ) { label(entry.brand, false) }
+                                        ) { frostedLabel(entry.brand, false) }
                                     }
                                 }
                             }
@@ -280,7 +308,7 @@ fun VaultEntryCard(
                             // One line only: a very long name is cut at the pill edge instead of wrapping
                             Box(modifier = Modifier.weight(1f, fill = false).clipToBounds()) {
                                 Box(modifier = Modifier.wrapContentWidth(align = Alignment.Start, unbounded = true)) {
-                                    label(entry.title, true)
+                                    frostedLabel(entry.title, true)
                                 }
                             }
                             if (!arabicName) badge()
@@ -305,8 +333,8 @@ fun VaultEntryCard(
                     ) {
                         CompositionLocalProvider(LocalContentColor provides textColor) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                label(field.caption, false)
-                                label(field.shown, false)
+                                frostedLabel(field.caption, false)
+                                frostedLabel(field.shown, false)
                             }
                         }
                     }
