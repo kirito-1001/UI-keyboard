@@ -5,9 +5,6 @@
     <string name="key__phone_wait" comment="Label for the Wait key in the telephone keyboard layout">Pričekajte</string>
     <string name="key_popup__threedots_alt" comment="Content description for the three-dots icon in a key popup">Ikona s tri točke. Ako je vidljivo, moguće je unijeti više karaktera tako da dulje držite tipku.</string>
     <!-- One-handed strings -->
-    <string name="one_handed__close_btn_content_description" comment="Content description for the one-handed close button">Izlaz iz načina rada jednom rukom.</string>
-    <string name="one_handed__move_start_btn_content_description" comment="Content description for the one-handed move to left button">Premjestite tipkovnicu lijevo.</string>
-    <string name="one_handed__move_end_btn_content_description" comment="Content description for the one-handed move to right button">Premjestite tipkovnicu desno.</string>
     <!-- Media strings -->
     <string name="settings__media__title">Emotikoni</string>
     <string name="media__tab__emojis" comment="Tab description for emojis in the media UI">Emotikoni</string>

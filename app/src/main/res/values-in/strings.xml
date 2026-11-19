@@ -5,9 +5,6 @@
     <string name="key__phone_wait" comment="Label for the Wait key in the telephone keyboard layout">Tunggu</string>
     <string name="key_popup__threedots_alt" comment="Content description for the three-dots icon in a key popup">Ikon titik tiga. Jika terlihat, menandakan bahwa lebih banyak huruf dapat digunakan jika ditekan lama.</string>
     <!-- One-handed strings -->
-    <string name="one_handed__close_btn_content_description" comment="Content description for the one-handed close button">Tutup mode satu tangan.</string>
-    <string name="one_handed__move_start_btn_content_description" comment="Content description for the one-handed move to left button">Pindahkan keyboard ke kiri.</string>
-    <string name="one_handed__move_end_btn_content_description" comment="Content description for the one-handed move to right button">Pindahkan keyboard ke kanan.</string>
     <!-- Media strings -->
     <string name="settings__media__title">Emoji</string>
     <string name="media__tab__emojis" comment="Tab description for emojis in the media UI">Emoji</string>
@@ -90,8 +87,6 @@
     <string name="quick_action__toggle_autocorrect__tooltip">Alihkan koreksi otomatis</string>
     <string name="quick_action__voice_input" comment="Please mind the limited available space for the quick action strings">Input suara</string>
     <string name="quick_action__voice_input__tooltip" comment="IME stands for Input Method Editor and is indirectly equivalent to 'keyboard'.">Buka penyedia masukan suara</string>
-    <string name="quick_action__one_handed_mode" comment="Please mind the limited available space for the quick action strings">Satu tangan</string>
-    <string name="quick_action__one_handed_mode__tooltip">Alih mode satu tangan</string>
     <string name="quick_action__drag_marker" comment="This action is only used as a placeholder in the actions editor drag and drop screen and only visible in debug mode">Tarik marker</string>
     <string name="quick_action__drag_marker__tooltip" comment="This action is only used as a placeholder in the actions editor drag and drop screen and only visible in debug mode">Posisi penanda tarikan saat ini</string>
     <string name="quick_action__noop" comment="Noop=no operation; this action is only used as a placeholder in the actions editor drag and drop screen">Tidak ada</string>
@@ -401,8 +396,6 @@ Klik di sini untuk menyelesaikan masalah ini.</string>
     <string name="pref__keyboard__capitalization_behavior__label" comment="Preference title">Perilaku kapitalisasi</string>
     <string name="pref__keyboard__font_size_multiplier__label" comment="Preference title">Pengganda ukuran font</string>
     <string name="pref__keyboard__group_layout__label" comment="Preference group title">Tata letak</string>
-    <string name="pref__keyboard__one_handed_mode__label" comment="Preference title">Mode satu tangan</string>
-    <string name="pref__keyboard__one_handed_mode_scale_factor__label" comment="Preference title">Lebar papan ketik mode satu tangan</string>
     <string name="pref__keyboard__landscape_input_ui_mode__label" comment="Preference value">Masukan layar penuh lanskap</string>
     <string name="pref__keyboard__height_factor__label" comment="Preference title">Ketinggian papan ketik</string>
     <string name="pref__keyboard__key_spacing__label" comment="Preference title">Spasi tombol</string>
@@ -929,8 +922,6 @@ Klik di sini untuk menyelesaikan masalah ini.</string>
     <string name="enum__landscape_input_ui_mode__never_show" comment="Enum value label">Jangan tampilkan</string>
     <string name="enum__landscape_input_ui_mode__always_show" comment="Enum value label">Selalu tampilkan</string>
     <string name="enum__landscape_input_ui_mode__dynamically_show" comment="Enum value label">Tampilkan secara dinamis</string>
-    <string name="enum__one_handed_mode__start" comment="Enum value label">Mode tangan kiri</string>
-    <string name="enum__one_handed_mode__end" comment="Enum value label">Mode tangan kanan</string>
     <string name="enum__shape_corner__top_start" comment="Enum value label">Awalan atas</string>
     <string name="enum__shape_corner__top_end" comment="Enum value label">Akhiran atas</string>
     <string name="enum__shape_corner__bottom_end" comment="Enum value label">Akhiran bawah</string>

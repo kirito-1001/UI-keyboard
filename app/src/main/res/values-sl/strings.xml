@@ -2,9 +2,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="key__phone_wait" comment="Label for the Wait key in the telephone keyboard layout">Počakaj</string>
     <!-- One-handed strings -->
-    <string name="one_handed__close_btn_content_description" comment="Content description for the one-handed close button">Zapri enoročni način.</string>
-    <string name="one_handed__move_start_btn_content_description" comment="Content description for the one-handed move to left button">Premakni tipkovnico na levo.</string>
-    <string name="one_handed__move_end_btn_content_description" comment="Content description for the one-handed move to right button">Premakni tipkovnico na desno.</string>
     <!-- Media strings -->
     <string name="settings__media__title">Čustvenčki</string>
     <string name="media__tab__emojis" comment="Tab description for emojis in the media UI">Čustvenčki</string>

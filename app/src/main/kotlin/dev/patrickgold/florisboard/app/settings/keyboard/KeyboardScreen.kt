@@ -32,7 +32,6 @@ import dev.patrickgold.florisboard.app.enumDisplayEntriesOf
 import dev.patrickgold.florisboard.ime.input.CapitalizationBehavior
 import dev.patrickgold.florisboard.ime.keyboard.SpaceBarMode
 import dev.patrickgold.florisboard.ime.landscapeinput.LandscapeInputUiMode
-import dev.patrickgold.florisboard.ime.onehanded.OneHandedMode
 import dev.patrickgold.florisboard.ime.smartbar.IncognitoDisplayMode
 import dev.patrickgold.florisboard.ime.text.key.KeyHintMode
 import dev.patrickgold.florisboard.ime.text.key.UtilityKeyAction
@@ -181,22 +180,6 @@ fun KeyboardScreen() = FlorisScreen {
         )
 
         PreferenceGroup(title = stringRes(R.string.pref__keyboard__group_layout__label)) {
-            ListPreference(
-                prefs.keyboard.oneHandedMode,
-                prefs.keyboard.oneHandedModeEnabled,
-                title = stringRes(R.string.pref__keyboard__one_handed_mode__label),
-                entries = enumDisplayEntriesOf(OneHandedMode::class),
-                summarySwitchDisabled = stringRes(R.string.state__disabled),
-            )
-            DialogSliderPreference(
-                prefs.keyboard.oneHandedModeScaleFactor,
-                title = stringRes(R.string.pref__keyboard__one_handed_mode_scale_factor__label),
-                valueLabel = { stringRes(R.string.unit__percent__symbol, "v" to it) },
-                min = 70,
-                max = 90,
-                stepIncrement = 1,
-                enabledIf = { prefs.keyboard.oneHandedModeEnabled.isTrue() },
-            )
             ListPreference(
                 prefs.keyboard.landscapeInputUiMode,
                 title = stringRes(R.string.pref__keyboard__landscape_input_ui_mode__label),

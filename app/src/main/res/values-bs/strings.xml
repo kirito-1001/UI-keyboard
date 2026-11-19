@@ -5,9 +5,6 @@
     <string name="key__phone_wait" comment="Label for the Wait key in the telephone keyboard layout">Čekaj</string>
     <string name="key_popup__threedots_alt" comment="Content description for the three-dots icon in a key popup">Ikonica sa tri tačke. Ako je prikazana, znači da se dodatna slova mogu upisati dugim pritiskom na dugme.</string>
     <!-- One-handed strings -->
-    <string name="one_handed__close_btn_content_description" comment="Content description for the one-handed close button">Odaberi mod za jednu ruku.</string>
-    <string name="one_handed__move_start_btn_content_description" comment="Content description for the one-handed move to left button">Pomjeri tastaturu lijevo.</string>
-    <string name="one_handed__move_end_btn_content_description" comment="Content description for the one-handed move to right button">Pomjeri tastaturu desno.</string>
     <!-- Media strings -->
     <string name="media__tab__emojis" comment="Tab description for emojis in the media UI">Emoji</string>
     <string name="media__tab__emoticons" comment="Tab description for emoticons in the media UI">Emotikon</string>
@@ -39,7 +36,6 @@
     <string name="settings__keyboard__title" comment="Title of Keyboard preferences screen">Tastatura</string>
     <string name="pref__keyboard__number_row__label" comment="Preference title">Red sa brojevima</string>
     <string name="pref__keyboard__group_layout__label" comment="Preference group title">Raspored</string>
-    <string name="pref__keyboard__one_handed_mode__label" comment="Preference title">Mod za jednu ruku</string>
     <string name="pref__keyboard__height_factor__label" comment="Preference title">Visina tastature</string>
     <string name="pref__keyboard__group_keypress__label" comment="Preference group title">Pritisak tastera</string>
     <!-- Smartbar strings -->
@@ -76,8 +72,6 @@
     <string name="enum__landscape_input_ui_mode__never_show" comment="Enum value label">Nikad ne prikaži</string>
     <string name="enum__landscape_input_ui_mode__always_show" comment="Enum value label">Uvijek prikaži</string>
     <string name="enum__landscape_input_ui_mode__dynamically_show" comment="Enum value label">Prikaži dinamički</string>
-    <string name="enum__one_handed_mode__start" comment="Enum value label">Mod za lijevu ruku</string>
-    <string name="enum__one_handed_mode__end" comment="Enum value label">Mod za desnu ruku</string>
     <string name="enum__swipe_action__no_action" comment="Enum value label">Bez akcije</string>
     <string name="enum__swipe_action__hide_keyboard" comment="Enum value label">Sakrij tastaturu</string>
     <string name="enum__swipe_action__insert_space" comment="Enum value label">Unesi razmak</string>

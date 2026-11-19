@@ -121,9 +121,6 @@ data class TextKeyData(
                 CLIPBOARD_CLEAR_HISTORY,
                 CLIPBOARD_CLEAR_FULL_HISTORY,
                 CLIPBOARD_CLEAR_PRIMARY_CLIP,
-                TOGGLE_COMPACT_LAYOUT,
-                COMPACT_LAYOUT_TO_LEFT,
-                COMPACT_LAYOUT_TO_RIGHT,
                 UNDO,
                 REDO,
                 VIEW_CHARACTERS,
@@ -337,25 +334,6 @@ data class TextKeyData(
             type = KeyType.SYSTEM_GUI,
             code = KeyCode.CLIPBOARD_CLEAR_PRIMARY_CLIP,
             label = "clipboard_clear_primary_clip",
-        )
-
-        /** Predefined key data for [KeyCode.TOGGLE_COMPACT_LAYOUT] */
-        val TOGGLE_COMPACT_LAYOUT = TextKeyData(
-            type = KeyType.SYSTEM_GUI,
-            code = KeyCode.TOGGLE_COMPACT_LAYOUT,
-            label = "toggle_compact_layout",
-        )
-        /** Predefined key data for [KeyCode.COMPACT_LAYOUT_TO_LEFT] */
-        val COMPACT_LAYOUT_TO_LEFT = TextKeyData(
-            type = KeyType.SYSTEM_GUI,
-            code = KeyCode.COMPACT_LAYOUT_TO_LEFT,
-            label = "compact_layout_to_left",
-        )
-        /** Predefined key data for [KeyCode.COMPACT_LAYOUT_TO_RIGHT] */
-        val COMPACT_LAYOUT_TO_RIGHT = TextKeyData(
-            type = KeyType.SYSTEM_GUI,
-            code = KeyCode.COMPACT_LAYOUT_TO_RIGHT,
-            label = "compact_layout_to_right",
         )
 
         /** Predefined key data for [KeyCode.UNDO] */

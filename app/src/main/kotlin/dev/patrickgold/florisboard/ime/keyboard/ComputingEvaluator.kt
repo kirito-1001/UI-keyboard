@@ -211,11 +211,6 @@ fun ComputingEvaluator.computeImageVector(data: KeyData): ImageVector? {
         KeyCode.CLIPBOARD_CLEAR_PRIMARY_CLIP -> {
             Icons.Default.DeleteSweep
         }
-        KeyCode.COMPACT_LAYOUT_TO_LEFT,
-        KeyCode.COMPACT_LAYOUT_TO_RIGHT,
-        KeyCode.TOGGLE_COMPACT_LAYOUT -> {
-            context()?.vectorResource(id = R.drawable.ic_accessibility_one_handed)
-        }
         KeyCode.VOICE_INPUT -> {
             Icons.Default.KeyboardVoice
         }

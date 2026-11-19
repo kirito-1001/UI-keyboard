@@ -5,9 +5,6 @@
     <string name="key__phone_wait" comment="Label for the Wait key in the telephone keyboard layout">대기</string>
     <string name="key_popup__threedots_alt" comment="Content description for the three-dots icon in a key popup">삼점 아이콘입니다. 이 아이콘이 보인다면 길게 눌러서 더 많은 글자를 사용할 수 있습니다.</string>
     <!-- One-handed strings -->
-    <string name="one_handed__close_btn_content_description" comment="Content description for the one-handed close button">한손 모드를 닫습니다.</string>
-    <string name="one_handed__move_start_btn_content_description" comment="Content description for the one-handed move to left button">키보드를 왼쪽으로 옮깁니다.</string>
-    <string name="one_handed__move_end_btn_content_description" comment="Content description for the one-handed move to right button">키보드를 오른쪽으로 옮깁니다.</string>
     <!-- Media strings -->
     <string name="settings__media__title">이모지</string>
     <string name="media__tab__emojis" comment="Tab description for emojis in the media UI">이모지</string>
@@ -81,8 +78,6 @@
     <string name="quick_action__toggle_autocorrect__tooltip">자동 수정 켜기 / 끄기</string>
     <string name="quick_action__voice_input" comment="Please mind the limited available space for the quick action strings">음성 입력</string>
     <string name="quick_action__voice_input__tooltip" comment="IME stands for Input Method Editor and is indirectly equivalent to 'keyboard'.">음성 입력 제공자 열기</string>
-    <string name="quick_action__one_handed_mode" comment="Please mind the limited available space for the quick action strings">한손</string>
-    <string name="quick_action__one_handed_mode__tooltip">한손 모드 켜기 / 끄기</string>
     <string name="quick_action__drag_marker" comment="This action is only used as a placeholder in the actions editor drag and drop screen and only visible in debug mode">드래그 마커</string>
     <string name="quick_action__drag_marker__tooltip" comment="This action is only used as a placeholder in the actions editor drag and drop screen and only visible in debug mode">현재 드래그 마커 위치</string>
     <string name="quick_action__noop" comment="Noop=no operation; this action is only used as a placeholder in the actions editor drag and drop screen">없음</string>
@@ -229,8 +224,6 @@
     <string name="pref__keyboard__space_bar_mode__label" comment="Preference title">스페이스 바 라벨</string>
     <string name="pref__keyboard__font_size_multiplier__label" comment="Preference title">글꼴 크기 배율</string>
     <string name="pref__keyboard__group_layout__label" comment="Preference group title">레이아웃</string>
-    <string name="pref__keyboard__one_handed_mode__label" comment="Preference title">한손 모드</string>
-    <string name="pref__keyboard__one_handed_mode_scale_factor__label" comment="Preference title">한손 모드 키보드 너비</string>
     <string name="pref__keyboard__landscape_input_ui_mode__label" comment="Preference value">가로 모드 전체 화면 입력</string>
     <string name="pref__keyboard__height_factor__label" comment="Preference title">키보드 높이</string>
     <string name="pref__keyboard__key_spacing__label" comment="Preference title">키 간격</string>
@@ -506,8 +499,6 @@
     <string name="enum__input_feedback_activation_mode__haptic_respect_system_settings" comment="Enum value label">입력 이벤트가 발생하면 시스템 설정에 따라 진동합니다.</string>
     <string name="enum__input_feedback_activation_mode__haptic_ignore_system_settings" comment="Enum value label">입력 이벤트가 발생하면 시스템 설정에 관계없이 항상 진동합니다.</string>
     <string name="enum__input_shift_state__caps_lock" comment="Enum value label">캡스락</string>
-    <string name="enum__one_handed_mode__start" comment="Enum value label">왼손 모드</string>
-    <string name="enum__one_handed_mode__end" comment="Enum value label">오른손 모드</string>
     <string name="enum__snygg_level__basic" comment="Enum value label">기본</string>
     <string name="enum__snygg_level__basic__description" comment="Enum value description">색상 속성만 보여줍니다. 속성과 규칙은 번역한 명칭을 보여줍니다.</string>
     <string name="enum__snygg_level__advanced" comment="Enum value label">고급</string>

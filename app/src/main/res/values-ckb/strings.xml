@@ -5,9 +5,6 @@
     <string name="key__phone_wait" comment="Label for the Wait key in the telephone keyboard layout">چاوەڕوانبە</string>
     <string name="key_popup__threedots_alt" comment="Content description for the three-dots icon in a key popup">ئایکۆنی سێ نوقتە، ئەگەر چالاک بێت پیت و هێما لاوەکیەکانی خانەی دووەم پیشان ئەدرێن لەکاتی دەست ڕاگرتن</string>
     <!-- One-handed strings -->
-    <string name="one_handed__close_btn_content_description" comment="Content description for the one-handed close button">داخستنی دۆخی بەکارهێنانی یەک دەست</string>
-    <string name="one_handed__move_start_btn_content_description" comment="Content description for the one-handed move to left button">بردنی تەختەکلیل بۆ لای چەپ</string>
-    <string name="one_handed__move_end_btn_content_description" comment="Content description for the one-handed move to right button">بردنی تەختەکلیل بۆ لای ڕاست</string>
     <!-- Media strings -->
     <string name="settings__media__title">خەندەکان</string>
     <string name="media__tab__emojis" comment="Tab description for emojis in the media UI">خەندەکان</string>
@@ -79,8 +76,6 @@
     <string name="quick_action__toggle_autocorrect__tooltip">چالاککردنی ڕاستکردنەوەی نووسین</string>
     <string name="quick_action__voice_input" comment="Please mind the limited available space for the quick action strings">گەڕانی دەنگی</string>
     <string name="quick_action__voice_input__tooltip" comment="IME stands for Input Method Editor and is indirectly equivalent to 'keyboard'.">کردنەوەی تایبەتمەندی گەڕانی دەنگی</string>
-    <string name="quick_action__one_handed_mode" comment="Please mind the limited available space for the quick action strings">دۆخی یەکدەست</string>
-    <string name="quick_action__one_handed_mode__tooltip">چالاککردنی بەکارهێنان بەیەکدەست</string>
     <string name="quick_action__drag_marker" comment="This action is only used as a placeholder in the actions editor drag and drop screen and only visible in debug mode">شوێنی ئامراز</string>
     <string name="quick_action__drag_marker__tooltip" comment="This action is only used as a placeholder in the actions editor drag and drop screen and only visible in debug mode">شوێنی ئامرازەکانی ئێستا</string>
     <string name="quick_action__noop" comment="Noop=no operation; this action is only used as a placeholder in the actions editor drag and drop screen">هیچ نییە</string>
@@ -284,8 +279,6 @@
     <string name="pref__keyboard__utility_key_action__label" comment="Preference title">فرمانی دوگمەی ئامراز</string>
     <string name="pref__keyboard__font_size_multiplier__label" comment="Preference title">قەبارەی فۆنت</string>
     <string name="pref__keyboard__group_layout__label" comment="Preference group title">شێوازەکان</string>
-    <string name="pref__keyboard__one_handed_mode__label" comment="Preference title">بەکارهێنان بە یەک دەست</string>
-    <string name="pref__keyboard__one_handed_mode_scale_factor__label" comment="Preference title">فراوانی شێوازی یەکدەست</string>
     <string name="pref__keyboard__landscape_input_ui_mode__label" comment="Preference value">نووسین بە تەواوی شاشە لە باری خستە سەرلا</string>
     <string name="pref__keyboard__height_factor__label" comment="Preference title">بەرزی تەختەکلیل</string>
     <string name="pref__keyboard__key_spacing__label" comment="Preference title">بۆشایی نێوان دوگمەکان</string>
@@ -678,8 +671,6 @@
     <string name="enum__landscape_input_ui_mode__never_show" comment="Enum value label">شاردنەوە</string>
     <string name="enum__landscape_input_ui_mode__always_show" comment="Enum value label">هەمیشە پیشاندان</string>
     <string name="enum__landscape_input_ui_mode__dynamically_show" comment="Enum value label">پیشاندانی زیرەکانە</string>
-    <string name="enum__one_handed_mode__start" comment="Enum value label">بەکارهێنان بۆ دەستی چەپ</string>
-    <string name="enum__one_handed_mode__end" comment="Enum value label">بەکارهێنان بۆ دەستی ڕاست</string>
     <string name="enum__shape_corner__top_start" comment="Enum value label">سەرەتای سەرەوە</string>
     <string name="enum__shape_corner__top_end" comment="Enum value label">کۆتایی سەرەوە</string>
     <string name="enum__shape_corner__bottom_end" comment="Enum value label">کۆتایی خوارەوە</string>

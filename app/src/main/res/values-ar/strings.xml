@@ -5,9 +5,6 @@
     <string name="key__phone_wait" comment="Label for the Wait key in the telephone keyboard layout">انتظر</string>
     <string name="key_popup__threedots_alt" comment="Content description for the three-dots icon in a key popup">أيقونة ثلاث نقاط. إذا كانت ظاهرة ، تشير إلى أنه يمكن استخدام المزيد من الأحرف إذا تم الضغط عليها لفترة أطول.</string>
     <!-- One-handed strings -->
-    <string name="one_handed__close_btn_content_description" comment="Content description for the one-handed close button">غلق وضع اليد الواحدة.</string>
-    <string name="one_handed__move_start_btn_content_description" comment="Content description for the one-handed move to left button">نقل لوحة المفاتيح إلى اليسار.</string>
-    <string name="one_handed__move_end_btn_content_description" comment="Content description for the one-handed move to right button">نقل لوحة المفاتيح إلى اليمين.</string>
     <!-- Media strings -->
     <string name="settings__media__title">الرموز التعبيرية</string>
     <string name="media__tab__emojis" comment="Tab description for emojis in the media UI">الرموز التعبيرية</string>
@@ -90,8 +87,6 @@
     <string name="quick_action__toggle_autocorrect__tooltip">تمكين التصحيح التلقائي</string>
     <string name="quick_action__voice_input" comment="Please mind the limited available space for the quick action strings">إدخال الصوت</string>
     <string name="quick_action__voice_input__tooltip" comment="IME stands for Input Method Editor and is indirectly equivalent to 'keyboard'.">افتح موفر خدمة الإدخال الصوتي</string>
-    <string name="quick_action__one_handed_mode" comment="Please mind the limited available space for the quick action strings">اليد الواحدة</string>
-    <string name="quick_action__one_handed_mode__tooltip">تفعيل وضع اليد الواحدة</string>
     <string name="quick_action__drag_marker" comment="This action is only used as a placeholder in the actions editor drag and drop screen and only visible in debug mode">سحب التمييز</string>
     <string name="quick_action__drag_marker__tooltip" comment="This action is only used as a placeholder in the actions editor drag and drop screen and only visible in debug mode">موضع علامة السحب الحالي</string>
     <string name="quick_action__noop" comment="Noop=no operation; this action is only used as a placeholder in the actions editor drag and drop screen">لا شَيْء</string>
@@ -303,8 +298,6 @@
     <string name="pref__keyboard__capitalization_behavior__label" comment="Preference title">سلوك الأحرف الكبيرة</string>
     <string name="pref__keyboard__font_size_multiplier__label" comment="Preference title">مضاعف حجم الخط</string>
     <string name="pref__keyboard__group_layout__label" comment="Preference group title">التخطيط</string>
-    <string name="pref__keyboard__one_handed_mode__label" comment="Preference title">وضع اليد الواحدة</string>
-    <string name="pref__keyboard__one_handed_mode_scale_factor__label" comment="Preference title">عرض لوحة مفاتيح الوضع بيد واحدة</string>
     <string name="pref__keyboard__landscape_input_ui_mode__label" comment="Preference value">إدخال ملء الشاشة الأفقي</string>
     <string name="pref__keyboard__height_factor__label" comment="Preference title">ارتفاع لوحة المفاتيح</string>
     <string name="pref__keyboard__key_spacing__label" comment="Preference title">المسافة بين المفاتيح</string>
@@ -803,8 +796,6 @@
     <string name="enum__landscape_input_ui_mode__never_show" comment="Enum value label">لا تُظهر أبداً</string>
     <string name="enum__landscape_input_ui_mode__always_show" comment="Enum value label">الإظهار دائماً</string>
     <string name="enum__landscape_input_ui_mode__dynamically_show" comment="Enum value label">يعين بشكل ديناميكي</string>
-    <string name="enum__one_handed_mode__start" comment="Enum value label">وضع اليد اليسرى</string>
-    <string name="enum__one_handed_mode__end" comment="Enum value label">وضع اليد اليمنى</string>
     <string name="enum__shape_corner__top_start" comment="Enum value label">بداية علوية</string>
     <string name="enum__shape_corner__top_end" comment="Enum value label">نهاية علوية</string>
     <string name="enum__shape_corner__bottom_end" comment="Enum value label">نهاية سفلية</string>

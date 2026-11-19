@@ -118,8 +118,6 @@ fun ProvideKeyboardRowBaseHeight(content: @Composable () -> Unit) {
 
     val heightFactorPortrait by prefs.keyboard.heightFactorPortrait.observeAsTransformingState { it.toFloat() / 100f }
     val heightFactorLandscape by prefs.keyboard.heightFactorLandscape.observeAsTransformingState { it.toFloat() / 100f }
-    val oneHandedMode by prefs.keyboard.oneHandedModeEnabled.observeAsState()
-    val oneHandedModeScaleFactor by prefs.keyboard.oneHandedModeScaleFactor.observeAsTransformingState { it.toFloat() / 100f }
 
     // Only set systemBarHeights on api 35 or later because https://developer.android.com/about/versions/15/behavior-changes-15#stable-configuration
     val systemBarHeights = if (AndroidVersion.ATLEAST_API35_V) {
@@ -129,11 +127,11 @@ fun ProvideKeyboardRowBaseHeight(content: @Composable () -> Unit) {
     }
     val baseRowHeight = remember(
         configuration, resources, heightFactorPortrait, heightFactorLandscape,
-        oneHandedMode, oneHandedModeScaleFactor, systemBarHeights,
+        systemBarHeights,
     ) {
         calcInputViewHeight(resources, systemBarHeights) * when {
             configuration.isOrientationLandscape() -> heightFactorLandscape
-            else -> heightFactorPortrait * (if (oneHandedMode) oneHandedModeScaleFactor else 1f)
+            else -> heightFactorPortrait
         }
     }
     val smartbarHeightFactor by prefs.smartbar.heightFactor.observeAsTransformingState { it.toFloat() / 100f }

@@ -91,8 +91,6 @@ import dev.patrickgold.florisboard.ime.landscapeinput.LandscapeInputUiMode
 import dev.patrickgold.florisboard.ime.lifecycle.LifecycleInputMethodService
 import dev.patrickgold.florisboard.ime.media.MediaInputLayout
 import dev.patrickgold.florisboard.ime.nlp.NlpInlineAutofill
-import dev.patrickgold.florisboard.ime.onehanded.OneHandedMode
-import dev.patrickgold.florisboard.ime.onehanded.OneHandedPanel
 import dev.patrickgold.florisboard.ime.sheet.BottomSheetHostUi
 import dev.patrickgold.florisboard.ime.sheet.isBottomSheetShowing
 import dev.patrickgold.florisboard.ime.smartbar.ExtendedActionsPlacement
@@ -678,23 +676,10 @@ class FlorisImeService : LifecycleInputMethodService() {
                         .safeDrawingPadding()
                         .padding(bottom = bottomOffset),
                 ) {
-                    val oneHandedMode by prefs.keyboard.oneHandedMode.observeAsState()
-                    val oneHandedModeEnabled by prefs.keyboard.oneHandedModeEnabled.observeAsState()
-                    val oneHandedModeScaleFactor by prefs.keyboard.oneHandedModeScaleFactor.observeAsState()
-                    val keyboardWeight = when {
-                        !oneHandedModeEnabled || configuration.isOrientationLandscape() -> 1f
-                        else -> oneHandedModeScaleFactor / 100f
-                    }
-                    if (oneHandedModeEnabled && oneHandedMode == OneHandedMode.END && configuration.isOrientationPortrait()) {
-                        OneHandedPanel(
-                            panelSide = OneHandedMode.START,
-                            weight = 1f - keyboardWeight,
-                        )
-                    }
                     CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
                         Box(
                             modifier = Modifier
-                                .weight(keyboardWeight)
+                                .weight(1f)
                                 .wrapContentHeight(),
                         ) {
                             when (state.imeUiMode) {
@@ -703,12 +688,6 @@ class FlorisImeService : LifecycleInputMethodService() {
                                 ImeUiMode.CLIPBOARD -> ClipboardInputLayout()
                             }
                         }
-                    }
-                    if (oneHandedModeEnabled && oneHandedMode == OneHandedMode.START && configuration.isOrientationPortrait()) {
-                        OneHandedPanel(
-                            panelSide = OneHandedMode.END,
-                            weight = 1f - keyboardWeight,
-                        )
                     }
                 }
             }

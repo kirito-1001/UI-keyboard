@@ -5,9 +5,6 @@
     <string name="key__phone_wait" comment="Label for the Wait key in the telephone keyboard layout">Warten</string>
     <string name="key_popup__threedots_alt" comment="Content description for the three-dots icon in a key popup">Drei-Punkte-Symbol. Zeigt an, dass durch langes Drücken mehr Zeichen verwendet werden können.</string>
     <!-- One-handed strings -->
-    <string name="one_handed__close_btn_content_description" comment="Content description for the one-handed close button">Einhandmodus schließen.</string>
-    <string name="one_handed__move_start_btn_content_description" comment="Content description for the one-handed move to left button">Tastatur nach links verschieben.</string>
-    <string name="one_handed__move_end_btn_content_description" comment="Content description for the one-handed move to right button">Tastatur nach rechts verschieben.</string>
     <!-- Media strings -->
     <string name="settings__media__title">Emojis</string>
     <string name="media__tab__emojis" comment="Tab description for emojis in the media UI">Emojis</string>
@@ -87,8 +84,6 @@
     <string name="quick_action__toggle_autocorrect__tooltip">Autokorrektur umschalten</string>
     <string name="quick_action__voice_input" comment="Please mind the limited available space for the quick action strings">Spracheinga.</string>
     <string name="quick_action__voice_input__tooltip" comment="IME stands for Input Method Editor and is indirectly equivalent to 'keyboard'.">Öffne Anbieter für Spracheingabe</string>
-    <string name="quick_action__one_handed_mode" comment="Please mind the limited available space for the quick action strings">Einhändig</string>
-    <string name="quick_action__one_handed_mode__tooltip">Einhandmodus umschalten</string>
     <string name="quick_action__drag_marker" comment="This action is only used as a placeholder in the actions editor drag and drop screen and only visible in debug mode">Zug-Marker</string>
     <string name="quick_action__drag_marker__tooltip" comment="This action is only used as a placeholder in the actions editor drag and drop screen and only visible in debug mode">Aktuelle Marker-Position</string>
     <string name="quick_action__noop" comment="Noop=no operation; this action is only used as a placeholder in the actions editor drag and drop screen">Keine</string>
@@ -326,8 +321,6 @@
     <string name="pref__keyboard__capitalization_behavior__label" comment="Preference title">Großschreibverhalten</string>
     <string name="pref__keyboard__font_size_multiplier__label" comment="Preference title">Schriftgröße</string>
     <string name="pref__keyboard__group_layout__label" comment="Preference group title">Layout</string>
-    <string name="pref__keyboard__one_handed_mode__label" comment="Preference title">Einhandmodus</string>
-    <string name="pref__keyboard__one_handed_mode_scale_factor__label" comment="Preference title">Breite der Tastatur im Einhandmodus</string>
     <string name="pref__keyboard__landscape_input_ui_mode__label" comment="Preference value">Querformat Vollbild Eingabe</string>
     <string name="pref__keyboard__height_factor__label" comment="Preference title">Tastaturhöhe</string>
     <string name="pref__keyboard__key_spacing__label" comment="Preference title">Platz zwischen Tasten</string>
@@ -838,8 +831,6 @@
     <string name="enum__landscape_input_ui_mode__never_show" comment="Enum value label">Nie anzeigen</string>
     <string name="enum__landscape_input_ui_mode__always_show" comment="Enum value label">Immer anzeigen</string>
     <string name="enum__landscape_input_ui_mode__dynamically_show" comment="Enum value label">Dynamisch anzeigen</string>
-    <string name="enum__one_handed_mode__start" comment="Enum value label">Linkshänder-Modus</string>
-    <string name="enum__one_handed_mode__end" comment="Enum value label">Rechtshänder-Modus</string>
     <string name="enum__shape_corner__top_start" comment="Enum value label">Anfang oben</string>
     <string name="enum__shape_corner__top_end" comment="Enum value label">Ende oben</string>
     <string name="enum__shape_corner__bottom_end" comment="Enum value label">Ende unten</string>

@@ -5,9 +5,6 @@
     <string name="key__phone_wait" comment="Label for the Wait key in the telephone keyboard layout">Aguarde</string>
     <string name="key_popup__threedots_alt" comment="Content description for the three-dots icon in a key popup">Ícone de 3 pontos. Se mostrado, indica que pode utilizar mais letras com um toque longo.</string>
     <!-- One-handed strings -->
-    <string name="one_handed__close_btn_content_description" comment="Content description for the one-handed close button">Fechar modo de uma mão.</string>
-    <string name="one_handed__move_start_btn_content_description" comment="Content description for the one-handed move to left button">Mover teclado para a esquerda.</string>
-    <string name="one_handed__move_end_btn_content_description" comment="Content description for the one-handed move to right button">Mover teclado para a direita.</string>
     <!-- Media strings -->
     <string name="settings__media__title">Emojis</string>
     <string name="media__tab__emojis" comment="Tab description for emojis in the media UI">Emojis</string>
@@ -81,8 +78,6 @@
     <string name="quick_action__toggle_autocorrect__tooltip">Alternar correção automática</string>
     <string name="quick_action__voice_input" comment="Please mind the limited available space for the quick action strings">Etd. por voz</string>
     <string name="quick_action__voice_input__tooltip" comment="IME stands for Input Method Editor and is indirectly equivalent to 'keyboard'.">Abrir provedor de entrada de voz</string>
-    <string name="quick_action__one_handed_mode" comment="Please mind the limited available space for the quick action strings">Modo uma mão</string>
-    <string name="quick_action__one_handed_mode__tooltip">Ativar/desativar modo uma mão</string>
     <string name="quick_action__drag_marker" comment="This action is only used as a placeholder in the actions editor drag and drop screen and only visible in debug mode">Arrastar</string>
     <string name="quick_action__drag_marker__tooltip" comment="This action is only used as a placeholder in the actions editor drag and drop screen and only visible in debug mode">Posição atual do marcador de arrastar</string>
     <!-- Incognito mode strings -->
@@ -244,8 +239,6 @@
     <string name="pref__keyboard__utility_key_action__label" comment="Preference title">Ação da tecla utilitária</string>
     <string name="pref__keyboard__font_size_multiplier__label" comment="Preference title">Multiplicador do tamanho das letras</string>
     <string name="pref__keyboard__group_layout__label" comment="Preference group title">Disposição</string>
-    <string name="pref__keyboard__one_handed_mode__label" comment="Preference title">Modo de uma mão</string>
-    <string name="pref__keyboard__one_handed_mode_scale_factor__label" comment="Preference title">Largura do teclado no modo de uma mão</string>
     <string name="pref__keyboard__landscape_input_ui_mode__label" comment="Preference value">Introdução em ecrã completo (horizontal)</string>
     <string name="pref__keyboard__height_factor__label" comment="Preference title">Altura do teclado</string>
     <string name="pref__keyboard__key_spacing__label" comment="Preference title">Espaço entre teclas</string>
@@ -593,8 +586,6 @@
     <string name="enum__landscape_input_ui_mode__never_show" comment="Enum value label">Não mostrar</string>
     <string name="enum__landscape_input_ui_mode__always_show" comment="Enum value label">Mostrar sempre</string>
     <string name="enum__landscape_input_ui_mode__dynamically_show" comment="Enum value label">Mostrar dinamicamente</string>
-    <string name="enum__one_handed_mode__start" comment="Enum value label">Modo esquerdino</string>
-    <string name="enum__one_handed_mode__end" comment="Enum value label">Modo destro</string>
     <string name="enum__shape_corner__top_start" comment="Enum value label">Início do topo</string>
     <string name="enum__shape_corner__top_end" comment="Enum value label">Fim do topo</string>
     <string name="enum__shape_corner__bottom_end" comment="Enum value label">Fim do fundo</string>

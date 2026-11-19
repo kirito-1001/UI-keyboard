@@ -5,9 +5,6 @@
     <string name="key__phone_wait" comment="Label for the Wait key in the telephone keyboard layout">Prit</string>
     <string name="key_popup__threedots_alt" comment="Content description for the three-dots icon in a key popup">Ikonë me tre pika. Nëse është e dukshme, do të thotë që më shumë shkronja mund te përdoren nëse shtypen më gjatë.</string>
     <!-- One-handed strings -->
-    <string name="one_handed__close_btn_content_description" comment="Content description for the one-handed close button">Mbyll metodën e përdorimit me një dorë.</string>
-    <string name="one_handed__move_start_btn_content_description" comment="Content description for the one-handed move to left button">Lëviz tastierën në të majtë.</string>
-    <string name="one_handed__move_end_btn_content_description" comment="Content description for the one-handed move to right button">Lëviz tastierën në të djathtë.</string>
     <!-- Media strings -->
     <string name="settings__media__title">Emojis</string>
     <string name="media__tab__emojis" comment="Tab description for emojis in the media UI">Emojis</string>
@@ -54,8 +51,6 @@
     <string name="quick_action__toggle_autocorrect__tooltip">Ndiz / Fik autokorrigjuesin</string>
     <string name="quick_action__voice_input" comment="Please mind the limited available space for the quick action strings">Hyrja me zë</string>
     <string name="quick_action__voice_input__tooltip" comment="IME stands for Input Method Editor and is indirectly equivalent to 'keyboard'.">Hap marrësin e hyrjes zanore</string>
-    <string name="quick_action__one_handed_mode" comment="Please mind the limited available space for the quick action strings">Me një dorë</string>
-    <string name="quick_action__one_handed_mode__tooltip">Ndiz / Fik metodën e përdorimit me një dorë</string>
     <string name="quick_action__drag_marker__tooltip" comment="This action is only used as a placeholder in the actions editor drag and drop screen and only visible in debug mode">Pozicioni i tanishëm i shënjesuit me të tërhequr</string>
     <string name="quick_action__noop" comment="Noop=no operation; this action is only used as a placeholder in the actions editor drag and drop screen">Asnjë</string>
     <string name="quick_action__noop__tooltip" comment="Noop=no operation; this action is only used as a placeholder in the actions editor drag and drop screen">Asnjë operim</string>

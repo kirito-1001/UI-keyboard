@@ -5,9 +5,6 @@
     <string name="key__phone_wait" comment="Label for the Wait key in the telephone keyboard layout">等待</string>
     <string name="key_popup__threedots_alt" comment="Content description for the three-dots icon in a key popup">三点图标。如果可见，表明长按后可使用更多字符。</string>
     <!-- One-handed strings -->
-    <string name="one_handed__close_btn_content_description" comment="Content description for the one-handed close button">关闭单手模式。</string>
-    <string name="one_handed__move_start_btn_content_description" comment="Content description for the one-handed move to left button">将键盘移动到左边。</string>
-    <string name="one_handed__move_end_btn_content_description" comment="Content description for the one-handed move to right button">将键盘移动到右边。</string>
     <!-- Media strings -->
     <string name="settings__media__title">表情符号</string>
     <string name="media__tab__emojis" comment="Tab description for emojis in the media UI">表情符号</string>
@@ -86,8 +83,6 @@
     <string name="quick_action__toggle_autocorrect__tooltip">自动更正开关</string>
     <string name="quick_action__voice_input" comment="Please mind the limited available space for the quick action strings">语音输入</string>
     <string name="quick_action__voice_input__tooltip" comment="IME stands for Input Method Editor and is indirectly equivalent to 'keyboard'.">打开语音输入提供者</string>
-    <string name="quick_action__one_handed_mode" comment="Please mind the limited available space for the quick action strings">单手模式</string>
-    <string name="quick_action__one_handed_mode__tooltip">单手模式开关</string>
     <string name="quick_action__drag_marker" comment="This action is only used as a placeholder in the actions editor drag and drop screen and only visible in debug mode">拖动标记</string>
     <string name="quick_action__drag_marker__tooltip" comment="This action is only used as a placeholder in the actions editor drag and drop screen and only visible in debug mode">当前拖动标记位置</string>
     <string name="quick_action__noop" comment="Noop=no operation; this action is only used as a placeholder in the actions editor drag and drop screen">无</string>
@@ -300,8 +295,6 @@
     <string name="pref__keyboard__capitalization_behavior__label" comment="Preference title">大小写行为模式</string>
     <string name="pref__keyboard__font_size_multiplier__label" comment="Preference title">字体大小缩放倍率</string>
     <string name="pref__keyboard__group_layout__label" comment="Preference group title">布局</string>
-    <string name="pref__keyboard__one_handed_mode__label" comment="Preference title">单手模式</string>
-    <string name="pref__keyboard__one_handed_mode_scale_factor__label" comment="Preference title">单手模式键盘宽度</string>
     <string name="pref__keyboard__landscape_input_ui_mode__label" comment="Preference value">横向全屏输入</string>
     <string name="pref__keyboard__height_factor__label" comment="Preference title">键盘高度</string>
     <string name="pref__keyboard__key_spacing__label" comment="Preference title">键间距</string>
@@ -777,8 +770,6 @@
     <string name="enum__landscape_input_ui_mode__never_show" comment="Enum value label">从不显示</string>
     <string name="enum__landscape_input_ui_mode__always_show" comment="Enum value label">始终显示</string>
     <string name="enum__landscape_input_ui_mode__dynamically_show" comment="Enum value label">动态显示</string>
-    <string name="enum__one_handed_mode__start" comment="Enum value label">左手模式</string>
-    <string name="enum__one_handed_mode__end" comment="Enum value label">右手模式</string>
     <string name="enum__shape_corner__top_start" comment="Enum value label">顶部起始</string>
     <string name="enum__shape_corner__top_end" comment="Enum value label">顶部末尾</string>
     <string name="enum__shape_corner__bottom_end" comment="Enum value label">底部末尾</string>

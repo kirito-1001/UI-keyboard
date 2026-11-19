@@ -39,7 +39,6 @@ import dev.patrickgold.florisboard.ime.media.emoji.EmojiHistory
 import dev.patrickgold.florisboard.ime.media.emoji.EmojiSkinTone
 import dev.patrickgold.florisboard.ime.media.emoji.EmojiSuggestionType
 import dev.patrickgold.florisboard.ime.nlp.SpellingLanguageMode
-import dev.patrickgold.florisboard.ime.onehanded.OneHandedMode
 import dev.patrickgold.florisboard.ime.keyboard.KeyCustomizations
 import dev.patrickgold.florisboard.ime.smartbar.CandidatesDisplayMode
 import dev.patrickgold.florisboard.ime.smartbar.ExtendedActionsPlacement
@@ -535,18 +534,6 @@ abstract class FlorisPreferenceModel : PreferenceModel() {
             key = "keyboard__font_size_multiplier_landscape",
             default = 100,
         )
-        val oneHandedMode = enum(
-            key = "keyboard__one_handed_mode",
-            default = OneHandedMode.END,
-        )
-        val oneHandedModeEnabled = boolean(
-            key = "keyboard__one_handed_mode_enabled",
-            default = false,
-        )
-        val oneHandedModeScaleFactor = int(
-            key = "keyboard__one_handed_mode_scale_factor",
-            default = 87,
-        )
         val landscapeInputUiMode = enum(
             key = "keyboard__landscape_input_ui_mode",
             default = LandscapeInputUiMode.DYNAMICALLY_SHOW,
@@ -622,18 +609,12 @@ abstract class FlorisPreferenceModel : PreferenceModel() {
         @Composable
         fun fontSizeMultiplier(): Float {
             val configuration = LocalConfiguration.current
-            val oneHandedModeEnabled by oneHandedModeEnabled.observeAsState()
-            val oneHandedModeFactor by oneHandedModeScaleFactor.observeAsTransformingState { it / 100.0f }
             val fontSizeMultiplierBase by if (configuration.isOrientationPortrait()) {
                 fontSizeMultiplierPortrait
             } else {
                 fontSizeMultiplierLandscape
             }.observeAsTransformingState { it / 100.0f }
-            val fontSizeMultiplier = fontSizeMultiplierBase * if (oneHandedModeEnabled && configuration.isOrientationPortrait()) {
-                oneHandedModeFactor
-            } else {
-                1.0f
-            }
+            val fontSizeMultiplier = fontSizeMultiplierBase
             return fontSizeMultiplier
         }
     }
@@ -942,28 +923,17 @@ abstract class FlorisPreferenceModel : PreferenceModel() {
                 entry.transform(key = "clipboard__suggestion_timeout")
             }
 
-            //Migrate one hand mode prefs keep until: 0.7 dev cycle
-            "keyboard__one_handed_mode" -> {
-                if (entry.rawValue == "OFF") {
-                    entry.reset()
-                } else {
-                    entry.keepAsIs()
-                }
-            }
             "smartbar__action_arrangement" -> {
-                fun migrateAction(action: QuickAction): QuickAction {
-                    return if (action is QuickAction.InsertKey && action.data.code == KeyCode.COMPACT_LAYOUT_TO_RIGHT) {
-                        action.copy(TextKeyData.TOGGLE_COMPACT_LAYOUT)
-                    } else {
-                        action
-                    }
+                // The one-handed mode was removed: drop its toolbar actions (key codes -110..-112)
+                fun isRemovedAction(action: QuickAction): Boolean {
+                    return action is QuickAction.InsertKey && action.data.code in -112..-110
                 }
 
                 val arrangement = QuickActionJsonConfig.decodeFromString<QuickActionArrangement>(entry.rawValue)
                 var newArrangement = arrangement.copy(
-                    stickyAction = arrangement.stickyAction?.let{ migrateAction(it) },
-                    dynamicActions = arrangement.dynamicActions.map { migrateAction(it) },
-                    hiddenActions = arrangement.hiddenActions.map { migrateAction(it) },
+                    stickyAction = arrangement.stickyAction?.takeIf { !isRemovedAction(it) },
+                    dynamicActions = arrangement.dynamicActions.filter { !isRemovedAction(it) },
+                    hiddenActions = arrangement.hiddenActions.filter { !isRemovedAction(it) },
                 )
                 if (QuickAction.InsertKey(TextKeyData.LANGUAGE_SWITCH) !in newArrangement) {
                     newArrangement = newArrangement.copy(

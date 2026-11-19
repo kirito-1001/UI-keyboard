@@ -5,9 +5,6 @@
     <string name="key__phone_wait" comment="Label for the Wait key in the telephone keyboard layout">Ожидание</string>
     <string name="key_popup__threedots_alt" comment="Content description for the three-dots icon in a key popup">Значок троеточия. Если отображается, показывает, что можно использовать больше знаков при долгом нажатии.</string>
     <!-- One-handed strings -->
-    <string name="one_handed__close_btn_content_description" comment="Content description for the one-handed close button">Закрыть режим \"одной руки\".</string>
-    <string name="one_handed__move_start_btn_content_description" comment="Content description for the one-handed move to left button">Переместить клавиатуру влево.</string>
-    <string name="one_handed__move_end_btn_content_description" comment="Content description for the one-handed move to right button">Переместить клавиатуру вправо.</string>
     <!-- Media strings -->
     <string name="settings__media__title">Эмодзи</string>
     <string name="media__tab__emojis" comment="Tab description for emojis in the media UI">Эмодзи</string>
@@ -90,8 +87,6 @@
     <string name="quick_action__toggle_autocorrect__tooltip">Включить автоисправление</string>
     <string name="quick_action__voice_input" comment="Please mind the limited available space for the quick action strings">Голос. ввод</string>
     <string name="quick_action__voice_input__tooltip" comment="IME stands for Input Method Editor and is indirectly equivalent to 'keyboard'.">Открытый провайдер голосового ввода</string>
-    <string name="quick_action__one_handed_mode" comment="Please mind the limited available space for the quick action strings">Одной рукой</string>
-    <string name="quick_action__one_handed_mode__tooltip">Включить режим управления одной рукой</string>
     <string name="quick_action__drag_marker" comment="This action is only used as a placeholder in the actions editor drag and drop screen and only visible in debug mode">Курсор</string>
     <string name="quick_action__drag_marker__tooltip" comment="This action is only used as a placeholder in the actions editor drag and drop screen and only visible in debug mode">Текущее положение маркера перетаскивания</string>
     <string name="quick_action__noop" comment="Noop=no operation; this action is only used as a placeholder in the actions editor drag and drop screen">Отсутствует</string>
@@ -401,8 +396,6 @@
     <string name="pref__keyboard__capitalization_behavior__label" comment="Preference title">Поведение кнопки изменения регистра</string>
     <string name="pref__keyboard__font_size_multiplier__label" comment="Preference title">Множитель размера шрифта</string>
     <string name="pref__keyboard__group_layout__label" comment="Preference group title">Внешний вид</string>
-    <string name="pref__keyboard__one_handed_mode__label" comment="Preference title">Управление одной рукой</string>
-    <string name="pref__keyboard__one_handed_mode_scale_factor__label" comment="Preference title">Ширина в режиме одной руки</string>
     <string name="pref__keyboard__landscape_input_ui_mode__label" comment="Preference value">На весь экран в альбомном режиме</string>
     <string name="pref__keyboard__height_factor__label" comment="Preference title">Высота клавиатуры</string>
     <string name="pref__keyboard__key_spacing__label" comment="Preference title">Расстояние между кнопками</string>
@@ -948,8 +941,6 @@
     <string name="enum__landscape_input_ui_mode__never_show" comment="Enum value label">Не показывать</string>
     <string name="enum__landscape_input_ui_mode__always_show" comment="Enum value label">Всегда показывать</string>
     <string name="enum__landscape_input_ui_mode__dynamically_show" comment="Enum value label">Автоматически</string>
-    <string name="enum__one_handed_mode__start" comment="Enum value label">Для левши</string>
-    <string name="enum__one_handed_mode__end" comment="Enum value label">Для правши</string>
     <string name="enum__shape_corner__top_start" comment="Enum value label">Верх начало</string>
     <string name="enum__shape_corner__top_end" comment="Enum value label">Верх конец</string>
     <string name="enum__shape_corner__bottom_end" comment="Enum value label">Низ конец</string>

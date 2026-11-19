@@ -88,6 +88,16 @@ data class QuickActionArrangement(
         return copy(dynamicActions = dynamicActions + vault)
     }
 
+    /** Drops the toolbar actions of the removed one-handed mode (key codes -110..-112) from saved arrangements. */
+    fun withoutOneHandedActions(): QuickActionArrangement {
+        fun removed(action: QuickAction) = action is QuickAction.InsertKey && action.data.code in -112..-110
+        return copy(
+            stickyAction = stickyAction?.takeIf { !removed(it) },
+            dynamicActions = dynamicActions.filter { !removed(it) },
+            hiddenActions = hiddenActions.filter { !removed(it) },
+        )
+    }
+
     fun distinct(): QuickActionArrangement {
         val distinctSet = mutableSetOf<QuickAction>()
         if (stickyAction != null) {
@@ -116,7 +126,6 @@ data class QuickActionArrangement(
                 QuickAction.InsertKey(TextKeyData.TOGGLE_INCOGNITO_MODE),
                 QuickAction.InsertKey(TextKeyData.IME_UI_MODE_CLIPBOARD),
                 QuickAction.InsertKey(TextKeyData.IME_UI_MODE_MEDIA),
-                QuickAction.InsertKey(TextKeyData.TOGGLE_COMPACT_LAYOUT),
                 QuickAction.InsertKey(TextKeyData.TOGGLE_AUTOCORRECT),
                 QuickAction.InsertKey(TextKeyData.ARROW_UP),
                 QuickAction.InsertKey(TextKeyData.ARROW_DOWN),

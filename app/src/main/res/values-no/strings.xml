@@ -5,9 +5,6 @@
     <string name="key__phone_wait" comment="Label for the Wait key in the telephone keyboard layout">Vent</string>
     <string name="key_popup__threedots_alt" comment="Content description for the three-dots icon in a key popup">Ikon med tre prikker. Hvis synlig, indikerer det at flere bokstaver kan brukes hvis de trykkes lenger.</string>
     <!-- One-handed strings -->
-    <string name="one_handed__close_btn_content_description" comment="Content description for the one-handed close button">Lukk enhåndsmodus.</string>
-    <string name="one_handed__move_start_btn_content_description" comment="Content description for the one-handed move to left button">Flytt tastaturet til venstre.</string>
-    <string name="one_handed__move_end_btn_content_description" comment="Content description for the one-handed move to right button">Flytt tastaturet til høyre.</string>
     <!-- Media strings -->
     <string name="settings__media__title">Emojier</string>
     <string name="media__tab__emojis" comment="Tab description for emojis in the media UI">Emojier</string>
@@ -62,8 +59,6 @@
     <string name="quick_action__toggle_autocorrect__tooltip">Skru av/på autoretting</string>
     <string name="quick_action__voice_input" comment="Please mind the limited available space for the quick action strings">Talefôring</string>
     <string name="quick_action__voice_input__tooltip" comment="IME stands for Input Method Editor and is indirectly equivalent to 'keyboard'.">Åpne taleinndataleverandør</string>
-    <string name="quick_action__one_handed_mode" comment="Please mind the limited available space for the quick action strings">Eihåndsmodus</string>
-    <string name="quick_action__one_handed_mode__tooltip">Skru av/på eihåndsmodus</string>
     <string name="quick_action__drag_marker" comment="This action is only used as a placeholder in the actions editor drag and drop screen and only visible in debug mode">Dra-markør</string>
     <string name="quick_action__drag_marker__tooltip" comment="This action is only used as a placeholder in the actions editor drag and drop screen and only visible in debug mode">Dra-markørens posisjon</string>
     <string name="quick_action__noop" comment="Noop=no operation; this action is only used as a placeholder in the actions editor drag and drop screen">Ingen</string>
@@ -213,8 +208,6 @@
     <string name="pref__keyboard__utility_key_action__label" comment="Preference title">Verktøytastfunksjon</string>
     <string name="pref__keyboard__font_size_multiplier__label" comment="Preference title">Skriftstørrelse multiplikator</string>
     <string name="pref__keyboard__group_layout__label" comment="Preference group title">Oppsett</string>
-    <string name="pref__keyboard__one_handed_mode__label" comment="Preference title">Enhåndsmodus</string>
-    <string name="pref__keyboard__one_handed_mode_scale_factor__label" comment="Preference title">Tastaturbredde i enhåndsmodus</string>
     <string name="pref__keyboard__landscape_input_ui_mode__label" comment="Preference value">Landskap fullskjerm input</string>
     <string name="pref__keyboard__height_factor__label" comment="Preference title">Tastaturhøyde</string>
     <string name="pref__keyboard__key_spacing__label" comment="Preference title">Tasteavstand</string>
@@ -471,8 +464,6 @@
     <string name="enum__landscape_input_ui_mode__never_show" comment="Enum value label">Vis aldri</string>
     <string name="enum__landscape_input_ui_mode__always_show" comment="Enum value label">Vis alltid</string>
     <string name="enum__landscape_input_ui_mode__dynamically_show" comment="Enum value label">Dynamisk visning</string>
-    <string name="enum__one_handed_mode__start" comment="Enum value label">Venstrehåndsmodus</string>
-    <string name="enum__one_handed_mode__end" comment="Enum value label">Høyrehåndsmodus</string>
     <string name="enum__smartbar_layout__suggestions_only" comment="Enum value label">Bare råd</string>
     <string name="enum__smartbar_layout__actions_only" comment="Enum value label">Bare gjerninger</string>
     <string name="enum__snygg_level__basic" comment="Enum value label">Enkel</string>

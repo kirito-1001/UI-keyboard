@@ -83,6 +83,11 @@ Entry cards (`ime/uikb/VaultViews.kt`): taller (min 128dp), title pill in the to
 badge left of Arabic names, right of others), data cells and pill use the blurred picture + dark tint when the entry has a picture. The panel has round settings and back buttons.
 Built-in voice typing no longer stops by itself (watchdog, immediate restarts); only a missing permission pauses it.
 
+One-handed mode removed (2026-11-19, Khaled's decision): `ime/onehanded/`, its prefs, settings entries, toolbar action (key codes -110..-112),
+strings and dimens are gone; saved toolbar arrangements are cleaned by `QuickActionArrangement.withoutOneHandedActions()`. The theme elements
+`one-handed-panel` / `one-handed-panel-button` (and their strings) were kept on purpose because the bundled theme JSON files mention them.
+A floating / draggable keyboard was discussed and not built (IME window is fixed to the bottom; risky without a compiler).
+
 ## Pending / open
 - The old branch `typo-suggestions` is merged and can be deleted by Khaled in GitHub (Claude cannot delete it).
 - The "100 times more frequent" rule in `UiDictionary.corrections` may need tuning if corrections feel too eager.

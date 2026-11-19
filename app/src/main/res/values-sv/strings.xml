@@ -4,9 +4,6 @@
     <string name="key__phone_pause" comment="Label for the Pause key in the telephone keyboard layout">Pausa</string>
     <string name="key__phone_wait" comment="Label for the Wait key in the telephone keyboard layout">Vänta</string>
     <!-- One-handed strings -->
-    <string name="one_handed__close_btn_content_description" comment="Content description for the one-handed close button">Stäng enhandsläge.</string>
-    <string name="one_handed__move_start_btn_content_description" comment="Content description for the one-handed move to left button">Flytta tangentbord till vänster.</string>
-    <string name="one_handed__move_end_btn_content_description" comment="Content description for the one-handed move to right button">Flytta tangentbord till höger.</string>
     <!-- Media strings -->
     <string name="media__tab__emojis" comment="Tab description for emojis in the media UI">Emojis</string>
     <string name="media__tab__emoticons" comment="Tab description for emoticons in the media UI">Emotikoner</string>
@@ -51,7 +48,6 @@
     <string name="settings__keyboard__title" comment="Title of Keyboard preferences screen">Tangentbord</string>
     <string name="pref__keyboard__number_row__label" comment="Preference title">Sifferrad</string>
     <string name="pref__keyboard__group_layout__label" comment="Preference group title">Layout</string>
-    <string name="pref__keyboard__one_handed_mode__label" comment="Preference title">Enhandsläge</string>
     <string name="pref__keyboard__height_factor__label" comment="Preference title">Tangentbordshöjd</string>
     <string name="pref__keyboard__group_keypress__label" comment="Preference group title">Tangenttryck</string>
     <string name="pref__keyboard__popup_enabled__summary" comment="Preference summary">Visa popup vid tangenttryck</string>
@@ -96,8 +92,6 @@
     <!-- State strings -->
     <string name="state__disabled">Inaktiverad</string>
     <!-- Enum label and description strings -->
-    <string name="enum__one_handed_mode__start" comment="Enum value label">Vänsterhandsläge</string>
-    <string name="enum__one_handed_mode__end" comment="Enum value label">Högerhandsläge</string>
     <string name="enum__swipe_action__shift" comment="Enum value label">Skift</string>
     <string name="enum__swipe_action__switch_to_prev_keyboard" comment="Enum value label">Byt till föregående tangentbord</string>
     <string name="enum__swipe_action__switch_to_prev_subtype" comment="Enum value label">Byt till föregående undertyp</string>

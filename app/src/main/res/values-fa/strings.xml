@@ -5,9 +5,6 @@
     <string name="key__phone_wait" comment="Label for the Wait key in the telephone keyboard layout">صبر‌کنید</string>
     <string name="key_popup__threedots_alt" comment="Content description for the three-dots icon in a key popup">نماد سه نقطه. در صورت مشاهده ، نشان می دهد که در صورت فشار بیشتر می توان از حروف بیشتری استفاده کرد.</string>
     <!-- One-handed strings -->
-    <string name="one_handed__close_btn_content_description" comment="Content description for the one-handed close button">بستن حالت یک دستی.</string>
-    <string name="one_handed__move_start_btn_content_description" comment="Content description for the one-handed move to left button">جابه‌جایی صفحه کلید به سمت چپ.</string>
-    <string name="one_handed__move_end_btn_content_description" comment="Content description for the one-handed move to right button">جابه‌جایی صفحه کلید به سمت راست.</string>
     <!-- Media strings -->
     <string name="settings__media__title">ایموجی ها</string>
     <string name="media__tab__emojis" comment="Tab description for emojis in the media UI">شکلک‌ها</string>
@@ -52,7 +49,6 @@
     <string name="quick_action__toggle_autocorrect" comment="Please mind the limited available space for the quick action strings">تصحیح خودکار</string>
     <string name="quick_action__toggle_autocorrect__tooltip">غیر فعال کردن تصحیح خودکار</string>
     <string name="quick_action__voice_input" comment="Please mind the limited available space for the quick action strings">ورودی صدا</string>
-    <string name="quick_action__one_handed_mode" comment="Please mind the limited available space for the quick action strings">یک دستی</string>
     <string name="quick_action__noop" comment="Noop=no operation; this action is only used as a placeholder in the actions editor drag and drop screen">هیچ کدام</string>
     <string name="quick_action__noop__tooltip" comment="Noop=no operation; this action is only used as a placeholder in the actions editor drag and drop screen">هیچ عملی</string>
     <!-- Incognito mode strings -->
@@ -158,8 +154,6 @@
     <string name="pref__keyboard__utility_key_enabled__summary" comment="Preference summary">یک کلید ابزار قابل تنظیم در کنار نوار فاصله نشان می دهد</string>
     <string name="pref__keyboard__utility_key_action__label" comment="Preference title">عملکرد کلید ابزار</string>
     <string name="pref__keyboard__group_layout__label" comment="Preference group title">چیدمان</string>
-    <string name="pref__keyboard__one_handed_mode__label" comment="Preference title">حالت تک دستی</string>
-    <string name="pref__keyboard__one_handed_mode_scale_factor__label" comment="Preference title">عرض کیبورد در حالت یک دستی</string>
     <string name="pref__keyboard__landscape_input_ui_mode__label" comment="Preference value">ورودی تمام صفحه افقی</string>
     <string name="pref__keyboard__height_factor__label" comment="Preference title">ارتفاع صفحه کلید</string>
     <string name="pref__keyboard__group_keypress__label" comment="Preference group title">فشردن کلید</string>
@@ -317,8 +311,6 @@
     <string name="enum__landscape_input_ui_mode__never_show" comment="Enum value label">هرگز نشان نده</string>
     <string name="enum__landscape_input_ui_mode__always_show" comment="Enum value label">همیشه نشان بده</string>
     <string name="enum__landscape_input_ui_mode__dynamically_show" comment="Enum value label">به صورت پویا نشان بده</string>
-    <string name="enum__one_handed_mode__start" comment="Enum value label">حالت دست چپی</string>
-    <string name="enum__one_handed_mode__end" comment="Enum value label">حالت دست راستی</string>
     <string name="enum__spelling_language_mode__use_system_languages" comment="Enum value label">استفاده از زبان سیستم</string>
     <string name="enum__spelling_language_mode__use_keyboard_subtypes" comment="Enum value label">استفاده از زیرنوع های صفحه کلید</string>
     <string name="enum__swipe_action__no_action" comment="Enum value label">بدون عمل</string>
