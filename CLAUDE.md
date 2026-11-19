@@ -88,6 +88,9 @@ strings and dimens are gone; saved toolbar arrangements are cleaned by `QuickAct
 `one-handed-panel` / `one-handed-panel-button` (and their strings) were kept on purpose because the bundled theme JSON files mention them.
 A floating / draggable keyboard was discussed and not built (IME window is fixed to the bottom; risky without a compiler).
 
+Cards hint (2026-11-19): the period key of the characters layout (GROUP_RIGHT, code 46) shows a small faded credit-card icon as a hint
+(`TextKey.vaultHint`, drawn in `TextKeyboardLayout`, follows the hint size/fade settings) and has the cards shortcut (`KeyCode.VAULT`) as a long-press key in every language.
+
 ## Pending / open
 - The old branch `typo-suggestions` is merged and can be deleted by Khaled in GitHub (Claude cannot delete it).
 - The "100 times more frequent" rule in `UiDictionary.corrections` may need tuning if corrections feel too eager.
