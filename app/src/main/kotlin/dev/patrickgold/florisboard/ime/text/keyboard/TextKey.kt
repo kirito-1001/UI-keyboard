@@ -40,6 +40,9 @@ class TextKey(override val data: AbstractKeyData) : Key(data) {
     var computedNumberHint: KeyData? = null
     var computedHintData: KeyData = TextKeyData.UNSPECIFIED
 
+    /** True on the period key of the characters layout: it shows the cards icon as a hint and has the cards shortcut as a long-press key. */
+    var vaultHint: Boolean = false
+
     // This should exclusively be set and used by the TextKeyboardLayout
     var computedDataOnDown: KeyData = TextKeyData.UNSPECIFIED
 
@@ -68,6 +71,7 @@ class TextKey(override val data: AbstractKeyData) : Key(data) {
         } else {
             computedData = computed
             computedPopups.clear()
+            vaultHint = false
             mergePopups(computed, evaluator, computedPopups::merge)
             if (keyboardMode == KeyboardMode.CHARACTERS || keyboardMode == KeyboardMode.NUMERIC_ADVANCED ||
                 keyboardMode == KeyboardMode.SYMBOLS || keyboardMode == KeyboardMode.SYMBOLS2) {
@@ -141,6 +145,13 @@ class TextKey(override val data: AbstractKeyData) : Key(data) {
                         if (has) continue
                         if (computedPopups.main == null) computedPopups.main = comma else computedPopups.relevant.add(0, comma)
                     }
+                    // The cards shortcut is on the period key in every language
+                    val vault = TextKeyData.VAULT
+                    val hasVault = computedPopups.main?.code == vault.code || computedPopups.relevant.any { it.code == vault.code }
+                    if (!hasVault) {
+                        if (computedPopups.main == null) computedPopups.main = vault else computedPopups.relevant.add(0, vault)
+                    }
+                    vaultHint = true
                 }
                 if (computed.type == KeyType.CHARACTER) {
                     addComputedHints(computed.code, evaluator, extendedPopups, extendedPopupsDefault)

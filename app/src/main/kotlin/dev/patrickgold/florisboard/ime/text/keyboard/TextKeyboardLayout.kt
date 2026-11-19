@@ -27,6 +27,8 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
@@ -406,6 +408,22 @@ private fun TextKeyButton(
                         .wrapContentSize()
                         .align(if (isTelPadKey) BiasAlignment(0.5f, 0f) else Alignment.TopEnd),
                     text = hintedLabel,
+                )
+            }
+        }
+        if (key.vaultHint) {
+            dev.patrickgold.florisboard.ime.uikb.UiHintStyle {
+                val delta = org.florisboard.lib.snygg.ui.LocalSnyggFontOverride.current?.fontSizeDelta ?: 0f
+                SnyggIcon(
+                    elementName = FlorisImeUi.KeyHint.elementName,
+                    attributes = attributes,
+                    selector = selector,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(top = 2.dp, end = 3.dp)
+                        .size((11f + delta).coerceAtLeast(6f).dp),
+                    imageVector = androidx.compose.material.icons.Icons.Default.CreditCard,
+                    contentDescription = null,
                 )
             }
         }
