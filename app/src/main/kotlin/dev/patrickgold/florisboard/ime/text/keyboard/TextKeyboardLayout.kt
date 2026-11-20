@@ -22,6 +22,8 @@ import android.content.Context
 import android.view.MotionEvent
 import android.view.animation.AccelerateInterpolator
 import androidx.compose.foundation.border
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.absoluteOffset
@@ -422,7 +424,7 @@ private fun TextKeyButton(
                         .align(Alignment.TopEnd)
                         .padding(top = 2.dp, end = 3.dp)
                         .size((11f + delta).coerceAtLeast(6f).dp),
-                    imageVector = androidx.compose.material.icons.Icons.Default.CreditCard,
+                    imageVector = Icons.Default.CreditCard,
                     contentDescription = null,
                 )
             }
