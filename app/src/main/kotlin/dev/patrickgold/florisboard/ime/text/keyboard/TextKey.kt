@@ -145,11 +145,21 @@ class TextKey(override val data: AbstractKeyData) : Key(data) {
                         if (has) continue
                         if (computedPopups.main == null) computedPopups.main = comma else computedPopups.relevant.add(0, comma)
                     }
-                    // The cards shortcut is on the period key in every language
+                    // The cards shortcut is on the period key in every language, in the place of the question mark
                     val vault = TextKeyData.VAULT
                     val hasVault = computedPopups.main?.code == vault.code || computedPopups.relevant.any { it.code == vault.code }
                     if (!hasVault) {
-                        if (computedPopups.main == null) computedPopups.main = vault else computedPopups.relevant.add(0, vault)
+                        val isQuestionMark = { code: Int? -> code == 63 || code == 1567 }
+                        val questionIndex = computedPopups.relevant.indexOfFirst { isQuestionMark(it.code) }
+                        if (isQuestionMark(computedPopups.main?.code)) {
+                            computedPopups.main = vault
+                        } else if (questionIndex >= 0) {
+                            computedPopups.relevant[questionIndex] = vault
+                        } else if (computedPopups.main == null) {
+                            computedPopups.main = vault
+                        } else {
+                            computedPopups.relevant.add(vault)
+                        }
                     }
                     vaultHint = true
                 }
