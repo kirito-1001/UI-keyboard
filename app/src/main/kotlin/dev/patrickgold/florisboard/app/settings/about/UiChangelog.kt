@@ -56,6 +56,7 @@ val UiChangelogEntries = listOf(
         version = "2427089",
         ar = listOf(
             "تم إضافة ميزة حفظ بطاقات ومفاتيح المرور لتسهيل الشراء أونلاين أو تسجيل الدخول بسرعة.",
+            "يمكنك الوصول الي الاختصار في قائمة زر الشعار او بالضغط المطول علي زر النقطه",
             "يمكنك إضافة بيانات بطاقاتك الائتمانية.",
             "يمكنك إضافة اسم المستخدم وكلمة المرور الخاصة بموقع ما.",
             "يمكنك إضافة صورة خاصة لكل بطاقة ليسهل تمييزها.",
@@ -63,6 +64,7 @@ val UiChangelogEntries = listOf(
         ),
         en = listOf(
             "Added saving of cards and passkeys to make buying online or signing in quick.",
+            "You can reach the shortcut from the logo button menu or by long-pressing the period key.",
             "You can add your credit card details.",
             "You can add the username and password of a website.",
             "You can add a picture to each card so it is easy to tell apart.",
