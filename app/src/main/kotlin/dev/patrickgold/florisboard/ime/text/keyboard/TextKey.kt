@@ -145,22 +145,16 @@ class TextKey(override val data: AbstractKeyData) : Key(data) {
                         if (has) continue
                         if (computedPopups.main == null) computedPopups.main = comma else computedPopups.relevant.add(0, comma)
                     }
-                    // The cards shortcut is on the period key in every language, in the place of the question mark
+                    // The cards shortcut is the main (closest) long-press key of the period key in every language.
+                    // It takes the place of the question mark; the previous main key moves next to it.
                     val vault = TextKeyData.VAULT
-                    val hasVault = computedPopups.main?.code == vault.code || computedPopups.relevant.any { it.code == vault.code }
-                    if (!hasVault) {
-                        val isQuestionMark = { code: Int? -> code == 63 || code == 1567 }
-                        val questionIndex = computedPopups.relevant.indexOfFirst { isQuestionMark(it.code) }
-                        if (isQuestionMark(computedPopups.main?.code)) {
-                            computedPopups.main = vault
-                        } else if (questionIndex >= 0) {
-                            computedPopups.relevant[questionIndex] = vault
-                        } else if (computedPopups.main == null) {
-                            computedPopups.main = vault
-                        } else {
-                            computedPopups.relevant.add(vault)
-                        }
+                    val isQuestionMark = { code: Int? -> code == 63 || code == 1567 }
+                    val oldMain = computedPopups.main
+                    computedPopups.relevant.removeAll { it.code == vault.code || isQuestionMark(it.code) }
+                    if (oldMain != null && oldMain.code != vault.code && !isQuestionMark(oldMain.code)) {
+                        computedPopups.relevant.add(0, oldMain)
                     }
+                    computedPopups.main = vault
                     vaultHint = true
                 }
                 if (computed.type == KeyType.CHARACTER) {
