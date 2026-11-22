@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Toolbar logo: four rounded tiles with different strengths. Tinted with the theme icon color (alpha is kept). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FF000000"
+        android:fillAlpha="0.28"
+        android:pathData="M4,2.5h4a2,2 0 0 1 2,2v3a2,2 0 0 1 -2,2h-4a2,2 0 0 1 -2,-2v-3a2,2 0 0 1 2,-2z" />
+    <path
+        android:fillColor="#FF000000"
+        android:fillAlpha="0.68"
+        android:pathData="M14.9,2h4.7a2.4,2.4 0 0 1 2.4,2.4v6.2a2.4,2.4 0 0 1 -2.4,2.4h-4.7a2.4,2.4 0 0 1 -2.4,-2.4v-6.2a2.4,2.4 0 0 1 2.4,-2.4z" />
+    <path
+        android:fillColor="#FF000000"
+        android:fillAlpha="1.0"
+        android:pathData="M4.4,11.5h4.7a2.4,2.4 0 0 1 2.4,2.4v5.7a2.4,2.4 0 0 1 -2.4,2.4h-4.7a2.4,2.4 0 0 1 -2.4,-2.4v-5.7a2.4,2.4 0 0 1 2.4,-2.4z" />
+    <path
+        android:fillColor="#FF000000"
+        android:fillAlpha="0.5"
+        android:pathData="M15.5,15h4.5a2,2 0 0 1 2,2v3a2,2 0 0 1 -2,2h-4.5a2,2 0 0 1 -2,-2v-3a2,2 0 0 1 2,-2z" />
+</vector>
