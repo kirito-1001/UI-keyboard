@@ -92,6 +92,7 @@ Cards hint (2026-11-19): the period key of the characters layout (GROUP_RIGHT, c
 (`TextKey.vaultHint`, drawn in `TextKeyboardLayout`, follows the hint size/fade settings) and has the cards shortcut (`KeyCode.VAULT`) as a long-press key in every language.
 
 ## Pending / open
+- The live translator idea was dropped by Khaled (2026-11-23). Do not propose it again unless he asks.
 - The old branch `typo-suggestions` is merged and can be deleted by Khaled in GitHub (Claude cannot delete it).
 - The "100 times more frequent" rule in `UiDictionary.corrections` may need tuning if corrections feel too eager.
 - Cloud AI features for the keyboard were discussed and not chosen (he chose on-device suggestions).
