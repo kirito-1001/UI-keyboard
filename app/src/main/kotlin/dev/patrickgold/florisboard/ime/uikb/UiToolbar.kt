@@ -326,7 +326,7 @@ fun UiToolbar(modifier: Modifier = Modifier, middle: (@Composable BoxScope.() ->
         val logoPart: @Composable RowScope.() -> Unit = {
             Box(modifier = Modifier.weight(1f).fillMaxHeight(), contentAlignment = Alignment.Center) {
                 BarButton(onClick = { UiPanelState.toggle(UiPanel.ACTIONS) }) {
-                    SnyggIcon(modifier = Modifier.size(iconSize(ToolbarIconSize) * 0.85f), painter = painterResource(R.drawable.ui_toolbar_logo_grid))
+                    SnyggIcon(modifier = Modifier.size(iconSize(ToolbarIconSize) * 0.7225f), painter = painterResource(R.drawable.ui_toolbar_logo_grid))
                 }
             }
         }
