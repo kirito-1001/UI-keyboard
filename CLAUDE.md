@@ -91,6 +91,9 @@ A floating / draggable keyboard was discussed and not built (IME window is fixed
 Cards hint (2026-11-19): the period key of the characters layout (GROUP_RIGHT, code 46) shows a small faded credit-card icon as a hint
 (`TextKey.vaultHint`, drawn in `TextKeyboardLayout`, follows the hint size/fade settings) and has the cards shortcut (`KeyCode.VAULT`) as a long-press key in every language.
 
+Logo grid drag and drop (2026-11-24, commit 21d8a52): `ime/uikb/ActionsPanel.kt` - long press a tile and drag to reorder (initial-pass pointer handling, animateItem for smooth shifting,
+auto-scroll at the edges, drop animation); the order is saved into `QuickActionArrangement.dynamicActions` (hidden actions keep their place), same order as Settings > Toolbar buttons. Untested (not compiled).
+
 ## Pending / open
 - The live translator idea was dropped by Khaled (2026-11-23). Do not propose it again unless he asks.
 - The old branch `typo-suggestions` is merged and can be deleted by Khaled in GitHub (Claude cannot delete it).
