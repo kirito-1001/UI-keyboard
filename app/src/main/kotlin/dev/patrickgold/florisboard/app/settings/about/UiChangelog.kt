@@ -53,6 +53,15 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "21d8a52",
+        ar = listOf(
+            "الآن يمكنك تعديل قائمة الشعار مباشرة عن طريق الضغط المطول على الأزرار.",
+        ),
+        en = listOf(
+            "You can now edit the logo menu directly by long-pressing the buttons.",
+        ),
+    ),
+    UiChangelogEntry(
         version = "2427089",
         ar = listOf(
             "تم إضافة ميزة حفظ بطاقات ومفاتيح المرور لتسهيل الشراء أونلاين أو تسجيل الدخول بسرعة.",
