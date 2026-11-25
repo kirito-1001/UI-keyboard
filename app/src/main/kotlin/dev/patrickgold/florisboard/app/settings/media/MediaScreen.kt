@@ -58,6 +58,8 @@ fun MediaScreen() = FlorisScreen {
     val scope = rememberCoroutineScope()
 
     content {
+        EmojiSizePreference()
+
         ListPreference(
             prefs.emoji.preferredSkinTone,
             title = stringRes(R.string.prefs__media__emoji_preferred_skin_tone),

@@ -1279,4 +1279,7 @@
     <string name="ui__vault__lock_duration">Unlock duration</string>
     <string name="ui__vault__seconds_short">s</string>
     <string name="ui__vault__lock_duration_help">After a fingerprint or lock check, no new check is asked for this many seconds (5 to 60).</string>
+    <string name="ui__emoji_size__title">Emoji size</string>
+    <string name="ui__emoji_size__summary">Choose the size of the emoji in the emoji panel. The bigger the size, the fewer emoji fit in a row.</string>
+    <string name="ui__emoji_size__default">Use default</string>
 </resources>

@@ -1047,4 +1047,7 @@
     <string name="ui__vault__lock_duration">مدة إلغاء القفل</string>
     <string name="ui__vault__seconds_short">ث</string>
     <string name="ui__vault__lock_duration_help">بعد التحقق بالبصمة أو القفل لا يُطلب تحقق جديد خلال هذه المدة (من 5 إلى 60 ثانية).</string>
+    <string name="ui__emoji_size__title">حجم رموز الإيموجي</string>
+    <string name="ui__emoji_size__summary">اختر حجم رموز الإيموجي في لوحة الإيموجي، وكلما كبر الحجم قل عدد الرموز في الصف الواحد.</string>
+    <string name="ui__emoji_size__default">استخدام الخيار التلقائي</string>
 </resources>

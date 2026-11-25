@@ -23,6 +23,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,7 +32,8 @@ fun FlorisAppBar(
     title: String,
     navigationIcon: (@Composable () -> Unit)?,
     actions: @Composable RowScope.() -> Unit = { },
-    scrollBehavior: TopAppBarScrollBehavior
+    scrollBehavior: TopAppBarScrollBehavior,
+    containerColor: Color = Color.Unspecified,
 ) {
     TopAppBar(
         navigationIcon = navigationIcon ?: {},
@@ -43,7 +45,11 @@ fun FlorisAppBar(
             )
         },
         actions = actions,
-        colors = TopAppBarDefaults.topAppBarColors(),
+        colors = if (containerColor == Color.Unspecified) {
+            TopAppBarDefaults.topAppBarColors()
+        } else {
+            TopAppBarDefaults.topAppBarColors(containerColor = containerColor, scrolledContainerColor = containerColor)
+        },
         scrollBehavior = scrollBehavior
     )
 }

@@ -27,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,12 +35,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import dev.patrickgold.florisboard.app.FlorisPreferenceModel
 import dev.patrickgold.florisboard.app.FlorisPreferenceStore
 import dev.patrickgold.florisboard.app.LocalNavController
+import dev.patrickgold.jetpref.datastore.ui.LocalPrefCardColor
 import dev.patrickgold.jetpref.datastore.ui.PreferenceLayout
 import dev.patrickgold.jetpref.datastore.ui.PreferenceUiContent
 import org.florisboard.lib.android.AndroidVersion
@@ -144,26 +147,42 @@ private class FlorisScreenScopeImpl : FlorisScreenScope {
 
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-        Scaffold(
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            topBar = { FlorisAppBar(title, navigationIcon.takeIf { navigationIconVisible }, actions, scrollBehavior) },
-            bottomBar = bottomBar,
-            floatingActionButton = fab,
-        ) { innerPadding ->
-            val scrollModifier = if (scrollable) {
-                Modifier.florisVerticalScroll()
-            } else {
-                Modifier
+        // Settings look: a light grey page with every option in its own card (dark theme: dark grey page and cards)
+        val isDarkPage = colorScheme.background.luminance() < 0.5f
+        val pageColor = if (isDarkPage) Color(0xFF121212) else Color(0xFFEFEFF1)
+        val cardColor = if (isDarkPage) Color(0xFF1E1E1E) else Color(0xFFF8F8FA)
+
+        CompositionLocalProvider(LocalPrefCardColor provides cardColor) {
+            Scaffold(
+                modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+                containerColor = pageColor,
+                topBar = {
+                    FlorisAppBar(
+                        title,
+                        navigationIcon.takeIf { navigationIconVisible },
+                        actions,
+                        scrollBehavior,
+                        containerColor = pageColor,
+                    )
+                },
+                bottomBar = bottomBar,
+                floatingActionButton = fab,
+            ) { innerPadding ->
+                val scrollModifier = if (scrollable) {
+                    Modifier.florisVerticalScroll()
+                } else {
+                    Modifier
+                }
+                PreferenceLayout(
+                    FlorisPreferenceStore,
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxWidth()
+                        .then(scrollModifier),
+                    iconSpaceReserved = iconSpaceReserved,
+                    content = content,
+                )
             }
-            PreferenceLayout(
-                FlorisPreferenceStore,
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxWidth()
-                    .then(scrollModifier),
-                iconSpaceReserved = iconSpaceReserved,
-                content = content,
-            )
         }
     }
 }

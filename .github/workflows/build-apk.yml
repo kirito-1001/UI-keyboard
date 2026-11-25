@@ -28,6 +28,9 @@ jobs:
           git clone https://github.com/patrickgold/jetpref "$RUNNER_TEMP/jetpref"
           cd "$RUNNER_TEMP/jetpref"
           git checkout d6e12dd
+          # UI Keyboard patch: settings cards, lists and sliders that open under the option (see tools/jetpref-patch)
+          cp "$GITHUB_WORKSPACE"/tools/jetpref-patch/*.kt \
+            datastore-ui/src/androidMain/kotlin/dev/patrickgold/jetpref/datastore/ui/
           ./gradlew publishToMavenLocal \
             -PprojectVersion=20251119T222500Z-SNAPSHOT \
             -PRELEASE_SIGNING_ENABLED=false \

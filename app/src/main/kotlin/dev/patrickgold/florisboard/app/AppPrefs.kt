@@ -231,6 +231,11 @@ abstract class FlorisPreferenceModel : PreferenceModel() {
 
     val emoji = Emoji()
     inner class Emoji {
+        /** Size of the emoji in the emoji panel: 1 (default, smallest) to 5 (largest). */
+        val sizeLevel = int(
+            key = "emoji__ui_size_level",
+            default = 1,
+        )
         val preferredSkinTone = enum(
             key = "emoji__preferred_skin_tone",
             default = EmojiSkinTone.DEFAULT,

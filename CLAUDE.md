@@ -94,6 +94,12 @@ Cards hint (2026-11-19): the period key of the characters layout (GROUP_RIGHT, c
 Logo grid drag and drop (2026-11-24, commit 21d8a52): `ime/uikb/ActionsPanel.kt` - long press a tile and drag to reorder (initial-pass pointer handling, animateItem for smooth shifting,
 auto-scroll at the edges, drop animation); the order is saved into `QuickActionArrangement.dynamicActions` (hidden actions keep their place), same order as Settings > Toolbar buttons. Untested (not compiled).
 
+Settings redesign (2026-11-25, untested, not compiled): list preferences open inline under the option, sliders show inline with a default button, every option is a card
+(page #EFEFF1 / card #F8F8FA, dark #121212 / #1E1E1E chosen by Claude). Done by patched copies of jetpref sources in `tools/jetpref-patch/` that the CI workflow copies over
+the jetpref checkout before building it (`LocalPrefCardColor` set in `lib/compose/FlorisScreen.kt`; null = old look). Slider values apply on release, lists apply on selection.
+The app's own custom dialogs (hint size, vault unlock time, color picker, text fields, confirmations) and screens using JetPrefListItem directly stay unchanged.
+Emoji size option (first item of Settings > Emoji, `app/settings/media/EmojiSizePreference.kt`, pref `emoji.sizeLevel` 1..5, level 1 = old default, factor in `emojiSizeFactor()` used by `EmojiPaletteView`).
+
 ## Pending / open
 - The live translator idea was dropped by Khaled (2026-11-23). Do not propose it again unless he asks.
 - The old branch `typo-suggestions` is merged and can be deleted by Khaled in GitHub (Claude cannot delete it).
