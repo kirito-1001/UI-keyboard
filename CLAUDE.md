@@ -104,6 +104,9 @@ Cards grouping + inline corner/hint options (2026-11-26, untested, not compiled)
 the middle ones 7dp, gap 3dp, like the settings home (`PrefGroupState` / `LocalPrefGroupState` in `tools/jetpref-patch`, positions reported with `onGloballyPositioned`; cards outside a group stay 20dp).
 Key corners, popup corners and hint size now open inline under their option (`KeyCornersContent`, `HintSizeContent` in `settings/keyboard/KeyCornersDialog.kt`); vault unlock time and shortcut buttons stay dialogs (Khaled's choice).
 
+Hidden settings entries + renamed texts (2026-11-26): removed from the screens (prefs/code kept): "Display keyboard labels in subtype language" and "Language packs" (Settings > Languages), the keyboard "Accent color" (Settings > Appearance;
+the separate one in Advanced > Other stays). Arabic texts: subtype -> "لغة" ("لغات الإدخال", "إضافة لغة", "تعديل اللغة", "حدد اللغة", "اللغات المسبقة").
+
 ## Pending / open
 - The live translator idea was dropped by Khaled (2026-11-23). Do not propose it again unless he asks.
 - The old branch `typo-suggestions` is merged and can be deleted by Khaled in GitHub (Claude cannot delete it).

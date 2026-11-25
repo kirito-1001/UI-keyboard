@@ -96,7 +96,7 @@
     <string name="quick_actions_editor__subheader_sticky_action">المهام المثبتة ({n})</string>
     <string name="quick_actions_editor__subheader_dynamic_actions">مهام متكيفة ({n})</string>
     <string name="quick_actions_editor__subheader_hidden_actions">مهام مخفية ({n})</string>
-    <string name="select_subtype_panel__header">حدد النوع الفرعي</string>
+    <string name="select_subtype_panel__header">حدد اللغة</string>
     <!-- Incognito mode strings -->
     <string name="incognito_mode__toast_after_enabled">وضع التصفح المتخفي ممكن الآن\n\n{app_name} لن يتعلم الكلمات من مدخلاتك أثناء تنشيط هذا الوضع</string>
     <string name="incognito_mode__toast_after_disabled">الوضع الخاص هو الان معطل افتراضيا</string>
@@ -111,11 +111,11 @@
     <string name="settings__home__ime_not_selected" comment="Warning message shown in Home fragment when UI Keyboard is not selected as the default keyboard">لم يتم تعيين UI Keyboard كطريقة الإدخال الافتراضية. انقر هنا لحل هذه المشكلة.</string>
     <string name="settings__localization__title" comment="Title of languages and Layout screen">اللغات و التخطيطات</string>
     <string name="settings__localization__display_language_names_in__label" comment="Label of Display language names in preference">عرض أسم اللغة المفعلة</string>
-    <string name="settings__localization__group_subtypes__label" comment="Label of subtypes group">أنواع الإدخال الفرعية</string>
-    <string name="settings__localization__subtype_add_title" comment="Title of subtype dialog when adding a new subtype">إضافة نوع فرعي</string>
+    <string name="settings__localization__group_subtypes__label" comment="Label of subtypes group">لغات الإدخال</string>
+    <string name="settings__localization__subtype_add_title" comment="Title of subtype dialog when adding a new subtype">إضافة لغة</string>
     <string name="settings__localization__language_pack_title" comment="Title of the language pack manager screen for managing installed and custom language packs">أدارة حزم اللغات المثبتة</string>
     <string name="settings__localization__language_pack_summary" comment="Summary of preference item for adding a new language pack">تجريبي: إدارة الإضافات التي تضيف دعمًا للغات معينة (الإدخال الصيني المستند إلى الشكل في الوقت الحالي)</string>
-    <string name="settings__localization__subtype_edit_title" comment="Title of subtype dialog when editing an existing subtype">تعديل النوع الفرعي</string>
+    <string name="settings__localization__subtype_edit_title" comment="Title of subtype dialog when editing an existing subtype">تعديل اللغة</string>
     <string name="settings__localization__subtype_locale" comment="Label for locale dropdown in subtype dialog">اللغة الأساسية</string>
     <string name="settings__localization__subtype_popup_mapping" comment="Label for popup mapping dropdown in subtype screen">تخصيص المنبثقة</string>
     <string name="settings__localization__subtype_characters_layout" comment="Label for layout dropdown in subtype dialog">تخطيط المحارف</string>
@@ -136,7 +136,7 @@
     <string name="settings__localization__subtype_summary" comment="Subtype summary">{characters_name} / {symbols_name} / {currency_set_name}</string>
     <string name="settings__localization__suggested_subtype_presets" comment="Suggested presets title">الإعدادات المسبقة المقترحة للنوع الفرعي</string>
     <string name="settings__localization__suggested_subtype_presets_none_found" comment="Suggested presets none found">لا توجد إعدادات مسبقة مقترحة متاحة. استخدم الزر أدناه لعرض جميع الإعدادات المسبقة للنوع الفرعي.</string>
-    <string name="settings__localization__subtype_presets" comment="Subtype presets dialog title">الأنواع الفرعية المسبقة</string>
+    <string name="settings__localization__subtype_presets" comment="Subtype presets dialog title">اللغات المسبقة</string>
     <string name="settings__localization__subtype_presets_view_all" comment="View all presets button">عرض الكل</string>
     <string name="settings__localization__subtype_no_subtypes_configured_warning" comment="Warning message that no subtype has been defined">يبدو أنك لم تقم بإختيار أية أنواع إدخال فرعية. كبديل، سيتم استخدام النوع الفرعي English / QWERTY!</string>
     <string name="settings__localization__subtype_error_already_exists" comment="Error message shown in subtype dialog when a subtype to add already exists">هذا النوع الفرعي موجود مسبقا!</string>

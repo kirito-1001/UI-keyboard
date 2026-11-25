@@ -103,17 +103,6 @@ fun LocalizationScreen() = FlorisScreen {
             title = stringRes(R.string.settings__localization__display_language_names_in__label),
             entries = enumDisplayEntriesOf(DisplayLanguageNamesIn::class),
         )
-        SwitchPreference(
-            prefs.localization.displayKeyboardLabelsInSubtypeLanguage,
-            title = stringRes(R.string.settings__localization__display_keyboard_labels_in_subtype_language),
-        )
-        Preference(
-            title = stringRes(R.string.settings__localization__language_pack_title),
-            summary = stringRes(R.string.settings__localization__language_pack_summary),
-            onClick = {
-                navController.navigate(Routes.Settings.LanguagePackManager(LanguagePackManagerScreenAction.MANAGE))
-            },
-        )
         PreferenceGroup(title = stringRes(R.string.settings__localization__group_subtypes__label)) {
             val subtypes by subtypeManager.subtypesFlow.collectAsState()
             if (subtypes.isEmpty()) {

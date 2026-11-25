@@ -104,23 +104,6 @@ fun ThemeScreen() = FlorisScreen {
             icon = Icons.Default.Brightness2,
             enabledIf = { prefs.theme.mode isEqualTo ThemeMode.FOLLOW_TIME },
         )
-        ColorPickerPreference(
-            pref = prefs.theme.accentColor,
-            title = stringRes(R.string.pref__theme__theme_accent_color__label),
-            defaultValueLabel = stringRes(R.string.action__default),
-            icon = Icons.Default.ColorLens,
-            defaultColors = ColorMappings.colors,
-            showAlphaSlider = false,
-            enableAdvancedLayout = true,
-            colorOverride = {
-                if (it.isMaterialYou(context)) {
-                    Color.Unspecified
-                } else {
-                    it
-                }
-            }
-        )
-
         KeyboardFontSettings()
 
         UiThemesSettings()
