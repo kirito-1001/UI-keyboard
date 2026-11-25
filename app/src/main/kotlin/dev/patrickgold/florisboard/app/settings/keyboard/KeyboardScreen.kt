@@ -74,67 +74,17 @@ fun KeyboardScreen() = FlorisScreen {
             entries = enumDisplayEntriesOf(KeyHintMode::class),
         )
         run {
-            val hintSizePref = prefs.keyboard.hintSize
-            val hintFadePref = prefs.keyboard.hintFade
-            val hintSize by hintSizePref.observeAsState()
-            val hintFade by hintFadePref.observeAsState()
-            var showHintDialog by remember { mutableStateOf(false) }
+            val hintSize by prefs.keyboard.hintSize.observeAsState()
+            val hintFade by prefs.keyboard.hintFade.observeAsState()
+            var hintOpen by remember { mutableStateOf(false) }
+            val hintBelow: (@Composable () -> Unit)? = if (hintOpen) ({ HintSizeContent() }) else null
             Preference(
                 title = stringRes(R.string.ui__hint_size__title),
                 summary = stringRes(R.string.ui__hint_size__size) + " " + hintSize + " · " +
                     stringRes(R.string.ui__hint_size__fade) + " " + hintFade,
-                onClick = { showHintDialog = true },
+                onClick = { hintOpen = !hintOpen },
+                belowContent = hintBelow,
             )
-            if (showHintDialog) {
-                val scope = androidx.compose.runtime.rememberCoroutineScope()
-                androidx.compose.material3.AlertDialog(
-                    onDismissRequest = { showHintDialog = false },
-                    title = { androidx.compose.material3.Text(stringRes(R.string.ui__hint_size__title)) },
-                    text = {
-                        androidx.compose.foundation.layout.Column {
-                            androidx.compose.foundation.layout.Row(
-                                modifier = androidx.compose.ui.Modifier.fillMaxWidth(),
-                                horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween,
-                            ) {
-                                androidx.compose.material3.Text(stringRes(R.string.ui__hint_size__size))
-                                androidx.compose.material3.Text(hintSize.toString())
-                            }
-                            androidx.compose.material3.Slider(
-                                value = hintSize.toFloat(),
-                                onValueChange = { v -> scope.launch { hintSizePref.set(v.roundToInt()) } },
-                                valueRange = 1f..10f,
-                                steps = 8,
-                            )
-                            androidx.compose.foundation.layout.Row(
-                                modifier = androidx.compose.ui.Modifier.fillMaxWidth(),
-                                horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween,
-                            ) {
-                                androidx.compose.material3.Text(stringRes(R.string.ui__hint_size__fade))
-                                androidx.compose.material3.Text(hintFade.toString())
-                            }
-                            androidx.compose.material3.Slider(
-                                value = hintFade.toFloat(),
-                                onValueChange = { v -> scope.launch { hintFadePref.set(v.roundToInt()) } },
-                                valueRange = 1f..10f,
-                                steps = 8,
-                            )
-                        }
-                    },
-                    confirmButton = {
-                        androidx.compose.material3.TextButton(onClick = { showHintDialog = false }) {
-                            androidx.compose.material3.Text(stringRes(R.string.ui__hint_size__done))
-                        }
-                    },
-                    dismissButton = {
-                        androidx.compose.material3.TextButton(onClick = {
-                            scope.launch {
-                                hintSizePref.set(5)
-                                hintFadePref.set(5)
-                            }
-                        }) { androidx.compose.material3.Text(stringRes(R.string.ui__hint_size__reset)) }
-                    },
-                )
-            }
         }
         SwitchPreference(
             prefs.keyboard.utilityKeyEnabled,
@@ -218,19 +168,23 @@ fun KeyboardScreen() = FlorisScreen {
                 max = 60,
                 stepIncrement = 1,
             )
-            var showKeyCorners by remember { mutableStateOf(false) }
-            if (showKeyCorners) KeyCornersDialog(onDismiss = { showKeyCorners = false })
+            var keyCornersOpen by remember { mutableStateOf(false) }
+            val keyCornersBelow: (@Composable () -> Unit)? =
+                if (keyCornersOpen) ({ KeyCornersContent() }) else null
             Preference(
                 title = stringRes(R.string.ui__key_corners__title),
                 summary = stringRes(R.string.ui__key_corners__summary),
-                onClick = { showKeyCorners = true },
+                onClick = { keyCornersOpen = !keyCornersOpen },
+                belowContent = keyCornersBelow,
             )
-            var showPopupCorners by remember { mutableStateOf(false) }
-            if (showPopupCorners) KeyCornersDialog(onDismiss = { showPopupCorners = false }, popup = true)
+            var popupCornersOpen by remember { mutableStateOf(false) }
+            val popupCornersBelow: (@Composable () -> Unit)? =
+                if (popupCornersOpen) ({ KeyCornersContent(popup = true) }) else null
             Preference(
                 title = stringRes(R.string.ui__popup_corners__title),
                 summary = stringRes(R.string.ui__popup_corners__summary),
-                onClick = { showPopupCorners = true },
+                onClick = { popupCornersOpen = !popupCornersOpen },
+                belowContent = popupCornersBelow,
             )
         }
 

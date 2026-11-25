@@ -26,9 +26,13 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.semantics.Role
 import dev.patrickgold.jetpref.datastore.model.PreferenceDataEvaluator
@@ -110,11 +114,34 @@ fun Preference(
             }
             if (cardColor != null) {
                 // (UI Keyboard patch) every preference is a card; belowContent opens under the item
+                val groupState = LocalPrefGroupState.current
+                val cardId = remember { Any() }
+                val big = 23.dp
+                val small = 7.dp
+                val cardShape = if (groupState == null) {
+                    RoundedCornerShape(20.dp)
+                } else {
+                    DisposableEffect(cardId) { onDispose { groupState.tops.remove(cardId) } }
+                    val myTop = groupState.tops[cardId]
+                    val tops = groupState.tops.values
+                    val isFirst = myTop != null && tops.all { it >= myTop }
+                    val isLast = myTop != null && tops.all { it <= myTop }
+                    RoundedCornerShape(
+                        topStart = if (isFirst) big else small, topEnd = if (isFirst) big else small,
+                        bottomStart = if (isLast) big else small, bottomEnd = if (isLast) big else small,
+                    )
+                }
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 12.dp, vertical = 3.dp),
-                    shape = RoundedCornerShape(20.dp),
+                        .padding(horizontal = 12.dp, vertical = if (groupState == null) 3.dp else 1.5.dp)
+                        .onGloballyPositioned { coords ->
+                            if (groupState != null) {
+                                val y = coords.positionInParent().y
+                                if (groupState.tops[cardId] != y) groupState.tops[cardId] = y
+                            }
+                        },
+                    shape = cardShape,
                     color = cardColor,
                 ) {
                     Column(modifier = Modifier.animateContentSize()) {

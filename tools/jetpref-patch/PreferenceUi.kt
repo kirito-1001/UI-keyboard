@@ -26,6 +26,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -70,6 +72,17 @@ val LocalIsPrefVisible = staticCompositionLocalOf { true }
  * drawn without a card, exactly like before.
  */
 val LocalPrefCardColor = staticCompositionLocalOf<Color?> { null }
+
+/**
+ * (UI Keyboard patch) Keeps the vertical position of every card of one [PreferenceGroup] so each card can find out if
+ * it is the first / last one of the group (first and last get bigger corners).
+ */
+class PrefGroupState {
+    val tops = mutableStateMapOf<Any, Float>()
+}
+
+/** (UI Keyboard patch) The group state of the surrounding [PreferenceGroup], null outside of a group. */
+val LocalPrefGroupState = staticCompositionLocalOf<PrefGroupState?> { null }
 
 /**
  * Preference UI scope which allows access to the current datastore model.
@@ -192,6 +205,7 @@ fun <T : PreferenceModel> PreferenceUiScope<T>.PreferenceGroup(
     content: PreferenceUiContent<T>,
 ) {
     if (LocalIsPrefVisible.current && visibleIf(PreferenceDataEvaluatorScope)) {
+        val groupState = remember { PrefGroupState() }
         Column(modifier = modifier) {
             val preferenceScope = PreferenceUiScope(
                 prefs = this@PreferenceGroup.prefs,
@@ -201,6 +215,7 @@ fun <T : PreferenceModel> PreferenceUiScope<T>.PreferenceGroup(
                 LocalIconSpaceReserved provides iconSpaceReserved,
                 LocalIsPrefEnabled provides enabledIf(PreferenceDataEvaluatorScope),
                 LocalIsPrefVisible provides visibleIf(PreferenceDataEvaluatorScope),
+                LocalPrefGroupState provides groupState,
             ) {
                 ListItem(
                     colors = if (LocalPrefCardColor.current != null) {

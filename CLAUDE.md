@@ -100,6 +100,10 @@ the jetpref checkout before building it (`LocalPrefCardColor` set in `lib/compos
 The app's own custom dialogs (hint size, vault unlock time, color picker, text fields, confirmations) and screens using JetPrefListItem directly stay unchanged.
 Emoji size option (first item of Settings > Emoji, `app/settings/media/EmojiSizePreference.kt`, pref `emoji.sizeLevel` 1..5, level 1 = old default, factor in `emojiSizeFactor()` used by `EmojiPaletteView`).
 
+Cards grouping + inline corner/hint options (2026-11-26, untested, not compiled): inside each `PreferenceGroup` the first card has big top corners (23dp), the last big bottom corners,
+the middle ones 7dp, gap 3dp, like the settings home (`PrefGroupState` / `LocalPrefGroupState` in `tools/jetpref-patch`, positions reported with `onGloballyPositioned`; cards outside a group stay 20dp).
+Key corners, popup corners and hint size now open inline under their option (`KeyCornersContent`, `HintSizeContent` in `settings/keyboard/KeyCornersDialog.kt`); vault unlock time and shortcut buttons stay dialogs (Khaled's choice).
+
 ## Pending / open
 - The live translator idea was dropped by Khaled (2026-11-23). Do not propose it again unless he asks.
 - The old branch `typo-suggestions` is merged and can be deleted by Khaled in GitHub (Claude cannot delete it).

@@ -20,16 +20,18 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.AlertDialog
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import kotlin.math.roundToInt
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.patrickgold.florisboard.R
@@ -39,11 +41,11 @@ import kotlinx.coroutines.launch
 import org.florisboard.lib.compose.stringRes
 
 /**
- * Dialog of Settings > Keyboard > Key corners: a slider for the corner roundness of the keys (0% square, 100% capsule),
- * and a reset button which gives the control back to the theme.
+ * Content shown under the "Key corners" / "Popup corners" option of Settings > Keyboard when it is opened: a slider for
+ * the corner roundness (0% square, 100% capsule) and a reset button which gives the control back to the theme.
  */
 @Composable
-fun KeyCornersDialog(onDismiss: () -> Unit, popup: Boolean = false) {
+fun KeyCornersContent(popup: Boolean = false) {
     val prefs by FlorisPreferenceStore
     val scope = rememberCoroutineScope()
     val pref = if (popup) prefs.keyboard.popupCornerPercent else prefs.keyboard.keyCornerPercent
@@ -52,46 +54,91 @@ fun KeyCornersDialog(onDismiss: () -> Unit, popup: Boolean = false) {
     // -1 (theme) stays until the slider is touched
     var useTheme by remember { androidx.compose.runtime.mutableStateOf(saved < 0) }
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(stringRes(if (popup) R.string.ui__popup_corners__title else R.string.ui__key_corners__title))
-        },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(
-                    if (useTheme) {
-                        stringRes(R.string.ui__key_corners__value_theme)
-                    } else {
-                        stringRes(R.string.ui__key_corners__value, "v" to sliderValue.toInt())
-                    },
-                )
-                Slider(
-                    value = sliderValue,
-                    onValueChange = {
-                        sliderValue = it
-                        useTheme = false
-                        scope.launch { pref.set(it.toInt()) }
-                    },
-                    valueRange = 0f..100f,
-                    steps = 19,
-                )
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text(stringRes(R.string.ui__key_corners__min))
-                    Text(stringRes(R.string.ui__key_corners__max))
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) { Text(stringRes(R.string.ui__key_corners__done)) }
-        },
-        dismissButton = {
-            TextButton(
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(
+            if (useTheme) {
+                stringRes(R.string.ui__key_corners__value_theme)
+            } else {
+                stringRes(R.string.ui__key_corners__value, "v" to sliderValue.toInt())
+            },
+        )
+        Slider(
+            value = sliderValue,
+            onValueChange = {
+                sliderValue = it
+                useTheme = false
+                scope.launch { pref.set(it.toInt()) }
+            },
+            valueRange = 0f..100f,
+            steps = 19,
+        )
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text(stringRes(R.string.ui__key_corners__min))
+            Text(stringRes(R.string.ui__key_corners__max))
+        }
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+            OutlinedButton(
                 onClick = {
                     useTheme = true
                     scope.launch { pref.set(-1) }
                 },
             ) { Text(stringRes(R.string.ui__key_corners__reset)) }
-        },
-    )
+        }
+    }
+}
+
+/**
+ * Content shown under the "Hint size" option of Settings > Keyboard when it is opened: sliders for the size and the
+ * fade of the key hints and a button which sets both back to the default (5).
+ */
+@Composable
+fun HintSizeContent() {
+    val prefs by FlorisPreferenceStore
+    val scope = rememberCoroutineScope()
+    val sizePref = prefs.keyboard.hintSize
+    val fadePref = prefs.keyboard.hintFade
+    val hintSize by sizePref.observeAsState()
+    val hintFade by fadePref.observeAsState()
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+    ) {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text(stringRes(R.string.ui__hint_size__size))
+            Text(hintSize.toString())
+        }
+        Slider(
+            value = hintSize.toFloat(),
+            onValueChange = { v -> scope.launch { sizePref.set(v.roundToInt()) } },
+            valueRange = 1f..10f,
+            steps = 8,
+        )
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text(stringRes(R.string.ui__hint_size__fade))
+            Text(hintFade.toString())
+        }
+        Slider(
+            value = hintFade.toFloat(),
+            onValueChange = { v -> scope.launch { fadePref.set(v.roundToInt()) } },
+            valueRange = 1f..10f,
+            steps = 8,
+        )
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+            OutlinedButton(
+                onClick = {
+                    scope.launch {
+                        sizePref.set(5)
+                        fadePref.set(5)
+                    }
+                },
+            ) { Text(stringRes(R.string.ui__hint_size__reset)) }
+        }
+    }
 }
