@@ -275,6 +275,16 @@ class EditorInstance(context: Context) : AbstractEditorInstance(context) {
                 }
             }
         } else {
+            // The editor reports no composing region (some apps do not support it), but the word being typed is
+            // still in front of the cursor: delete it, so the chosen word replaces it instead of being added to it
+            if (candidate is WordSuggestionCandidate && content.selection.isCursorMode) {
+                val typedLength = content.textBeforeSelection.toString().takeLast(40).takeLastWhile {
+                    it.isLetter() || Character.getType(it) == Character.NON_SPACING_MARK.toInt() || it == '\''
+                }.length
+                if (typedLength > 0) {
+                    currentInputConnection()?.deleteSurroundingText(typedLength, 0)
+                }
+            }
             val isPhantomSpaceActive = phantomSpace.determine(text)
             phantomSpace.setActive(showComposingRegion = false, candidate = candidate)
             val committed = if (isPhantomSpaceActive) {

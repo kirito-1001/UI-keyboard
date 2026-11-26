@@ -111,6 +111,9 @@ Suggestion reliability fix (2026-11-27, untested, not compiled): `NlpManager` nu
 skips outdated requests, and `assembleCandidates` now runs fully inside `internalSuggestionsGuard` (the inner withLock was removed: Mutex is not reentrant). `LatinLanguageProvider.suggest` falls back to the letters before the cursor
 when the editor reports no composing text / current word (apps such as Gemini). Khaled's report: suggestions sometimes do not work / vanish after the first letter / next word missing (example app: Gemini); next-word gaps may have other causes (after punctuation, digits, one-letter words) - ask for exact examples if it persists.
 
+Picking a suggestion in apps without a composing region (Gemini, 2026-11-27, untested): `EditorInstance.commitCompletion` (the branch where `content.composing` is not valid) now deletes the typed letters before the cursor
+(`deleteSurroundingText`) before committing the chosen word, so the word replaces them instead of being appended. Phantom space is inactive while typing, so `determine` is not affected.
+
 ## Pending / open
 - The live translator idea was dropped by Khaled (2026-11-23). Do not propose it again unless he asks.
 - The old branch `typo-suggestions` is merged and can be deleted by Khaled in GitHub (Claude cannot delete it).
