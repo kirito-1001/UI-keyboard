@@ -114,7 +114,12 @@ class LatinLanguageProvider(context: Context) : SpellingProvider, SuggestionProv
         val language = subtype.primaryLocale.language
         lastPrivate = isPrivateSession
         val limit = maxCandidateCount.coerceAtMost(5)
-        val typed = content.composingText.ifBlank { content.currentWordText }
+        // Some apps report the composing region / current word late or not at all: then take the letters before the cursor
+        val typed = content.composingText.ifBlank { content.currentWordText }.ifBlank {
+            content.textBeforeSelection.toString().takeLast(40).takeLastWhile {
+                it.isLetter() || it == '\'' || it.category == CharCategory.NON_SPACING_MARK
+            }
+        }
         val words = withContext(Dispatchers.Default) {
             if (typed.isBlank()) {
                 // Nothing is being typed: learn the last finished word and predict the next one

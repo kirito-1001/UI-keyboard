@@ -107,6 +107,10 @@ Key corners, popup corners and hint size now open inline under their option (`Ke
 Hidden settings entries + renamed texts (2026-11-26): removed from the screens (prefs/code kept): "Display keyboard labels in subtype language" and "Language packs" (Settings > Languages), the keyboard "Accent color" (Settings > Appearance;
 the separate one in Advanced > Other stays). Arabic texts: subtype -> "لغة" ("لغات الإدخال", "إضافة لغة", "تعديل اللغة", "حدد اللغة", "اللغات المسبقة").
 
+Suggestion reliability fix (2026-11-27, untested, not compiled): `NlpManager` numbers suggestion requests with `suggestionRequestSeq` instead of the time (two requests in the same millisecond dropped the newer one),
+skips outdated requests, and `assembleCandidates` now runs fully inside `internalSuggestionsGuard` (the inner withLock was removed: Mutex is not reentrant). `LatinLanguageProvider.suggest` falls back to the letters before the cursor
+when the editor reports no composing text / current word (apps such as Gemini). Khaled's report: suggestions sometimes do not work / vanish after the first letter / next word missing (example app: Gemini); next-word gaps may have other causes (after punctuation, digits, one-letter words) - ask for exact examples if it persists.
+
 ## Pending / open
 - The live translator idea was dropped by Khaled (2026-11-23). Do not propose it again unless he asks.
 - The old branch `typo-suggestions` is merged and can be deleted by Khaled in GitHub (Claude cannot delete it).

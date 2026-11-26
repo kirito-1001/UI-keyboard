@@ -73,7 +73,10 @@ class NlpManager(context: Context) {
     private val providersForceSuggestionOn = mutableMapOf<String, Boolean>()
 
     private val internalSuggestionsGuard = Mutex()
-    private var internalSuggestions by Delegates.observable(SystemClock.uptimeMillis() to listOf<SuggestionCandidate>()) { _, _, _ ->
+    // Every suggestion request / clear gets a growing number (the time is not enough: two requests can start in the
+    // same millisecond, and then the newer one was thrown away). A result is only used if no newer one was stored.
+    private val suggestionRequestSeq = java.util.concurrent.atomic.AtomicLong(0L)
+    private var internalSuggestions by Delegates.observable(0L to listOf<SuggestionCandidate>()) { _, _, _ ->
         scope.launch { assembleCandidates() }
     }
 
@@ -197,8 +200,10 @@ class NlpManager(context: Context) {
             || providerForcesSuggestionOn(subtypeManager.activeSubtype)
 
     fun suggest(subtype: Subtype, content: EditorContent) {
-        val reqTime = SystemClock.uptimeMillis()
+        val reqTime = suggestionRequestSeq.incrementAndGet()
         scope.launch {
+            // A newer request (or a clear) was made already: this one is outdated, so do not waste time on it
+            if (reqTime != suggestionRequestSeq.get()) return@launch
             val emojiSuggestions = when {
                 prefs.emoji.suggestionEnabled.get() -> {
                     emojiSuggestionProvider.suggest(
@@ -237,14 +242,14 @@ class NlpManager(context: Context) {
     }
 
     fun suggestDirectly(suggestions: List<SuggestionCandidate>) {
-        val reqTime = SystemClock.uptimeMillis()
+        val reqTime = suggestionRequestSeq.incrementAndGet()
         runBlocking {
             internalSuggestions = reqTime to suggestions
         }
     }
 
     fun clearSuggestions() {
-        val reqTime = SystemClock.uptimeMillis()
+        val reqTime = suggestionRequestSeq.incrementAndGet()
         runBlocking {
             internalSuggestions = reqTime to emptyList()
         }
@@ -279,26 +284,26 @@ class NlpManager(context: Context) {
 
     private fun assembleCandidates() {
         runBlocking {
-            val candidates = when {
-                isSuggestionOn() -> {
-                    clipboardSuggestionProvider.suggest(
-                        subtype = Subtype.DEFAULT,
-                        content = editorInstance.activeContent,
-                        maxCandidateCount = 8,
-                        allowPossiblyOffensive = !prefs.suggestion.blockPossiblyOffensive.get(),
-                        isPrivateSession = keyboardManager.activeState.isIncognitoMode,
-                    ).ifEmpty {
-                        buildList {
-                            internalSuggestionsGuard.withLock {
-                                addAll(internalSuggestions.second)
-                            }
+            // The whole step runs inside the lock, so two runs can never finish in the wrong order and let an
+            // older (for example empty) list replace a newer one
+            internalSuggestionsGuard.withLock {
+                val candidates = when {
+                    isSuggestionOn() -> {
+                        clipboardSuggestionProvider.suggest(
+                            subtype = Subtype.DEFAULT,
+                            content = editorInstance.activeContent,
+                            maxCandidateCount = 8,
+                            allowPossiblyOffensive = !prefs.suggestion.blockPossiblyOffensive.get(),
+                            isPrivateSession = keyboardManager.activeState.isIncognitoMode,
+                        ).ifEmpty {
+                            internalSuggestions.second.toList()
                         }
                     }
+                    else -> emptyList()
                 }
-                else -> emptyList()
+                activeCandidates = candidates
+                autoExpandCollapseSmartbarActions(candidates, NlpInlineAutofill.suggestions.value)
             }
-            activeCandidates = candidates
-            autoExpandCollapseSmartbarActions(candidates, NlpInlineAutofill.suggestions.value)
         }
     }
 
