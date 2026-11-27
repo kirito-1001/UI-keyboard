@@ -124,6 +124,7 @@ Khaled tested on 2026-11-27 (builds 121387b and earlier): the settings redesign,
 - The old branch `typo-suggestions` is merged and can be deleted by Khaled in GitHub (Claude cannot delete it).
 - The "100 times more frequent" rule in `UiDictionary.corrections` may need tuning if corrections feel too eager.
 - Cloud AI features for the keyboard were discussed and not chosen (he chose on-device suggestions).
+- Saved e-mail address suggestions in e-mail fields (with optional auto-save) were planned and then dropped by Khaled (2026-11-28, "not practical"). Nothing was built. Do not propose again unless he asks.
 
 ## Git notes
 - A stop hook may warn that a branch has "unpushed commits and no remote branch" even after a successful push. Check
