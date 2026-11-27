@@ -117,6 +117,8 @@ Picking a suggestion in apps without a composing region (Gemini, 2026-11-27, unt
 Faster typo correction (2026-11-27, untested, not compiled): `UiDictionary.corrections` only looks at words whose length is within the allowed edits (`byLength` index) and skips words whose letter fingerprint (`masks`, 64-bit) differs too much
 (max 2 bits for 1 edit, 6 for 2 edits; a safe bound, so results are the same as before, only faster).
 
+Khaled tested on 2026-11-27 (builds 121387b and earlier): the settings redesign, the suggestion fixes (ordering, fallback typed word, replace typed letters in Gemini) work well. He rejected extra prediction ideas (punctuation/sentence-start/one-letter/Arabic prefixes, learned-words screen, separate switches, export, bar font size) as unnecessary.
+
 ## Pending / open
 - The live translator idea was dropped by Khaled (2026-11-23). Do not propose it again unless he asks.
 - The old branch `typo-suggestions` is merged and can be deleted by Khaled in GitHub (Claude cannot delete it).
