@@ -114,6 +114,9 @@ when the editor reports no composing text / current word (apps such as Gemini). 
 Picking a suggestion in apps without a composing region (Gemini, 2026-11-27, untested): `EditorInstance.commitCompletion` (the branch where `content.composing` is not valid) now deletes the typed letters before the cursor
 (`deleteSurroundingText`) before committing the chosen word, so the word replaces them instead of being appended. Phantom space is inactive while typing, so `determine` is not affected.
 
+Faster typo correction (2026-11-27, untested, not compiled): `UiDictionary.corrections` only looks at words whose length is within the allowed edits (`byLength` index) and skips words whose letter fingerprint (`masks`, 64-bit) differs too much
+(max 2 bits for 1 edit, 6 for 2 edits; a safe bound, so results are the same as before, only faster).
+
 ## Pending / open
 - The live translator idea was dropped by Khaled (2026-11-23). Do not propose it again unless he asks.
 - The old branch `typo-suggestions` is merged and can be deleted by Khaled in GitHub (Claude cannot delete it).

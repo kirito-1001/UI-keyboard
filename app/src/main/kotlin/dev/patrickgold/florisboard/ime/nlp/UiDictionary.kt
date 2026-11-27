@@ -33,6 +33,26 @@ class UiDictionary private constructor(
 ) {
     val size: Int get() = words.size
 
+    /** Small fingerprint of the letters of every key; used to skip words that are far from a typed word quickly. */
+    private val masks = LongArray(keys.size) { letterMask(keys[it]) }
+
+    /** For every key length the indices of the entries of that length (only the first form of a key). */
+    private val byLength: Array<IntArray> = run {
+        var maxLength = 0
+        for (k in keys) if (k.length > maxLength) maxLength = k.length
+        val counts = IntArray(maxLength + 1)
+        for (i in keys.indices) if (i == 0 || keys[i - 1] != keys[i]) counts[keys[i].length]++
+        val lists = Array(maxLength + 1) { IntArray(counts[it]) }
+        val filled = IntArray(maxLength + 1)
+        for (i in keys.indices) {
+            if (i == 0 || keys[i - 1] != keys[i]) {
+                val length = keys[i].length
+                lists[length][filled[length]++] = i
+            }
+        }
+        lists
+    }
+
     /** Returns up to [limit] words starting with [prefix], most frequent first (the typed word itself is skipped). */
     fun complete(prefix: String, limit: Int): List<String> {
         val key = normalize(prefix, language)
@@ -95,15 +115,18 @@ class UiDictionary private constructor(
         val maxCost = maxEdits.toDouble()
         val buffers = Array(3) { DoubleArray(key.length + maxEdits + 2) }
         val found = ArrayList<Pair<Int, Double>>()
-        for (i in keys.indices) {
-            val candidate = keys[i]
-            if (kotlin.math.abs(candidate.length - key.length) > maxEdits) continue
-            // Several forms of one key follow each other; only the most frequent one is used
-            if (i > 0 && keys[i - 1] == candidate) continue
-            if (candidate == key) continue
-            if (own >= 0 && counts[i].toLong() < ownCount * 100) continue
-            val cost = editCost(key, candidate, maxCost, buffers)
-            if (cost <= maxCost) found.add(i to cost)
+        val keyMask = letterMask(key)
+        // Every edit changes at most two bits of the letter fingerprint; at most 3 cheap edits fit into 2.0
+        val maxBitDifference = if (maxEdits == 1) 2 else 6
+        for (length in (key.length - maxEdits).coerceAtLeast(1)..(key.length + maxEdits).coerceAtMost(byLength.size - 1)) {
+            for (i in byLength[length]) {
+                val candidate = keys[i]
+                if (candidate == key) continue
+                if (own >= 0 && counts[i].toLong() < ownCount * 100) continue
+                if (java.lang.Long.bitCount(masks[i] xor keyMask) > maxBitDifference) continue
+                val cost = editCost(key, candidate, maxCost, buffers)
+                if (cost <= maxCost) found.add(i to cost)
+            }
         }
         found.sortWith(compareBy<Pair<Int, Double>> { it.second }.thenByDescending { counts[it.first] })
         return found.asSequence().map { words[it.first] }.take(limit).toList()
@@ -254,6 +277,13 @@ class UiDictionary private constructor(
                 counts = IntArray(entries.size) { entries[it].third },
                 language = language,
             )
+        }
+
+        /** One bit per letter (letters share bits, which only makes the fingerprints more alike, never less). */
+        private fun letterMask(text: String): Long {
+            var mask = 0L
+            for (ch in text) mask = mask or (1L shl (ch.code and 63))
+            return mask
         }
 
         fun normalize(text: String, language: String): String {
