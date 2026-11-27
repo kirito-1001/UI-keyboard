@@ -53,6 +53,19 @@ data class UiChangelogEntry(
 
 val UiChangelogEntries = listOf(
     UiChangelogEntry(
+        version = "121387b",
+        ar = listOf(
+            "تصميم جديد للإعدادات: بطاقات مجمّعة، وقوائم وسلايدرات تفتح تحت الخيار.",
+            "خيار جديد لحجم رموز الإيموجي بخمسة مستويات.",
+            "تحسين موثوقية التنبؤ بالكلمات، خاصة في بعض التطبيقات مثل جيميناي.",
+        ),
+        en = listOf(
+            "New settings design: grouped cards, and lists and sliders that open under the option.",
+            "New option for the emoji size with five levels.",
+            "Better reliability of word suggestions, especially in some apps such as Gemini.",
+        ),
+    ),
+    UiChangelogEntry(
         version = "21d8a52",
         ar = listOf(
             "الآن يمكنك تعديل قائمة الشعار مباشرة عن طريق الضغط المطول على الأزرار.",
